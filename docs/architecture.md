@@ -27,7 +27,7 @@ The initial page is rendered with React Server Components and requires no client
 
 ## Styling
 
-Global CSS owns design tokens, baseline element behavior, focus treatment, and the reduced-motion policy. CSS Modules keep component presentation local. The laptop is built with HTML and CSS, avoiding image dependencies and heavy 3D rendering in the first milestone.
+Global CSS owns design tokens, baseline element behavior, focus treatment, and the reduced-motion policy. CSS Modules keep component presentation local. The [Helix design system](design-system.md) is the primary reference for visual and interaction decisions. The laptop is built with HTML and CSS, avoiding image dependencies and heavy 3D rendering in the first milestone.
 
 ## Motion strategy
 

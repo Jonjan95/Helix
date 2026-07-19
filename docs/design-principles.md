@@ -2,6 +2,8 @@
 
 These principles translate the project vision into practical design constraints.
 
+The [Helix design system](design-system.md) is the primary visual and interaction reference. This document remains the concise set of product-level guardrails behind it.
+
 ## Animation supports storytelling
 
 Motion must explain a transition, establish spatial context, guide attention, or reward curiosity. An effect without a clear narrative or UX purpose does not belong in Helix.

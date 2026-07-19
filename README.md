@@ -56,6 +56,7 @@ Advanced scroll animation, the laptop zoom, the transition into the screen, and 
 
 ## Project documentation
 
+- [Design system](docs/design-system.md) — primary visual and interaction reference
 - [Design principles](docs/design-principles.md)
 - [Architecture](docs/architecture.md)
 - [Roadmap](docs/roadmap.md)
