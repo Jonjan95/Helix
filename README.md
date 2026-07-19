@@ -11,7 +11,7 @@ The project follows a private internal design vision centred on curiosity, clari
 - TypeScript
 - CSS Modules
 - ESLint
-- GSAP and ScrollTrigger (installed for later milestones, not currently used)
+- GSAP and ScrollTrigger for scoped, progressively enhanced motion
 - Playwright for end-to-end testing
 
 ## Getting started
@@ -50,9 +50,9 @@ npm run validate
 
 ## Current status
 
-The static foundation and initial laptop hero refinement are in place. The page includes Jonathan's software developer positioning, a responsive laptop hero, a restrained introduction, a scroll cue, semantic placeholder sections, an initial reduced-motion policy, and desktop/mobile end-to-end coverage.
+The static foundation, laptop hero refinement, semantic journey chapters, and first Arrival-to-Orientation motion prototype are in place. On larger viewports, a short reversible scroll sequence moves toward the laptop display before handing off to Orientation. Mobile uses a lighter native-flow treatment, while reduced-motion visitors receive the complete static chapter sequence without camera movement or pinning.
 
-Advanced scroll animation, the laptop zoom, the transition into the screen, and the helix journey are intentionally deferred. See [the roadmap](docs/roadmap.md) for the planned sequence.
+The internal digital world, later chapter transitions, project interactions, and helix journey remain intentionally deferred. See [the roadmap](docs/roadmap.md) for the planned sequence.
 
 ## Project documentation
 

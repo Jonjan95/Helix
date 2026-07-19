@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { PortfolioSections } from "@/components/sections/PortfolioSections";
+import { ArrivalOrientationTransition } from "@/components/motion/ArrivalOrientationTransition";
 
 export default function Home() {
   return (
@@ -8,8 +9,10 @@ export default function Home() {
         Skip to portfolio content
       </a>
       <main id="main-content">
-        <HeroSection />
-        <PortfolioSections />
+        <ArrivalOrientationTransition>
+          <HeroSection />
+          <PortfolioSections />
+        </ArrivalOrientationTransition>
       </main>
     </>
   );
