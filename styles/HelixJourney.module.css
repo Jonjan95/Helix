@@ -1,5 +1,7 @@
 .journey {
   position: relative;
+  padding-top: clamp(4rem, 8vw, 7rem);
+  padding-bottom: clamp(5rem, 9vw, 8rem);
   overflow: hidden;
   background-color: #111719;
   background-image: linear-gradient(rgb(105 211 231 / 0.045) 1px, transparent 1px),
@@ -8,8 +10,84 @@
   isolation: isolate;
 }
 
+.journey::before {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: clamp(12rem, 30vw, 24rem);
+  background: linear-gradient(to bottom, rgb(18 20 22 / 0.92), transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.entryMarker {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: min(100%, var(--content-width));
+  margin: 0 auto;
+  padding: 0 var(--page-gutter) 1.5rem;
+  border-bottom: 1px solid rgb(105 211 231 / 0.16);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+  justify-content: space-between;
+}
+
+.continuation {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(100%, 90rem);
+  height: 10rem;
+  margin: -2rem auto 0;
+  padding: 0 var(--page-gutter);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+  justify-items: center;
+}
+
+.continuation span {
+  width: 1px;
+  height: 6.5rem;
+  background: linear-gradient(rgb(105 211 231 / 0.52), transparent);
+}
+
+.continuation p {
+  margin: 0;
+}
+
 @media (max-width: 47.999rem) {
   .journey {
+    padding-top: 3.5rem;
+    padding-bottom: 4rem;
     background-size: 2.5rem 2.5rem;
+  }
+
+  .entryMarker span:last-child {
+    display: none;
+  }
+
+  .continuation {
+    height: 9rem;
+    margin-top: 0;
+    padding-left: calc(var(--page-gutter) + 0.45rem);
+    justify-items: start;
+  }
+
+  .continuation p {
+    margin-left: 3.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .continuation {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

@@ -1,0 +1,221 @@
+.content {
+  max-width: 35rem;
+}
+
+.eyebrow {
+  display: flex;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  align-items: center;
+}
+
+.eyebrow span {
+  color: var(--color-accent);
+}
+
+.content h2 {
+  max-width: 14ch;
+  margin: 0;
+  font-size: clamp(2.75rem, 4.8vw, 5rem);
+  font-weight: 430;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+}
+
+.introduction {
+  max-width: 36rem;
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  font-size: clamp(1.12rem, 2vw, 1.5rem);
+  letter-spacing: -0.02em;
+  line-height: 1.45;
+}
+
+.detail {
+  max-width: 32rem;
+  margin: 1.5rem 0 0;
+  color: var(--color-muted);
+}
+
+.systemNote {
+  margin: 2.5rem 0 0;
+  color: rgb(168 173 178 / 0.7);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+}
+
+.principles,
+.projectList,
+.experienceList,
+.contactList {
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principles {
+  border-top: 1px solid rgb(244 240 232 / 0.14);
+}
+
+.principles li {
+  position: relative;
+  padding: 0.8rem 0 0.8rem 1.5rem;
+  border-bottom: 1px solid rgb(244 240 232 / 0.1);
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+.principles li::before {
+  position: absolute;
+  top: 1.42rem;
+  left: 0;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--color-accent);
+  content: "";
+}
+
+.projectList {
+  display: grid;
+  gap: 1rem;
+}
+
+.project {
+  position: relative;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgb(244 240 232 / 0.14);
+}
+
+.project h3 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.35rem, 2.1vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.project > p:not(.itemMeta) {
+  max-width: 34rem;
+  margin: 0.7rem 0 0;
+  color: var(--color-muted);
+}
+
+.itemMeta,
+.planned {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+}
+
+.itemMeta {
+  margin: 0;
+}
+
+.planned {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.experienceList {
+  border-top: 1px solid rgb(244 240 232 / 0.14);
+}
+
+.experienceList li {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgb(244 240 232 / 0.1);
+  color: var(--color-muted);
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+}
+
+.experienceList span {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.contactList {
+  border-top: 1px solid rgb(244 240 232 / 0.14);
+}
+
+.contactList li {
+  border-bottom: 1px solid rgb(244 240 232 / 0.1);
+}
+
+.contactList a,
+.contactList div {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  text-decoration: none;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.contactList a {
+  transition: color 160ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.contactList a:hover {
+  color: var(--color-accent);
+}
+
+.contactList div {
+  color: var(--color-muted);
+}
+
+.contactList small {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+@media (max-width: 64rem) {
+  .content h2 {
+    font-size: clamp(2.5rem, 5.5vw, 4rem);
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .content {
+    max-width: 34rem;
+  }
+
+  .content h2 {
+    max-width: 13ch;
+    font-size: clamp(2.5rem, 11vw, 3.75rem);
+  }
+
+  .introduction {
+    margin-top: 1.75rem;
+    font-size: 1.08rem;
+  }
+
+  .projectList {
+    gap: 0;
+  }
+
+  .contactList a,
+  .contactList div {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .contactList small {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactList a {
+    transition: none;
+  }
+}
