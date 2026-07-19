@@ -50,9 +50,9 @@ npm run validate
 
 ## Current status
 
-The static foundation, laptop hero refinement, semantic journey chapters, first digital workspace reveal, and an initial SVG helix skeleton are in place. On larger viewports, a short reversible scroll sequence moves toward the laptop display, reveals an Orientation threshold, and hands off to a calm HTML-and-CSS workspace. Continued native scrolling reveals the restrained relationship structure. Mobile uses lighter native-flow treatments, while reduced-motion visitors receive the complete static chapter sequence without camera movement, depth transitions, or pinning.
+The static foundation, laptop hero refinement, semantic journey chapters, digital workspace reveal, and first helix chapter attachment are in place. On larger viewports, a short reversible scroll sequence moves toward the laptop display and into the workspace. Continued native scrolling follows the SVG relationship structure to an active Engineering Mindset node and its semantic content. Mobile uses lighter native-flow treatments, while reduced-motion visitors receive the complete static chapter sequence without camera movement, depth transitions, or pinning.
 
-Final helix content, later chapter transitions, project interactions, and the complete helix journey remain intentionally deferred. See [the helix concept](docs/helix-concept.md) for the prototype boundary and [the roadmap](docs/roadmap.md) for the planned sequence.
+Later node attachments, project interactions, and the complete helix journey remain intentionally deferred. See [the helix concept](docs/helix-concept.md) for the current boundary and [the roadmap](docs/roadmap.md) for the planned sequence.
 
 ## Project documentation
 
