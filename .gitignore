@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# testing and generated reports
+coverage/
+playwright-report/
+test-results/
+
+# production
+/build
+
+# local environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# private project material
+vision.md
+private/
+local-notes/
+.agents/
+.codex/
+
+# editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

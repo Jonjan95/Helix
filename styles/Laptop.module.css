@@ -1,0 +1,120 @@
+.laptop {
+  width: min(100%, 46rem);
+  filter: drop-shadow(0 2.5rem 2rem rgb(0 0 0 / 0.25));
+}
+
+.display {
+  position: relative;
+  padding: clamp(0.55rem, 1.2vw, 0.8rem);
+  border: 1px solid #52595f;
+  border-radius: 1rem 1rem 0.3rem 0.3rem;
+  background: #25292d;
+}
+
+.camera {
+  position: absolute;
+  z-index: 1;
+  top: 0.35rem;
+  left: 50%;
+  width: 0.28rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #0b0d0f;
+}
+
+.screen {
+  position: relative;
+  display: grid;
+  min-height: clamp(15rem, 42vw, 27rem);
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  overflow: hidden;
+  border: 1px solid #30373b;
+  background-color: #111719;
+  background-image: linear-gradient(rgb(105 211 231 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 211 231 / 0.055) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  align-content: center;
+}
+
+.screen::after {
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid rgb(105 211 231 / 0.22);
+  content: "";
+  pointer-events: none;
+}
+
+.systemLabel,
+.status {
+  position: absolute;
+  z-index: 1;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: clamp(0.55rem, 1.2vw, 0.7rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.systemLabel {
+  top: 1.5rem;
+  left: 1.5rem;
+}
+
+.status {
+  right: 1.5rem;
+  bottom: 1.5rem;
+}
+
+.status::before {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  content: "";
+  vertical-align: 0.08em;
+}
+
+.name {
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(3.5rem, 12vw, 8.5rem);
+  font-weight: 540;
+  letter-spacing: -0.075em;
+  line-height: 0.9;
+}
+
+.cursor {
+  position: relative;
+  z-index: 1;
+  width: clamp(2.5rem, 8vw, 5.5rem);
+  height: 2px;
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+  background: var(--color-accent);
+}
+
+.base {
+  position: relative;
+  height: clamp(0.75rem, 2vw, 1.15rem);
+  border: 1px solid #555b60;
+  border-radius: 0.1rem 0.1rem 1.5rem 1.5rem;
+  background: #30353a;
+  transform: perspective(24rem) rotateX(46deg);
+  transform-origin: top;
+}
+
+.notch {
+  width: 14%;
+  height: 40%;
+  margin: 0 auto;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: #171a1d;
+}
+
+@media (max-width: 40rem) {
+  .status {
+    right: auto;
+    left: 1.5rem;
+  }
+}
