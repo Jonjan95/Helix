@@ -1,27 +1,27 @@
 import styles from "@/styles/HelixScene.module.css";
 
 const rungs = [
-  [266, 466, 48],
-  [402, 318, 124],
-  [498, 220, 202],
-  [432, 292, 282],
-  [214, 512, 362],
-  [106, 620, 442],
-  [158, 570, 522],
-  [330, 410, 602],
-  [506, 240, 682],
-  [586, 160, 762],
-  [500, 236, 842],
-  [346, 408, 922],
+  [314, 406, 48],
+  [421, 302, 124],
+  [436, 291, 202],
+  [348, 382, 282],
+  [170, 560, 362],
+  [82, 648, 442],
+  [91, 639, 522],
+  [193, 537, 602],
+  [394, 336, 682],
+  [507, 224, 762],
+  [503, 232, 842],
+  [394, 350, 922],
 ] as const;
 
 const nodes = [
-  { cx: 402, cy: 124, slot: "orientation" },
-  { cx: 214, cy: 362, slot: "engineering" },
-  { cx: 570, cy: 522, slot: "selected-work" },
-  { cx: 506, cy: 682, slot: "proof" },
-  { cx: 236, cy: 842, slot: "future" },
-  { cx: 408, cy: 922, slot: "continuation" },
+  { cx: 421, cy: 124, slot: "orientation" },
+  { cx: 560, cy: 362, slot: "engineering" },
+  { cx: 91, cy: 522, slot: "selected-work" },
+  { cx: 336, cy: 682, slot: "proof" },
+  { cx: 503, cy: 842, slot: "future" },
+  { cx: 350, cy: 922, slot: "continuation" },
 ] as const;
 
 export function HelixScene() {
