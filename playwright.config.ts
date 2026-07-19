@@ -4,8 +4,10 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
+  globalSetup: "./tests/global-setup.ts",
   retries: process.env.CI ? 2 : 0,
   reporter: "html",
+  workers: 1,
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
@@ -16,9 +18,4 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "npm run start",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-  },
 });
