@@ -76,7 +76,7 @@ export const arrivalOrientationConfig = {
     desktop: {
       baseTravel: 22,
       duration: 0.24,
-      identityOpacity: 0.04,
+      identityOpacity: 0,
       shellOpacity: 0.12,
       start: 0.72,
       thresholdOpacity: 1,
@@ -84,7 +84,7 @@ export const arrivalOrientationConfig = {
     tablet: {
       baseTravel: 14,
       duration: 0.2,
-      identityOpacity: 0.12,
+      identityOpacity: 0.02,
       shellOpacity: 0.24,
       start: 0.76,
       thresholdOpacity: 0.92,
@@ -92,7 +92,7 @@ export const arrivalOrientationConfig = {
     mobile: {
       baseTravel: 8,
       duration: 0.34,
-      identityOpacity: 0.36,
+      identityOpacity: 0.18,
       shellOpacity: 0.58,
       start: 0.56,
       thresholdOpacity: 0.82,

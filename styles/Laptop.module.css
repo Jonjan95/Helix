@@ -99,12 +99,17 @@
 
 .thresholdLabel {
   top: clamp(1.15rem, 2.5vw, 1.5rem);
-  left: clamp(1.15rem, 2.5vw, 1.5rem);
+  left: 50%;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .thresholdStatus {
-  right: clamp(1.15rem, 2.5vw, 1.5rem);
+  right: auto;
   bottom: clamp(1.15rem, 2.5vw, 1.5rem);
+  left: 50%;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .thresholdPath {

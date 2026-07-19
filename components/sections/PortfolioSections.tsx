@@ -10,9 +10,12 @@ import {
 } from "@/data/portfolio-sections";
 
 type SectionId = PortfolioSectionData["id"];
+type ContentChapterName = Exclude<ChapterName, "orientation">;
 
-const chapterSections: Array<{ chapter: ChapterName; sectionId: SectionId }> = [
-  { chapter: "orientation", sectionId: "about" },
+const chapterSections: Array<{
+  chapter: ContentChapterName;
+  sectionId: SectionId;
+}> = [
   { chapter: "engineering", sectionId: "skills" },
   { chapter: "selected-work", sectionId: "projects" },
   { chapter: "proof", sectionId: "experience" },
@@ -26,19 +29,11 @@ const sectionsById = new Map(
 export function PortfolioSections() {
   return (
     <div>
-      {chapterSections.map(({ chapter, sectionId }, index) => {
-        if (chapter === "orientation") {
-          return (
-            <JourneyChapter
-              key={chapter}
-              name={chapter}
-              labelledBy="about-heading"
-            >
-              <DigitalWorkspace />
-            </JourneyChapter>
-          );
-        }
+      <JourneyChapter name="orientation" labelledBy="about-heading">
+        <DigitalWorkspace />
+      </JourneyChapter>
 
+      {chapterSections.map(({ chapter, sectionId }, index) => {
         const section = sectionsById.get(sectionId);
 
         if (!section) {
@@ -51,7 +46,7 @@ export function PortfolioSections() {
             name={chapter}
             labelledBy={`${section.id}-heading`}
           >
-            <PortfolioSection section={section} index={index} />
+            <PortfolioSection section={section} index={index + 1} />
           </JourneyChapter>
         );
       })}
