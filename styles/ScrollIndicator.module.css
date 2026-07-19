@@ -24,3 +24,15 @@
 .indicator:hover {
   color: var(--color-text);
 }
+
+@media (max-width: 40rem) {
+  .indicator {
+    bottom: 1.15rem;
+    gap: 0.6rem;
+    font-size: 0.6rem;
+  }
+
+  .line {
+    width: 2rem;
+  }
+}

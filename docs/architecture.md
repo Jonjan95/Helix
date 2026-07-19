@@ -35,7 +35,7 @@ There is no timeline or scroll-linked animation yet. GSAP is installed only to e
 
 ## Testing
 
-Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the main identity heading is visible, and every primary portfolio section exists. Future milestones should add keyboard, reduced-motion, responsive, and transition coverage as behavior becomes more complex.
+Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the identity and laptop hero are visible, every primary portfolio section exists, and the document has no horizontal overflow at representative desktop and mobile widths. Future milestones should add deeper keyboard, reduced-motion, responsive, and transition coverage as behavior becomes more complex.
 
 ## Architectural guardrails
 

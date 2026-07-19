@@ -9,7 +9,7 @@ export function Laptop() {
           <span className={styles.systemLabel}>JONATHAN JANSSON / PORTFOLIO</span>
           <h1 className={styles.name}>Jonathan</h1>
           <span className={styles.cursor} aria-hidden="true" />
-          <span className={styles.status}>Quality-minded software developer</span>
+          <span className={styles.status}>Quality · Testing · Usability</span>
         </div>
       </div>
       <div className={styles.base} aria-hidden="true">
