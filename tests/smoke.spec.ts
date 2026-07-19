@@ -37,6 +37,10 @@ test("loads the portfolio foundation", async ({ page }) => {
     page.getByRole("heading", { level: 2, name: "Inside the system" }),
   ).toBeAttached();
   await expect(page.getByTestId("digital-workspace")).toBeAttached();
+  await expect(page.getByTestId("helix-scene")).toBeAttached();
+  await expect(page.getByTestId("helix-structure")).toBeAttached();
+  await expect(page.locator("[data-helix-rung]")).toHaveCount(12);
+  await expect(page.locator("[data-helix-node]")).toHaveCount(6);
 
   for (const section of ["Experience", "Skills", "Projects", "Contact"]) {
     await expect(
@@ -73,6 +77,7 @@ test("moves from Arrival to Orientation and reverses without browser errors", as
   );
   const arrival = page.locator('[data-chapter="arrival"]');
   const orientation = page.locator('[data-chapter="orientation"]');
+  const helix = page.getByTestId("helix-scene");
 
   await expect(motionRoot).toHaveAttribute("data-motion-state", "ready");
   await expect(arrival).toBeVisible();
@@ -86,6 +91,12 @@ test("moves from Arrival to Orientation and reverses without browser errors", as
     }),
   ).toBeVisible();
   await expect(page.getByTestId("digital-workspace")).toBeVisible();
+
+  await helix.scrollIntoViewIfNeeded();
+  await expect(helix).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(0);
   await expectNoHorizontalOverflow(page);
 
   await page.mouse.wheel(0, -10000);
@@ -107,7 +118,9 @@ test("reduced motion keeps Arrival and Orientation in the static flow", async ({
   await expect(page.locator('[data-chapter="arrival"]')).toBeAttached();
 
   const orientation = page.locator('[data-chapter="orientation"]');
+  const helix = page.getByTestId("helix-scene");
   await expect(orientation).toBeAttached();
+  await expect(helix).toBeAttached();
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
 
   await orientation.scrollIntoViewIfNeeded();
@@ -122,6 +135,11 @@ test("reduced motion keeps Arrival and Orientation in the static flow", async ({
       "A guided look at how I approach software, quality, and thoughtful implementation.",
     ),
   ).toBeVisible();
+
+  await helix.scrollIntoViewIfNeeded();
+  await expect(helix).toBeVisible();
+  await expect(helix).toHaveCSS("opacity", "1");
+  await expect(helix).toHaveCSS("transform", "none");
   await expectNoHorizontalOverflow(page);
 });
 
@@ -147,6 +165,11 @@ for (const viewport of [
     const workspace = page.getByTestId("digital-workspace");
     await workspace.scrollIntoViewIfNeeded();
     await expect(workspace).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
+    const helix = page.getByTestId("helix-scene");
+    await helix.scrollIntoViewIfNeeded();
+    await expect(helix).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });
 }

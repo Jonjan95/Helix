@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   arrivalOrientationConfig,
+  type HelixMotionProfile,
   type SpatialMotionProfile,
   type WorkspaceHandoffProfile,
 } from "@/components/motion/arrival-orientation.config";
@@ -19,6 +20,11 @@ type MotionTargets = {
   arrival: HTMLElement;
   copy: HTMLElement;
   frame: HTMLElement;
+  helixBackRail: SVGElement;
+  helixFrontRail: SVGElement;
+  helixNodes: SVGElement;
+  helixRungs: SVGElement;
+  helixScene: HTMLElement;
   indicator: HTMLElement;
   laptop: HTMLElement;
   laptopBase: HTMLElement;
@@ -43,6 +49,11 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
     arrival: scope.querySelector<HTMLElement>(selectors.arrival),
     copy: scope.querySelector<HTMLElement>(selectors.copy),
     frame: scope.querySelector<HTMLElement>(selectors.frame),
+    helixBackRail: scope.querySelector<SVGElement>(selectors.helixBackRail),
+    helixFrontRail: scope.querySelector<SVGElement>(selectors.helixFrontRail),
+    helixNodes: scope.querySelector<SVGElement>(selectors.helixNodes),
+    helixRungs: scope.querySelector<SVGElement>(selectors.helixRungs),
+    helixScene: scope.querySelector<HTMLElement>(selectors.helixScene),
     indicator: scope.querySelector<HTMLElement>(selectors.indicator),
     laptop: scope.querySelector<HTMLElement>(selectors.laptop),
     laptopBase: scope.querySelector<HTMLElement>(selectors.laptopBase),
@@ -264,6 +275,64 @@ function createMobileTimeline(targets: MotionTargets) {
   return motion;
 }
 
+function createHelixTimeline(
+  targets: MotionTargets,
+  profile: HelixMotionProfile,
+) {
+  const motion = gsap.timeline({
+    defaults: { ease: "none", overwrite: "auto" },
+    scrollTrigger: {
+      end: profile.end,
+      invalidateOnRefresh: true,
+      scrub: profile.scrub,
+      start: profile.start,
+      trigger: targets.helixScene,
+    },
+  });
+
+  motion
+    .fromTo(
+      targets.helixScene,
+      {
+        force3D: true,
+        scale: profile.scaleFrom,
+        y: profile.travelFrom,
+      },
+      {
+        scale: 1,
+        y: profile.travelTo,
+        duration: 1,
+      },
+      0,
+    )
+    .fromTo(
+      targets.helixBackRail,
+      { opacity: profile.backRailOpacityFrom, y: profile.depthTravel },
+      { opacity: 1, y: 0, duration: 0.88 },
+      0.04,
+    )
+    .fromTo(
+      targets.helixRungs,
+      { opacity: profile.rungOpacityFrom, y: profile.depthTravel * 0.75 },
+      { opacity: 1, y: 0, duration: 0.78 },
+      0.14,
+    )
+    .fromTo(
+      targets.helixFrontRail,
+      { opacity: profile.frontRailOpacityFrom, y: profile.depthTravel * 0.45 },
+      { opacity: 1, y: 0, duration: 0.84 },
+      0.08,
+    )
+    .fromTo(
+      targets.helixNodes,
+      { opacity: profile.nodeOpacityFrom, scale: 0.94 },
+      { opacity: 1, scale: 1, duration: 0.68 },
+      0.28,
+    );
+
+  return motion;
+}
+
 export function ArrivalOrientationTransition({
   children,
 }: ArrivalOrientationTransitionProps) {
@@ -298,6 +367,11 @@ export function ArrivalOrientationTransition({
               targets.arrival,
               targets.copy,
               targets.frame,
+              targets.helixBackRail,
+              targets.helixFrontRail,
+              targets.helixNodes,
+              targets.helixRungs,
+              targets.helixScene,
               targets.indicator,
               targets.laptop,
               targets.laptopBase,
@@ -321,14 +395,17 @@ export function ArrivalOrientationTransition({
             arrivalOrientationConfig.desktop,
             arrivalOrientationConfig.handoff.desktop,
           );
+          createHelixTimeline(targets, arrivalOrientationConfig.helix.desktop);
         } else if (conditions.tablet) {
           createSpatialTimeline(
             targets,
             arrivalOrientationConfig.tablet,
             arrivalOrientationConfig.handoff.tablet,
           );
+          createHelixTimeline(targets, arrivalOrientationConfig.helix.tablet);
         } else if (conditions.mobile) {
           createMobileTimeline(targets);
+          createHelixTimeline(targets, arrivalOrientationConfig.helix.mobile);
         }
       });
     }, scope);

@@ -1,8 +1,8 @@
 .workspace {
   position: relative;
-  display: grid;
   min-height: max(72svh, 42rem);
-  padding: clamp(1rem, 2vw, 2rem);
+  padding: clamp(1rem, 2vw, 2rem) clamp(1rem, 2vw, 2rem)
+    clamp(2rem, 5vw, 4rem);
   overflow: hidden;
   background-color: #111719;
   background-image: linear-gradient(rgb(105 211 231 / 0.045) 1px, transparent 1px),

@@ -19,11 +19,30 @@ export type WorkspaceHandoffProfile = {
   thresholdOpacity: number;
 };
 
+export type HelixMotionProfile = {
+  backRailOpacityFrom: number;
+  depthTravel: number;
+  end: string;
+  frontRailOpacityFrom: number;
+  nodeOpacityFrom: number;
+  rungOpacityFrom: number;
+  scaleFrom: number;
+  scrub: number;
+  start: string;
+  travelFrom: number;
+  travelTo: number;
+};
+
 export const arrivalOrientationConfig = {
   selectors: {
     arrival: '[data-chapter="arrival"]',
     copy: '[data-motion="arrival-copy"]',
     frame: '[data-motion="arrival-frame"]',
+    helixBackRail: '[data-motion="helix-back-rail"]',
+    helixFrontRail: '[data-motion="helix-front-rail"]',
+    helixNodes: '[data-motion="helix-nodes"]',
+    helixRungs: '[data-motion="helix-rungs"]',
+    helixScene: '[data-motion="helix-scene"]',
     indicator: '[data-motion="arrival-indicator"]',
     laptopBase: '[data-motion="laptop-base"]',
     laptopCamera: '[data-motion="laptop-camera"]',
@@ -97,6 +116,47 @@ export const arrivalOrientationConfig = {
       start: 0.56,
       thresholdOpacity: 0.82,
     } satisfies WorkspaceHandoffProfile,
+  },
+  helix: {
+    desktop: {
+      backRailOpacityFrom: 0.16,
+      depthTravel: 28,
+      end: "bottom 32%",
+      frontRailOpacityFrom: 0.28,
+      nodeOpacityFrom: 0.08,
+      rungOpacityFrom: 0.1,
+      scaleFrom: 0.93,
+      scrub: 0.48,
+      start: "top 86%",
+      travelFrom: 72,
+      travelTo: -22,
+    } satisfies HelixMotionProfile,
+    tablet: {
+      backRailOpacityFrom: 0.3,
+      depthTravel: 16,
+      end: "bottom 38%",
+      frontRailOpacityFrom: 0.42,
+      nodeOpacityFrom: 0.2,
+      rungOpacityFrom: 0.22,
+      scaleFrom: 0.96,
+      scrub: 0.36,
+      start: "top 90%",
+      travelFrom: 40,
+      travelTo: -10,
+    } satisfies HelixMotionProfile,
+    mobile: {
+      backRailOpacityFrom: 0.5,
+      depthTravel: 0,
+      end: "bottom 45%",
+      frontRailOpacityFrom: 0.55,
+      nodeOpacityFrom: 0.38,
+      rungOpacityFrom: 0.35,
+      scaleFrom: 0.985,
+      scrub: 0.22,
+      start: "top 94%",
+      travelFrom: 18,
+      travelTo: 0,
+    } satisfies HelixMotionProfile,
   },
   timeline: {
     cameraDuration: 0.76,
