@@ -2,7 +2,7 @@ import {
   JourneyChapter,
   type ChapterName,
 } from "@/components/JourneyChapter";
-import { DigitalWorkspace } from "@/components/DigitalWorkspace";
+import { HelixJourney } from "@/components/HelixJourney";
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import {
   portfolioSections,
@@ -10,16 +10,19 @@ import {
 } from "@/data/portfolio-sections";
 
 type SectionId = PortfolioSectionData["id"];
-type ContentChapterName = Exclude<ChapterName, "orientation">;
+type ContentChapterName = Exclude<
+  ChapterName,
+  "orientation" | "engineering"
+>;
 
 const chapterSections: Array<{
   chapter: ContentChapterName;
+  index: number;
   sectionId: SectionId;
 }> = [
-  { chapter: "engineering", sectionId: "skills" },
-  { chapter: "selected-work", sectionId: "projects" },
-  { chapter: "proof", sectionId: "experience" },
-  { chapter: "future", sectionId: "contact" },
+  { chapter: "selected-work", index: 2, sectionId: "projects" },
+  { chapter: "proof", index: 3, sectionId: "experience" },
+  { chapter: "future", index: 4, sectionId: "contact" },
 ];
 
 const sectionsById = new Map(
@@ -29,11 +32,9 @@ const sectionsById = new Map(
 export function PortfolioSections() {
   return (
     <div>
-      <JourneyChapter name="orientation" labelledBy="about-heading">
-        <DigitalWorkspace />
-      </JourneyChapter>
+      <HelixJourney />
 
-      {chapterSections.map(({ chapter, sectionId }, index) => {
+      {chapterSections.map(({ chapter, index, sectionId }) => {
         const section = sectionsById.get(sectionId);
 
         if (!section) {
@@ -46,7 +47,7 @@ export function PortfolioSections() {
             name={chapter}
             labelledBy={`${section.id}-heading`}
           >
-            <PortfolioSection section={section} index={index + 1} />
+            <PortfolioSection section={section} index={index} />
           </JourneyChapter>
         );
       })}
