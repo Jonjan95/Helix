@@ -1,5 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+const expectedChapters = [
+  "arrival",
+  "orientation",
+  "engineering",
+  "selected-work",
+  "proof",
+  "future",
+];
+
 test("loads the portfolio foundation", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
@@ -20,6 +29,15 @@ test("loads the portfolio foundation", async ({ page }) => {
       page.getByRole("heading", { level: 2, name: section, exact: true }),
     ).toBeAttached();
   }
+
+  const chapters = page.locator("[data-chapter]");
+  await expect(chapters).toHaveCount(expectedChapters.length);
+
+  const chapterOrder = await chapters.evaluateAll((elements) =>
+    elements.map((element) => element.getAttribute("data-chapter")),
+  );
+
+  expect(chapterOrder).toEqual(expectedChapters);
 });
 
 for (const viewport of [

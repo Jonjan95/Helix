@@ -4,7 +4,11 @@ import styles from "@/styles/HeroSection.module.css";
 
 export function HeroSection() {
   return (
-    <section className={styles.hero} aria-labelledby="hero-introduction">
+    <section
+      className={styles.hero}
+      data-chapter="arrival"
+      aria-labelledby="hero-introduction"
+    >
       <div className={styles.frame} aria-hidden="true">
         <span>01 / ENTRY</span>
         <span>SOFTWARE · QUALITY · EXPERIENCE</span>

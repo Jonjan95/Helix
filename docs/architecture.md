@@ -10,6 +10,7 @@ app/
   layout.tsx               Document metadata and root layout
   page.tsx                 Page composition
 components/
+  JourneyChapter.tsx       Semantic wrapper for narrative chapters
   sections/                Hero and portfolio section components
   Laptop.tsx               CSS-built hero object
   ScrollIndicator.tsx      In-page navigation cue
@@ -23,7 +24,9 @@ utils/                     Small reusable, framework-independent helpers
 
 ## Rendering and content
 
-The initial page is rendered with React Server Components and requires no client-side JavaScript for its core content. Section data is kept in a typed local module so placeholder content can be replaced without changing layout code. Every primary area is a semantic `<section>` with a stable URL fragment and labelled heading.
+The initial page is rendered with React Server Components and requires no client-side JavaScript for its core content. Section data is kept in a typed local module so placeholder content can be replaced without changing layout code.
+
+The page follows the six chapters defined by the [Experience Architecture](experience-architecture.md): arrival, orientation, engineering, selected work, proof, and future. Each chapter is a semantic `<section>` labelled by its visible heading and carries a stable internal `data-chapter` value. These attributes describe narrative structure; they are not visible navigation labels or animation behavior. Existing URL fragments remain on the content within each chapter.
 
 ## Styling
 
@@ -35,7 +38,7 @@ There is no timeline or scroll-linked animation yet. GSAP is installed only to e
 
 ## Testing
 
-Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the identity and laptop hero are visible, every primary portfolio section exists, and the document has no horizontal overflow at representative desktop and mobile widths. Future milestones should add deeper keyboard, reduced-motion, responsive, and transition coverage as behavior becomes more complex.
+Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the identity and laptop hero are visible, all narrative chapters appear in the intended order, every primary portfolio section exists, and the document has no horizontal overflow at representative desktop and mobile widths. Future milestones should add deeper keyboard, reduced-motion, responsive, and transition coverage as behavior becomes more complex.
 
 ## Architectural guardrails
 

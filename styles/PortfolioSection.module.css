@@ -2,10 +2,9 @@
   position: relative;
   display: grid;
   width: min(100%, var(--content-width));
-  min-height: 72svh;
+  min-height: var(--chapter-min-height, 72svh);
   margin: 0 auto;
   padding: clamp(5rem, 12vw, 10rem) var(--page-gutter);
-  border-top: 1px solid var(--color-line);
   grid-template-columns: minmax(3rem, 0.35fr) minmax(0, 1.65fr) auto;
   align-items: start;
 }
