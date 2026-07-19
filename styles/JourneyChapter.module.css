@@ -1,0 +1,32 @@
+.chapter {
+  --chapter-min-height: 72svh;
+
+  position: relative;
+  border-top: 1px solid var(--color-line);
+}
+
+.chapter[data-chapter="orientation"] {
+  --chapter-min-height: 68svh;
+}
+
+.chapter[data-chapter="engineering"] {
+  --chapter-min-height: 76svh;
+}
+
+.chapter[data-chapter="selected-work"] {
+  --chapter-min-height: 84svh;
+}
+
+.chapter[data-chapter="proof"] {
+  --chapter-min-height: 76svh;
+}
+
+.chapter[data-chapter="future"] {
+  --chapter-min-height: 64svh;
+}
+
+@media (max-width: 40rem) {
+  .chapter {
+    --chapter-min-height: auto;
+  }
+}

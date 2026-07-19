@@ -11,11 +11,7 @@ export function PortfolioSection({ section, index }: PortfolioSectionProps) {
   const headingId = `${section.id}-heading`;
 
   return (
-    <section
-      className={styles.section}
-      id={section.id}
-      aria-labelledby={headingId}
-    >
+    <div className={styles.section} id={section.id}>
       <div className={styles.index} aria-hidden="true">
         {formatSectionNumber(index)}
       </div>
@@ -26,6 +22,6 @@ export function PortfolioSection({ section, index }: PortfolioSectionProps) {
         <p className={styles.detail}>{section.detail}</p>
       </div>
       <span className={styles.marker} aria-hidden="true" />
-    </section>
+    </div>
   );
 }
