@@ -33,7 +33,12 @@ test("loads the portfolio foundation", async ({ page }) => {
     }),
   ).toBeVisible();
 
-  for (const section of ["About", "Experience", "Skills", "Projects", "Contact"]) {
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Inside the system" }),
+  ).toBeAttached();
+  await expect(page.getByTestId("digital-workspace")).toBeAttached();
+
+  for (const section of ["Experience", "Skills", "Projects", "Contact"]) {
     await expect(
       page.getByRole("heading", { level: 2, name: section, exact: true }),
     ).toBeAttached();
@@ -75,8 +80,12 @@ test("moves from Arrival to Orientation and reverses without browser errors", as
 
   await orientation.scrollIntoViewIfNeeded();
   await expect(
-    orientation.getByRole("heading", { level: 2, name: "About" }),
+    orientation.getByRole("heading", {
+      level: 2,
+      name: "Inside the system",
+    }),
   ).toBeVisible();
+  await expect(page.getByTestId("digital-workspace")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   await page.mouse.wheel(0, -10000);
@@ -103,7 +112,15 @@ test("reduced motion keeps Arrival and Orientation in the static flow", async ({
 
   await orientation.scrollIntoViewIfNeeded();
   await expect(
-    orientation.getByRole("heading", { level: 2, name: "About" }),
+    orientation.getByRole("heading", {
+      level: 2,
+      name: "Inside the system",
+    }),
+  ).toBeVisible();
+  await expect(
+    orientation.getByText(
+      "A guided look at how I approach software, quality, and thoughtful implementation.",
+    ),
   ).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
@@ -126,5 +143,10 @@ for (const viewport of [
     expect((laptopBounds?.x ?? 0) + (laptopBounds?.width ?? 0)).toBeLessThanOrEqual(
       viewport.width,
     );
+
+    const workspace = page.getByTestId("digital-workspace");
+    await workspace.scrollIntoViewIfNeeded();
+    await expect(workspace).toBeVisible();
+    await expectNoHorizontalOverflow(page);
   });
 }
