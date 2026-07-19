@@ -1,6 +1,6 @@
 # Helix
 
-Helix is a story-led portfolio focused on UX, visual storytelling, accessibility, and design. It begins in front of a stylized computer and will eventually guide visitors through a memorable digital journey of background, experience, skills, and projects.
+Helix is Jonathan Jansson's story-led software developer portfolio, with a focus on quality assurance, testing, usability, accessibility, and reliable implementation. It begins in front of a stylized computer and will eventually guide visitors through a memorable digital journey of background, experience, skills, and projects.
 
 The project follows a private internal design vision centred on curiosity, clarity, usability, performance, and accessibility. The private planning material is intentionally not part of the public repository.
 
@@ -50,7 +50,7 @@ npm run validate
 
 ## Current status
 
-Milestone 1, the static foundation, is in place. The page includes a responsive laptop hero, a short introduction, a scroll cue, semantic placeholder sections, an initial reduced-motion policy, and basic end-to-end coverage.
+The static foundation and initial laptop hero refinement are in place. The page includes Jonathan's software developer positioning, a responsive laptop hero, a restrained introduction, a scroll cue, semantic placeholder sections, an initial reduced-motion policy, and desktop/mobile end-to-end coverage.
 
 Advanced scroll animation, the laptop zoom, the transition into the screen, and the helix journey are intentionally deferred. See [the roadmap](docs/roadmap.md) for the planned sequence.
 

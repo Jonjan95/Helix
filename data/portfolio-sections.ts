@@ -12,43 +12,43 @@ export const portfolioSections: PortfolioSectionData[] = [
     eyebrow: "Perspective",
     title: "About",
     description:
-      "I connect thoughtful interaction design with the systems that bring it to life.",
+      "I’m a software developer interested in how careful engineering and thoughtful experience design make software easier to trust and use.",
     detail:
-      "A fuller introduction will live here, grounded in how I work, what I value, and the problems I enjoy solving.",
+      "A fuller introduction will describe how I approach quality, collaboration, learning, and technical problem solving.",
   },
   {
     id: "experience",
     eyebrow: "Practice",
     title: "Experience",
     description:
-      "Work shaped by collaboration, close attention to users, and care for the final details.",
+      "A practical view of the teams, responsibilities, and technical problems that have shaped how I work.",
     detail:
-      "Roles, responsibilities, and defining outcomes will become a concise, story-led timeline.",
+      "Roles and outcomes will become a concise timeline once the final work-history content is ready.",
   },
   {
     id: "skills",
     eyebrow: "Capabilities",
     title: "Skills",
     description:
-      "UX thinking, accessible interfaces, visual systems, and dependable front-end development.",
+      "Software development, quality assurance, test automation, usability, and reliable implementation.",
     detail:
-      "This area will balance technical fluency with the design and communication skills behind the work.",
+      "This section will connect technical tools with the testing, communication, and design thinking behind dependable software.",
   },
   {
     id: "projects",
     eyebrow: "Selected work",
     title: "Projects",
     description:
-      "Case studies that make the decisions, constraints, iterations, and impact visible.",
+      "Selected work explored through the problem, implementation, testing, and result.",
     detail:
-      "Project showcases will be added as focused narratives rather than a wall of disconnected thumbnails.",
+      "Project showcases will be added as focused technical narratives rather than a wall of disconnected thumbnails.",
   },
   {
     id: "contact",
     eyebrow: "Next step",
     title: "Contact",
     description:
-      "Interested in building something clear, useful, and memorable together?",
+      "Open to conversations about software development, quality, and useful digital products.",
     detail:
       "Contact details and social links will be added with the final portfolio content.",
   },
