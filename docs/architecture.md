@@ -10,6 +10,7 @@ app/
   layout.tsx               Document metadata and root layout
   page.tsx                 Page composition
 components/
+  DigitalWorkspace.tsx    Semantic Orientation workspace
   JourneyChapter.tsx       Semantic wrapper for narrative chapters
   motion/                  Scoped motion boundaries and configuration
   sections/                Hero and portfolio section components
@@ -35,17 +36,19 @@ Global CSS owns design tokens, baseline element behavior, focus treatment, and t
 
 ## Motion strategy
 
-### Arrival-to-Orientation transition
+### Arrival-to-Orientation workspace transition
 
-The first scroll-linked prototype is intentionally limited to the threshold between Arrival and Orientation. A dedicated client component owns one scoped GSAP context, one responsive `gsap.matchMedia()` configuration, and stable `data-motion` targets inside the existing chapters. Animation measurements and timing values live beside that component in one configuration module; presentational components only expose the minimal hooks the boundary requires.
+The first scroll-linked experience is intentionally limited to the threshold between Arrival and Orientation. `DigitalWorkspace` owns the semantic Orientation heading, concise provisional copy, and the restrained 2.5D environment built from CSS surfaces, borders, grid lines, and a central path. The laptop contains a separate aria-hidden threshold layer that previews the same visual language without duplicating Orientation's information.
 
-Desktop uses a short pinned, reversible camera move that scales and positions the physical laptop around its display while surrounding hero content recedes. Tablet uses a shorter, constrained version. Mobile keeps native document flow and applies only a restrained scale-and-recede treatment. The reduced-motion branch creates no timeline, ScrollTrigger, or pin, so Arrival and Orientation remain a direct static sequence with all content available.
+`ArrivalOrientationTransition` continues to own the complete motion sequence through one scoped GSAP context and one responsive `gsap.matchMedia()` configuration. Stable `data-motion` attributes connect that controller to the laptop shell, screen identity, threshold, and workspace without coupling GSAP to CSS Module class names. Measurements, breakpoints, scroll distances, and handoff values remain centralized in `arrival-orientation.config.ts`.
 
-GSAP contexts and match-media registrations are reverted when the boundary unmounts or a media condition changes. The prototype animates transforms and opacity, does not update React state per frame, and preserves native scrolling. The digital workspace, a literal passage through the display, unrelated chapter animation, route transitions, and the helix visualization remain deferred.
+Desktop preserves the approved short pin and full camera approach, then recedes the physical shell near the final threshold. Tablet uses the existing shorter and less aggressive profile. Mobile remains unpinned and uses a restrained identity-to-threshold handoff in native document flow. The reduced-motion branch creates no timeline, ScrollTrigger, pin, or screen-entry zoom; Arrival and the semantic workspace remain consecutive sections with all Orientation content visible.
+
+GSAP contexts and match-media registrations are reverted when the boundary unmounts or a media condition changes. The handoff animates transforms and opacity, does not update React state per frame, and preserves native scrolling. A wider workspace system, animation beyond Orientation, final portfolio content, route transitions, Three.js, WebGL, and the helix visualization remain deferred.
 
 ## Testing
 
-Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the identity and laptop hero are visible, all narrative chapters appear in the intended order, the motion boundary initializes without console errors, Orientation remains reachable, upward scrolling returns to Arrival, and reduced motion keeps both chapters in static flow without pinning. Horizontal overflow is checked at representative desktop, laptop, tablet, and mobile widths. Future milestones should add deeper keyboard and transition coverage as behavior becomes more complex.
+Playwright starts the built production server and verifies the public behavior that matters at this stage: the page loads, the identity, laptop, and digital workspace exist, all narrative chapters appear in the intended order, the motion boundary initializes without console errors, Orientation remains reachable, and upward scrolling returns to Arrival. Reduced motion keeps both chapters in static flow without pinning and exposes the essential Orientation heading and copy. Horizontal overflow is checked before and after entering the workspace at representative desktop, laptop, tablet, and mobile widths. Future milestones should add deeper keyboard and transition coverage as behavior becomes more complex.
 
 ## Architectural guardrails
 

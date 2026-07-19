@@ -1,5 +1,5 @@
 export type PortfolioSectionData = {
-  id: "about" | "experience" | "skills" | "projects" | "contact";
+  id: "experience" | "skills" | "projects" | "contact";
   eyebrow: string;
   title: string;
   description: string;
@@ -7,15 +7,6 @@ export type PortfolioSectionData = {
 };
 
 export const portfolioSections: PortfolioSectionData[] = [
-  {
-    id: "about",
-    eyebrow: "Perspective",
-    title: "About",
-    description:
-      "I’m a software developer interested in how careful engineering and thoughtful experience design make software easier to trust and use.",
-    detail:
-      "A fuller introduction will describe how I approach quality, collaboration, learning, and technical problem solving.",
-  },
   {
     id: "experience",
     eyebrow: "Practice",

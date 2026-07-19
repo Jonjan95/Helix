@@ -10,14 +10,29 @@ export type SpatialMotionProfile = {
   scrub: number;
 };
 
+export type WorkspaceHandoffProfile = {
+  baseTravel: number;
+  duration: number;
+  identityOpacity: number;
+  shellOpacity: number;
+  start: number;
+  thresholdOpacity: number;
+};
+
 export const arrivalOrientationConfig = {
   selectors: {
     arrival: '[data-chapter="arrival"]',
     copy: '[data-motion="arrival-copy"]',
     frame: '[data-motion="arrival-frame"]',
     indicator: '[data-motion="arrival-indicator"]',
+    laptopBase: '[data-motion="laptop-base"]',
+    laptopCamera: '[data-motion="laptop-camera"]',
     laptop: '[data-motion="laptop"]',
+    laptopShell: '[data-motion="laptop-shell"]',
     screen: '[data-motion="laptop-screen"]',
+    screenIdentity: '[data-motion="screen-identity"]',
+    workspace: '[data-motion="digital-workspace"]',
+    workspaceThreshold: '[data-motion="workspace-threshold"]',
   },
   media: {
     desktop:
@@ -56,6 +71,32 @@ export const arrivalOrientationConfig = {
     laptopScale: 1.08,
     laptopTravel: -18,
     scrub: 0.25,
+  },
+  handoff: {
+    desktop: {
+      baseTravel: 22,
+      duration: 0.24,
+      identityOpacity: 0,
+      shellOpacity: 0.12,
+      start: 0.72,
+      thresholdOpacity: 1,
+    } satisfies WorkspaceHandoffProfile,
+    tablet: {
+      baseTravel: 14,
+      duration: 0.2,
+      identityOpacity: 0.02,
+      shellOpacity: 0.24,
+      start: 0.76,
+      thresholdOpacity: 0.92,
+    } satisfies WorkspaceHandoffProfile,
+    mobile: {
+      baseTravel: 8,
+      duration: 0.34,
+      identityOpacity: 0.18,
+      shellOpacity: 0.58,
+      start: 0.56,
+      thresholdOpacity: 0.82,
+    } satisfies WorkspaceHandoffProfile,
   },
   timeline: {
     cameraDuration: 0.76,
