@@ -1,4 +1,3 @@
-import { HelixScene } from "@/components/HelixScene";
 import styles from "@/styles/DigitalWorkspace.module.css";
 
 export function DigitalWorkspace() {
@@ -35,8 +34,6 @@ export function DigitalWorkspace() {
           ENTRY 01 / CONTINUE INWARD
         </p>
       </div>
-
-      <HelixScene />
     </div>
   );
 }

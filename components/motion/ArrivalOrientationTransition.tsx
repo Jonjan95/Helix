@@ -19,12 +19,17 @@ type ArrivalOrientationTransitionProps = {
 type MotionTargets = {
   arrival: HTMLElement;
   copy: HTMLElement;
+  engineeringChapter: HTMLElement;
+  engineeringConnector: HTMLElement;
+  engineeringContent: HTMLElement;
+  engineeringNode: SVGElement;
   frame: HTMLElement;
   helixBackRail: SVGElement;
   helixFrontRail: SVGElement;
   helixNodes: SVGElement;
   helixRungs: SVGElement;
   helixScene: HTMLElement;
+  helixContinuation: HTMLElement;
   indicator: HTMLElement;
   laptop: HTMLElement;
   laptopBase: HTMLElement;
@@ -48,12 +53,27 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
   const targets = {
     arrival: scope.querySelector<HTMLElement>(selectors.arrival),
     copy: scope.querySelector<HTMLElement>(selectors.copy),
+    engineeringChapter: scope.querySelector<HTMLElement>(
+      selectors.engineeringChapter,
+    ),
+    engineeringConnector: scope.querySelector<HTMLElement>(
+      selectors.engineeringConnector,
+    ),
+    engineeringContent: scope.querySelector<HTMLElement>(
+      selectors.engineeringContent,
+    ),
+    engineeringNode: scope.querySelector<SVGElement>(
+      selectors.engineeringNode,
+    ),
     frame: scope.querySelector<HTMLElement>(selectors.frame),
     helixBackRail: scope.querySelector<SVGElement>(selectors.helixBackRail),
     helixFrontRail: scope.querySelector<SVGElement>(selectors.helixFrontRail),
     helixNodes: scope.querySelector<SVGElement>(selectors.helixNodes),
     helixRungs: scope.querySelector<SVGElement>(selectors.helixRungs),
     helixScene: scope.querySelector<HTMLElement>(selectors.helixScene),
+    helixContinuation: scope.querySelector<HTMLElement>(
+      selectors.helixContinuation,
+    ),
     indicator: scope.querySelector<HTMLElement>(selectors.indicator),
     laptop: scope.querySelector<HTMLElement>(selectors.laptop),
     laptopBase: scope.querySelector<HTMLElement>(selectors.laptopBase),
@@ -286,7 +306,7 @@ function createHelixTimeline(
       invalidateOnRefresh: true,
       scrub: profile.scrub,
       start: profile.start,
-      trigger: targets.helixScene,
+      trigger: targets.engineeringChapter,
     },
   });
 
@@ -326,8 +346,39 @@ function createHelixTimeline(
     .fromTo(
       targets.helixNodes,
       { opacity: profile.nodeOpacityFrom, scale: 0.94 },
-      { opacity: 1, scale: 1, duration: 0.68 },
-      0.28,
+      { opacity: 1, scale: 1, duration: 0.34 },
+      0.12,
+    )
+    .fromTo(
+      targets.engineeringNode,
+      {
+        opacity: profile.activeNodeOpacityFrom,
+        scale: profile.activeNodeScaleFrom,
+      },
+      { opacity: 1, scale: 1, duration: 0.22 },
+      0.18,
+    )
+    .fromTo(
+      targets.engineeringConnector,
+      {
+        opacity: profile.connectorOpacityFrom,
+        scaleX: 0,
+        transformOrigin: "left center",
+      },
+      { opacity: 0.7, scaleX: 1, duration: 0.2 },
+      0.24,
+    )
+    .fromTo(
+      targets.engineeringContent,
+      { opacity: profile.contentOpacityFrom, y: profile.contentTravel },
+      { opacity: 1, y: 0, duration: 0.26 },
+      0.3,
+    )
+    .fromTo(
+      targets.helixContinuation,
+      { opacity: profile.continuationOpacityFrom },
+      { opacity: 1, duration: 0.26 },
+      0.64,
     );
 
   return motion;
@@ -366,12 +417,17 @@ export function ArrivalOrientationTransition({
             [
               targets.arrival,
               targets.copy,
+              targets.engineeringChapter,
+              targets.engineeringConnector,
+              targets.engineeringContent,
+              targets.engineeringNode,
               targets.frame,
               targets.helixBackRail,
               targets.helixFrontRail,
               targets.helixNodes,
               targets.helixRungs,
               targets.helixScene,
+              targets.helixContinuation,
               targets.indicator,
               targets.laptop,
               targets.laptopBase,

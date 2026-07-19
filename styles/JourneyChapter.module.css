@@ -8,11 +8,15 @@
 .chapter[data-chapter="orientation"] {
   --chapter-min-height: 68svh;
 
-  background: #111719;
+  border-top: 0;
+  background: transparent;
 }
 
 .chapter[data-chapter="engineering"] {
-  --chapter-min-height: 76svh;
+  --chapter-min-height: 100svh;
+
+  border-top: 0;
+  background: transparent;
 }
 
 .chapter[data-chapter="selected-work"] {

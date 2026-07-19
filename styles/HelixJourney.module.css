@@ -1,0 +1,15 @@
+.journey {
+  position: relative;
+  overflow: hidden;
+  background-color: #111719;
+  background-image: linear-gradient(rgb(105 211 231 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 211 231 / 0.045) 1px, transparent 1px);
+  background-size: clamp(2.5rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
+  isolation: isolate;
+}
+
+@media (max-width: 47.999rem) {
+  .journey {
+    background-size: 2.5rem 2.5rem;
+  }
+}

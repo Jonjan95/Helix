@@ -20,7 +20,13 @@ export type WorkspaceHandoffProfile = {
 };
 
 export type HelixMotionProfile = {
+  activeNodeOpacityFrom: number;
+  activeNodeScaleFrom: number;
   backRailOpacityFrom: number;
+  connectorOpacityFrom: number;
+  contentOpacityFrom: number;
+  contentTravel: number;
+  continuationOpacityFrom: number;
   depthTravel: number;
   end: string;
   frontRailOpacityFrom: number;
@@ -37,12 +43,17 @@ export const arrivalOrientationConfig = {
   selectors: {
     arrival: '[data-chapter="arrival"]',
     copy: '[data-motion="arrival-copy"]',
+    engineeringChapter: '[data-helix-chapter="engineering"]',
+    engineeringConnector: '[data-motion="engineering-connector"]',
+    engineeringContent: '[data-motion="engineering-content"]',
+    engineeringNode: '[data-motion="engineering-node"]',
     frame: '[data-motion="arrival-frame"]',
     helixBackRail: '[data-motion="helix-back-rail"]',
     helixFrontRail: '[data-motion="helix-front-rail"]',
     helixNodes: '[data-motion="helix-nodes"]',
     helixRungs: '[data-motion="helix-rungs"]',
     helixScene: '[data-motion="helix-scene"]',
+    helixContinuation: '[data-motion="helix-continuation"]',
     indicator: '[data-motion="arrival-indicator"]',
     laptopBase: '[data-motion="laptop-base"]',
     laptopCamera: '[data-motion="laptop-camera"]',
@@ -119,9 +130,15 @@ export const arrivalOrientationConfig = {
   },
   helix: {
     desktop: {
+      activeNodeOpacityFrom: 0.34,
+      activeNodeScaleFrom: 0.72,
       backRailOpacityFrom: 0.16,
+      connectorOpacityFrom: 0.05,
+      contentOpacityFrom: 0.04,
+      contentTravel: 24,
+      continuationOpacityFrom: 0.18,
       depthTravel: 28,
-      end: "bottom 32%",
+      end: "bottom 28%",
       frontRailOpacityFrom: 0.28,
       nodeOpacityFrom: 0.08,
       rungOpacityFrom: 0.1,
@@ -132,7 +149,13 @@ export const arrivalOrientationConfig = {
       travelTo: -22,
     } satisfies HelixMotionProfile,
     tablet: {
+      activeNodeOpacityFrom: 0.45,
+      activeNodeScaleFrom: 0.82,
       backRailOpacityFrom: 0.3,
+      connectorOpacityFrom: 0.12,
+      contentOpacityFrom: 0.1,
+      contentTravel: 18,
+      continuationOpacityFrom: 0.26,
       depthTravel: 16,
       end: "bottom 38%",
       frontRailOpacityFrom: 0.42,
@@ -145,7 +168,13 @@ export const arrivalOrientationConfig = {
       travelTo: -10,
     } satisfies HelixMotionProfile,
     mobile: {
+      activeNodeOpacityFrom: 0.7,
+      activeNodeScaleFrom: 0.94,
       backRailOpacityFrom: 0.5,
+      connectorOpacityFrom: 0.3,
+      contentOpacityFrom: 0.22,
+      contentTravel: 12,
+      continuationOpacityFrom: 0.45,
       depthTravel: 0,
       end: "bottom 45%",
       frontRailOpacityFrom: 0.55,

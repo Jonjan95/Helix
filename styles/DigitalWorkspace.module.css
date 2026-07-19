@@ -4,10 +4,6 @@
   padding: clamp(1rem, 2vw, 2rem) clamp(1rem, 2vw, 2rem)
     clamp(2rem, 5vw, 4rem);
   overflow: hidden;
-  background-color: #111719;
-  background-image: linear-gradient(rgb(105 211 231 / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(105 211 231 / 0.045) 1px, transparent 1px);
-  background-size: clamp(2.5rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
   isolation: isolate;
 }
 
@@ -166,7 +162,6 @@
   .workspace {
     min-height: auto;
     padding: 1rem;
-    background-size: 2.5rem 2.5rem;
   }
 
   .frame {

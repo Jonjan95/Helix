@@ -1,68 +1,44 @@
 .scene {
   position: relative;
-  width: min(100%, var(--content-width));
-  min-height: clamp(44rem, 92svh, 64rem);
-  margin: clamp(4rem, 10vw, 8rem) auto 0;
+  z-index: 1;
+  width: 100%;
+  min-height: 100%;
   overflow: hidden;
-  border: 1px solid rgb(105 211 231 / 0.13);
-  background: #141a1c;
-  isolation: isolate;
+  grid-column: 1;
+  grid-row: 1;
 }
 
-.scene::before,
-.scene::after {
-  position: absolute;
-  content: "";
-  pointer-events: none;
-}
-
-.scene::before {
-  inset: 1rem;
-  border: 1px solid rgb(244 240 232 / 0.05);
-}
-
-.scene::after {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background: rgb(105 211 231 / 0.08);
-}
-
-.telemetry {
+.pathLabel {
   position: absolute;
   z-index: 2;
-  top: 1.5rem;
-  right: 1.5rem;
-  left: 1.5rem;
-  display: flex;
-  justify-content: space-between;
+  top: 6rem;
+  left: 0;
+  margin: 0;
   color: var(--color-muted);
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
 }
 
 .stage {
   position: absolute;
   z-index: 1;
-  inset: clamp(4.5rem, 8vw, 7rem) clamp(1.5rem, 6vw, 5rem);
+  inset: -5rem -2rem;
   display: grid;
   perspective: 60rem;
   place-items: center;
 }
 
 .structure {
-  width: min(42rem, 76vw);
-  height: 100%;
-  max-height: 54rem;
+  width: min(47rem, 62vw);
+  height: calc(100% + 10rem);
   overflow: visible;
-  transform: rotateX(4deg) scale(0.96);
-  transform-origin: center 60%;
+  transform: rotateX(3deg) scale(0.97);
+  transform-origin: center 58%;
 }
 
 .axis {
-  stroke: rgb(105 211 231 / 0.13);
+  stroke: rgb(105 211 231 / 0.11);
   stroke-dasharray: 2 12;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
@@ -71,88 +47,86 @@
 .backRail,
 .frontRail,
 .rungs,
-.nodes {
+.nodes,
+.activeNode {
   transform-box: fill-box;
   transform-origin: center;
 }
 
 .backRail path {
-  stroke: rgb(168 173 178 / 0.45);
+  stroke: rgb(168 173 178 / 0.38);
   stroke-width: 1.35;
 }
 
 .frontRail path {
-  stroke: var(--color-accent);
-  stroke-width: 1.6;
+  stroke: rgb(105 211 231 / 0.72);
+  stroke-width: 1.55;
 }
 
 .rungs line {
-  stroke: rgb(244 240 232 / 0.3);
+  stroke: rgb(244 240 232 / 0.22);
   stroke-width: 1;
 }
 
 .rungs line:nth-child(3n + 2) {
-  stroke-opacity: 0.6;
+  stroke-opacity: 0.58;
+}
+
+.rungs .activeRung {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.7;
 }
 
 .nodes circle {
-  fill: #141a1c;
-  stroke: rgb(244 240 232 / 0.72);
+  fill: #111719;
+  stroke: rgb(244 240 232 / 0.42);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
 .nodes .nodeCore {
-  fill: var(--color-accent);
+  fill: rgb(168 173 178 / 0.55);
   stroke: none;
 }
 
-.continuation {
-  position: absolute;
-  z-index: 2;
-  right: 1.5rem;
-  bottom: 1.25rem;
-  margin: 0;
-  color: var(--color-muted);
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.11em;
+.nodes .activeNode circle:first-child {
+  stroke: var(--color-accent);
+  stroke-width: 1.4;
+}
+
+.nodes .activeNode .nodeCore {
+  fill: var(--color-accent);
 }
 
 @media (max-width: 64rem) {
-  .scene {
-    min-height: clamp(40rem, 82svh, 50rem);
+  .stage {
+    inset-inline: -4rem;
   }
 
   .structure {
-    width: min(36rem, 80vw);
-    transform: rotateX(2deg) scale(0.96);
+    width: min(40rem, 74vw);
+    transform: rotateX(2deg) scale(0.97);
   }
 }
 
 @media (max-width: 47.999rem) {
   .scene {
-    min-height: 38rem;
-    margin-top: 4rem;
+    min-height: 34rem;
   }
 
-  .telemetry span:last-child {
-    display: none;
+  .pathLabel {
+    top: 3rem;
+    left: var(--page-gutter);
   }
 
   .stage {
-    inset: 4rem 0.75rem 3.5rem;
+    inset: -4rem -3.5rem -2rem;
   }
 
   .structure {
-    width: min(28rem, 92vw);
-    max-height: 31rem;
-    transform: none;
-  }
-
-  .continuation {
-    right: auto;
-    left: 1.5rem;
+    width: min(31rem, 122vw);
+    height: calc(100% + 6rem);
+    transform: translateX(-5%) scale(0.98);
   }
 }
 
@@ -161,7 +135,8 @@
   .backRail,
   .frontRail,
   .rungs,
-  .nodes {
+  .nodes,
+  .activeNode {
     opacity: 1 !important;
     transform: none !important;
   }

@@ -1,5 +1,17 @@
 import styles from "@/styles/HelixScene.module.css";
 
+export type HelixNodeName =
+  | "orientation"
+  | "engineering"
+  | "selected-work"
+  | "proof"
+  | "future"
+  | "continuation";
+
+type HelixSceneProps = {
+  activeNode: HelixNodeName;
+};
+
 const rungs = [
   [314, 406, 48],
   [421, 302, 124],
@@ -24,18 +36,16 @@ const nodes = [
   { cx: 350, cy: 922, slot: "continuation" },
 ] as const;
 
-export function HelixScene() {
+export function HelixScene({ activeNode }: HelixSceneProps) {
   return (
     <div
       className={styles.scene}
       data-motion="helix-scene"
       data-testid="helix-scene"
+      data-active-node={activeNode}
       aria-hidden="true"
     >
-      <div className={styles.telemetry}>
-        <span>HELIX / STRUCTURE 01</span>
-        <span>RELATION MAP / PROTOTYPE</span>
-      </div>
+      <p className={styles.pathLabel}>PATH / 02</p>
 
       <div className={styles.stage}>
         <svg
@@ -58,6 +68,8 @@ export function HelixScene() {
             {rungs.map(([x1, x2, y]) => (
               <line
                 key={y}
+                className={y === 362 ? styles.activeRung : undefined}
+                data-node-connection={y === 362 ? "engineering" : undefined}
                 data-helix-rung=""
                 x1={x1}
                 x2={x2}
@@ -77,7 +89,18 @@ export function HelixScene() {
 
           <g className={styles.nodes} data-motion="helix-nodes">
             {nodes.map(({ cx, cy, slot }) => (
-              <g key={slot} data-helix-node={slot}>
+              <g
+                key={slot}
+                className={activeNode === slot ? styles.activeNode : undefined}
+                data-helix-node={slot}
+                data-node-state={activeNode === slot ? "active" : "inactive"}
+                data-motion={
+                  activeNode === slot ? "engineering-node" : undefined
+                }
+                data-testid={
+                  activeNode === slot ? "engineering-node" : undefined
+                }
+              >
                 <circle cx={cx} cy={cy} r="10" />
                 <circle className={styles.nodeCore} cx={cx} cy={cy} r="2.5" />
               </g>
@@ -86,7 +109,6 @@ export function HelixScene() {
         </svg>
       </div>
 
-      <p className={styles.continuation}>PATH CONTINUES / ENGINEERING</p>
     </div>
   );
 }
