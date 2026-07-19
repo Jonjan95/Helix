@@ -1,6 +1,6 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { PortfolioSections } from "@/components/sections/PortfolioSections";
-import { ArrivalOrientationTransition } from "@/components/motion/ArrivalOrientationTransition";
+import { JourneyMotion } from "@/components/motion/JourneyMotion";
 
 export default function Home() {
   return (
@@ -9,10 +9,10 @@ export default function Home() {
         Skip to portfolio content
       </a>
       <main id="main-content">
-        <ArrivalOrientationTransition>
+        <JourneyMotion>
           <HeroSection />
           <PortfolioSections />
-        </ArrivalOrientationTransition>
+        </JourneyMotion>
       </main>
     </>
   );

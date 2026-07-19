@@ -19,45 +19,43 @@ export type WorkspaceHandoffProfile = {
   thresholdOpacity: number;
 };
 
-export type HelixMotionProfile = {
-  activeNodeOpacityFrom: number;
-  activeNodeScaleFrom: number;
-  backRailOpacityFrom: number;
+export type JourneyMotionProfile = {
+  chapterEnd: string;
+  chapterStart: string;
   connectorOpacityFrom: number;
-  contentOpacityFrom: number;
   contentTravel: number;
-  continuationOpacityFrom: number;
-  depthTravel: number;
-  end: string;
-  frontRailOpacityFrom: number;
   nodeOpacityFrom: number;
-  rungOpacityFrom: number;
-  scaleFrom: number;
+  nodeScaleFrom: number;
+  pathBackOpacityFrom: number;
+  pathEnd: string;
+  pathFrontOpacityFrom: number;
+  pathOpacityFrom: number;
+  pathRungOpacityFrom: number;
+  pathScaleFrom: number;
+  pathStart: string;
+  pathTravelFrom: number;
   scrub: number;
-  start: string;
-  travelFrom: number;
-  travelTo: number;
 };
 
-export const arrivalOrientationConfig = {
+export const journeyMotionConfig = {
   selectors: {
     arrival: '[data-chapter="arrival"]',
     copy: '[data-motion="arrival-copy"]',
-    engineeringChapter: '[data-helix-chapter="engineering"]',
-    engineeringConnector: '[data-motion="engineering-connector"]',
-    engineeringContent: '[data-motion="engineering-content"]',
-    engineeringNode: '[data-motion="engineering-node"]',
     frame: '[data-motion="arrival-frame"]',
-    helixBackRail: '[data-motion="helix-back-rail"]',
-    helixFrontRail: '[data-motion="helix-front-rail"]',
-    helixNodes: '[data-motion="helix-nodes"]',
-    helixRungs: '[data-motion="helix-rungs"]',
-    helixScene: '[data-motion="helix-scene"]',
-    helixContinuation: '[data-motion="helix-continuation"]',
     indicator: '[data-motion="arrival-indicator"]',
+    journey: '[data-helix-journey]',
+    journeyBackRail: '[data-motion="journey-back-rail"]',
+    journeyChapter: '[data-journey-chapter]',
+    journeyConnector: '[data-motion="journey-connector"]',
+    journeyContent: '[data-motion="journey-content"]',
+    journeyContinuation: '[data-motion="journey-continuation"]',
+    journeyFrontRail: '[data-motion="journey-front-rail"]',
+    journeyNode: '[data-motion="journey-node"]',
+    journeyPath: '[data-motion="journey-path"]',
+    journeyRungs: '[data-motion="journey-rungs"]',
+    laptop: '[data-motion="laptop"]',
     laptopBase: '[data-motion="laptop-base"]',
     laptopCamera: '[data-motion="laptop-camera"]',
-    laptop: '[data-motion="laptop"]',
     laptopShell: '[data-motion="laptop-shell"]',
     screen: '[data-motion="laptop-screen"]',
     screenIdentity: '[data-motion="screen-identity"]',
@@ -128,64 +126,58 @@ export const arrivalOrientationConfig = {
       thresholdOpacity: 0.82,
     } satisfies WorkspaceHandoffProfile,
   },
-  helix: {
+  journey: {
     desktop: {
-      activeNodeOpacityFrom: 0.34,
-      activeNodeScaleFrom: 0.72,
-      backRailOpacityFrom: 0.16,
-      connectorOpacityFrom: 0.05,
-      contentOpacityFrom: 0.04,
-      contentTravel: 24,
-      continuationOpacityFrom: 0.18,
-      depthTravel: 28,
-      end: "bottom 28%",
-      frontRailOpacityFrom: 0.28,
-      nodeOpacityFrom: 0.08,
-      rungOpacityFrom: 0.1,
-      scaleFrom: 0.93,
-      scrub: 0.48,
-      start: "top 86%",
-      travelFrom: 72,
-      travelTo: -22,
-    } satisfies HelixMotionProfile,
-    tablet: {
-      activeNodeOpacityFrom: 0.45,
-      activeNodeScaleFrom: 0.82,
-      backRailOpacityFrom: 0.3,
-      connectorOpacityFrom: 0.12,
-      contentOpacityFrom: 0.1,
-      contentTravel: 18,
-      continuationOpacityFrom: 0.26,
-      depthTravel: 16,
-      end: "bottom 38%",
-      frontRailOpacityFrom: 0.42,
-      nodeOpacityFrom: 0.2,
-      rungOpacityFrom: 0.22,
-      scaleFrom: 0.96,
-      scrub: 0.36,
-      start: "top 90%",
-      travelFrom: 40,
-      travelTo: -10,
-    } satisfies HelixMotionProfile,
-    mobile: {
-      activeNodeOpacityFrom: 0.7,
-      activeNodeScaleFrom: 0.94,
-      backRailOpacityFrom: 0.5,
-      connectorOpacityFrom: 0.3,
-      contentOpacityFrom: 0.22,
-      contentTravel: 12,
-      continuationOpacityFrom: 0.45,
-      depthTravel: 0,
-      end: "bottom 45%",
-      frontRailOpacityFrom: 0.55,
+      chapterEnd: "bottom 38%",
+      chapterStart: "top 72%",
+      connectorOpacityFrom: 0.08,
+      contentTravel: 28,
       nodeOpacityFrom: 0.38,
-      rungOpacityFrom: 0.35,
-      scaleFrom: 0.985,
-      scrub: 0.22,
-      start: "top 94%",
-      travelFrom: 18,
-      travelTo: 0,
-    } satisfies HelixMotionProfile,
+      nodeScaleFrom: 0.74,
+      pathBackOpacityFrom: 0.2,
+      pathEnd: "top 28%",
+      pathFrontOpacityFrom: 0.3,
+      pathOpacityFrom: 0.46,
+      pathRungOpacityFrom: 0.16,
+      pathScaleFrom: 0.985,
+      pathStart: "top 92%",
+      pathTravelFrom: 48,
+      scrub: 0.46,
+    } satisfies JourneyMotionProfile,
+    tablet: {
+      chapterEnd: "bottom 42%",
+      chapterStart: "top 78%",
+      connectorOpacityFrom: 0.16,
+      contentTravel: 20,
+      nodeOpacityFrom: 0.5,
+      nodeScaleFrom: 0.82,
+      pathBackOpacityFrom: 0.32,
+      pathEnd: "top 34%",
+      pathFrontOpacityFrom: 0.42,
+      pathOpacityFrom: 0.58,
+      pathRungOpacityFrom: 0.25,
+      pathScaleFrom: 0.992,
+      pathStart: "top 94%",
+      pathTravelFrom: 28,
+      scrub: 0.34,
+    } satisfies JourneyMotionProfile,
+    mobile: {
+      chapterEnd: "bottom 46%",
+      chapterStart: "top 88%",
+      connectorOpacityFrom: 0.42,
+      contentTravel: 10,
+      nodeOpacityFrom: 0.72,
+      nodeScaleFrom: 0.94,
+      pathBackOpacityFrom: 1,
+      pathEnd: "top 62%",
+      pathFrontOpacityFrom: 1,
+      pathOpacityFrom: 0.72,
+      pathRungOpacityFrom: 1,
+      pathScaleFrom: 1,
+      pathStart: "top 96%",
+      pathTravelFrom: 12,
+      scrub: 0.2,
+    } satisfies JourneyMotionProfile,
   },
   timeline: {
     cameraDuration: 0.76,
