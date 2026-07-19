@@ -10,18 +10,19 @@ app/
   layout.tsx               Document metadata and root layout
   page.tsx                 Page composition
 components/
-  DigitalWorkspace.tsx    Semantic Orientation workspace
-  HelixChapter.tsx        Reusable node-to-content attachment composition
-  HelixJourney.tsx        Shared Orientation and Engineering environment
-  HelixScene.tsx          Decorative SVG journey spine
+  HelixChapter.tsx         Reusable node-to-content attachment composition
+  HelixChapterContent.tsx  Explicit semantic content for each journey stop
+  HelixJourney.tsx         Shared environment for the complete journey
+  HelixPath.tsx            One decorative SVG path spanning every stop
   JourneyChapter.tsx       Semantic wrapper for narrative chapters
-  motion/                  Scoped motion boundaries and configuration
+  motion/
+    JourneyMotion.tsx      Scoped arrival and journey orchestration
+    journey-motion.config.ts  Central selectors, breakpoints, and values
   sections/                Hero and portfolio section components
   Laptop.tsx               CSS-built hero object
   ScrollIndicator.tsx      In-page navigation cue
 data/
-  helix-chapters.ts       Typed semantic content for implemented helix stops
-  portfolio-sections.ts    Typed placeholder portfolio content
+  helix-chapters.ts        Typed semantic content and placement for five stops
 docs/                      Product and technical documentation
 styles/                    Component-scoped CSS Modules
 tests/                     Playwright end-to-end tests
@@ -40,21 +41,21 @@ Global CSS owns design tokens, baseline element behavior, focus treatment, and t
 
 ## Motion strategy
 
-### Workspace-to-Engineering journey
+### Complete journey graybox
 
-`HelixJourney` composes the Orientation and Engineering chapter landmarks inside one continuous workspace field. `DigitalWorkspace` owns the semantic Orientation heading, concise provisional copy, and entry frame. The parent journey owns the shared graphite grid so the helix can emerge without a new panel, background, or section border.
+`HelixJourney` composes Orientation, Engineering, Selected Work, Proof, and Future as five semantic chapter landmarks inside one continuous workspace field. It renders one `HelixPath` behind every stop instead of giving each chapter a separate panel or decorative fragment. The path is a visual relationship layer only: it is non-focusable, hidden from assistive technology, and contains no essential labels.
 
-`HelixScene` owns only the finite decorative SVG: two rails, twelve rungs, six node positions, and the active Engineering visual state. `HelixChapter` owns the reusable attachment composition around that presentation: semantic content, a restrained connector, and a continuing-path cue. Engineering is the first use of this pattern. Its heading, introduction, and principles come from `helix-chapters.ts` and remain outside the decorative SVG and motion configuration.
+`HelixChapter` owns the repeated relationship between one node, one restrained connector, and one semantic content region. `HelixChapterContent` keeps the chapter-specific markup explicit so lists, project summaries, and contact routes can use the elements their meaning requires. `helix-chapters.ts` centralizes typed narrative content, document chapter names, placement, and pacing without turning the page into a generic content builder.
 
-`ArrivalOrientationTransition` continues to own all motion through one scoped GSAP context and one responsive `gsap.matchMedia()` configuration. The approved Arrival camera timeline remains unchanged. One unpinned helix timeline now coordinates the structure reveal, Engineering-node emphasis, connector, semantic content, and path continuation. Stable `data-motion` hooks keep this orchestration independent from CSS Module names, while selectors, breakpoints, and motion values remain centralized in `arrival-orientation.config.ts`.
+`JourneyMotion` owns both the approved Arrival camera transition and the full journey enhancement through one scoped GSAP context and one responsive `gsap.matchMedia()` configuration. A path timeline introduces the shared structure. Five local chapter timelines update direct DOM state attributes and coordinate each node, connector, and content entrance as the visitor reaches it. Stable `data-motion` and `data-journey-*` hooks keep orchestration independent from CSS Module names; selectors, breakpoints, durations, and travel values remain centralized in `journey-motion.config.ts`.
 
-Desktop places the journey spine and Engineering content in one asymmetric composition. Tablet reduces their separation without changing the relationship. Mobile uses a stacked native-flow composition with the content close to the relevant path segment. The reduced-motion branch creates no timeline, ScrollTrigger, pin, screen-entry zoom, or helix depth movement; it clears enhancement styles so the active node and all Engineering content appear statically in document order.
+Desktop preserves the complete alternating node-to-content composition. Tablet reduces separation while keeping the relationship legible. Mobile uses a vertical path beside stacked semantic content, a short unpinned Arrival handoff, and smaller transform distances. The reduced-motion branch creates no camera timeline, journey timeline, ScrollTrigger, or pin; it clears enhancement styles and marks every chapter static so the full experience remains available in document order.
 
-GSAP contexts, ScrollTriggers, and match-media registrations are reverted when the boundary unmounts or a media condition changes. The timelines animate transforms and opacity, do not update React state per frame, and preserve native scrolling. Later node attachments, node navigation, route transitions, Three.js, React Three Fiber, WebGL, and the complete helix journey remain deferred. See the focused [helix concept](helix-concept.md) for the narrative and visual boundary.
+GSAP contexts, ScrollTriggers, and match-media registrations are reverted when the boundary unmounts or a media condition changes. Timelines animate transforms and opacity, do not update React state on scroll frames, and preserve native scrolling. Node controls, case-study interactions, route transitions, Three.js, React Three Fiber, WebGL, and final visual composition remain deferred. See the focused [helix concept](helix-concept.md) for the narrative and visual boundary.
 
 ## Testing
 
-Playwright starts the built production server and verifies the identity, laptop, workspace, finite SVG, active Engineering node, semantic heading, introduction, and principles. It checks the node-to-content structural association, chapter order, skip link, console safety, forward activation, reverse restoration, and reduced-motion static route. Horizontal overflow is checked through the Engineering stop at representative desktop, laptop, tablet, and mobile widths. Future milestones should extend this same outcome-based pattern when later nodes are implemented.
+Playwright starts the built production server and verifies the identity, laptop, shared path, all five semantic chapters, chapter order, expected headings, and node-to-content associations. It checks the skip link, keyboard focus, console safety, forward progression through every stop, reverse restoration toward the workspace, and the complete reduced-motion static route. Horizontal overflow and responsive composition are checked at representative desktop, laptop, tablet, and mobile widths. Tests assert stable outcomes rather than intermediate transform values or fragile screenshots.
 
 ## Architectural guardrails
 
