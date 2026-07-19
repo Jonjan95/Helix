@@ -9,7 +9,11 @@ export function HeroSection() {
       data-chapter="arrival"
       aria-labelledby="hero-introduction"
     >
-      <div className={styles.frame} aria-hidden="true">
+      <div
+        className={styles.frame}
+        data-motion="arrival-frame"
+        aria-hidden="true"
+      >
         <span>01 / ENTRY</span>
         <span>SOFTWARE · QUALITY · EXPERIENCE</span>
       </div>
@@ -18,7 +22,7 @@ export function HeroSection() {
         <Laptop />
       </div>
 
-      <div className={styles.copy}>
+      <div className={styles.copy} data-motion="arrival-copy">
         <p className={styles.eyebrow}>Software developer portfolio</p>
         <h2 id="hero-introduction" className={styles.introduction}>
           I build thoughtful software experiences with a focus on quality,
