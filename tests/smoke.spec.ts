@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const expectedChapters = [
+const narrativeChapters = [
   "arrival",
   "orientation",
   "engineering",
@@ -8,6 +8,22 @@ const expectedChapters = [
   "proof",
   "future",
 ];
+
+const journeyChapters = [
+  "environment",
+  "engineering",
+  "projects",
+  "experience",
+  "contact",
+] as const;
+
+const chapterHeadings = {
+  contact: "Let’s build something reliable.",
+  engineering: "Quality is part of the build, not a final check.",
+  environment: "Inside the system",
+  experience: "Technical work across software, systems, and service.",
+  projects: "Building systems by solving real problems.",
+} as const;
 
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
@@ -18,7 +34,13 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(dimensions.scrollWidth).toBeLessThanOrEqual(dimensions.clientWidth);
 }
 
-test("loads the portfolio foundation", async ({ page }) => {
+async function centerChapter(page: Page, chapter: (typeof journeyChapters)[number]) {
+  await page.getByTestId(`journey-chapter-${chapter}`).evaluate((element) => {
+    element.scrollIntoView({ block: "center", behavior: "auto" });
+  });
+}
+
+test("renders the complete semantic Helix journey", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page).toHaveTitle(/Helix/);
@@ -26,189 +48,174 @@ test("loads the portfolio foundation", async ({ page }) => {
     page.getByRole("heading", { level: 1, name: "Jonathan" }),
   ).toBeVisible();
   await expect(page.getByTestId("laptop-hero")).toBeVisible();
-  await expect(
-    page.getByRole("heading", {
-      level: 2,
-      name: "I build thoughtful software experiences with a focus on quality, usability, and reliable implementation.",
-    }),
-  ).toBeVisible();
 
-  await expect(
-    page.getByRole("heading", { level: 2, name: "Inside the system" }),
-  ).toBeAttached();
-  await expect(page.getByTestId("digital-workspace")).toBeAttached();
-  await expect(page.getByTestId("helix-journey")).toBeAttached();
-  await expect(page.getByTestId("engineering-helix-chapter")).toBeAttached();
-  await expect(page.getByTestId("helix-scene")).toBeAttached();
-  await expect(page.getByTestId("helix-structure")).toBeAttached();
-  await expect(page.getByTestId("engineering-node")).toHaveAttribute(
-    "data-node-state",
-    "active",
+  const journey = page.getByTestId("helix-journey");
+  await expect(journey).toBeAttached();
+  await expect(page.getByTestId("helix-path")).toHaveAttribute(
+    "aria-hidden",
+    "true",
   );
-  await expect(page.locator("[data-helix-rung]")).toHaveCount(12);
-  await expect(page.locator("[data-helix-node]")).toHaveCount(6);
+  await expect(page.locator("[data-testid='helix-path'] svg text")).toHaveCount(0);
+  await expect(page.locator("[data-journey-chapter]")).toHaveCount(5);
+  await expect(page.locator("[data-journey-node]")).toHaveCount(5);
 
-  const engineering = page.locator('[data-chapter="engineering"]');
-  await expect(
-    engineering.getByRole("heading", {
-      level: 2,
-      name: "Quality is part of the build, not a final check.",
-    }),
-  ).toBeAttached();
-  await expect(
-    engineering.getByText(
-      "I approach software through clear requirements, testable behaviour, reliable implementation, and continuous learning.",
-    ),
-  ).toBeAttached();
-  await expect(engineering.getByRole("listitem")).toHaveCount(4);
+  const journeyOrder = await page
+    .locator("[data-journey-chapter]")
+    .evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("data-journey-chapter")),
+    );
+  expect(journeyOrder).toEqual(journeyChapters);
 
-  for (const section of ["Experience", "Projects", "Contact"]) {
+  const narrativeOrder = await page.locator("[data-chapter]").evaluateAll(
+    (elements) =>
+      elements.map((element) => element.getAttribute("data-chapter")),
+  );
+  expect(narrativeOrder).toEqual(narrativeChapters);
+
+  for (const chapter of journeyChapters) {
+    const chapterElement = page.getByTestId(`journey-chapter-${chapter}`);
+    await expect(chapterElement).toBeAttached();
+    await expect(page.getByTestId(`journey-node-${chapter}`)).toBeAttached();
     await expect(
-      page.getByRole("heading", { level: 2, name: section, exact: true }),
+      chapterElement.getByRole("heading", {
+        level: 2,
+        name: chapterHeadings[chapter],
+      }),
     ).toBeAttached();
   }
 
+  const projects = page.getByTestId("journey-chapter-projects");
+  for (const project of ["AI-Powered Test Engineer", "CortexGrid", "Helix"]) {
+    await expect(
+      projects.getByRole("heading", { level: 3, name: project }),
+    ).toBeAttached();
+  }
+  await expect(projects.getByRole("link")).toHaveCount(0);
+  await expect(projects.getByRole("button")).toHaveCount(0);
+
+  const experience = page.getByTestId("journey-chapter-experience");
+  for (const area of [
+    "Software development and testing studies",
+    "Embedded systems and networking",
+    "Technical service and field troubleshooting",
+  ]) {
+    await expect(
+      experience.locator("li").filter({ hasText: area }),
+    ).toBeAttached();
+  }
+
+  const contact = page.getByTestId("journey-chapter-contact");
   await expect(
-    page.getByRole("link", { name: "Skip to portfolio content" }),
-  ).toHaveAttribute("href", "#main-content");
+    contact.getByRole("link", { name: "View Jonjan95’s public GitHub profile" }),
+  ).toHaveAttribute("href", "https://github.com/Jonjan95");
+  await expect(contact.getByText("Profile link pending final content")).toBeAttached();
+  await expect(contact.getByText("Contact route pending final content")).toBeAttached();
 
-  const chapters = page.locator("[data-chapter]");
-  await expect(chapters).toHaveCount(expectedChapters.length);
+  for (const id of ["projects", "experience"]) {
+    const section = page.locator(`#${id}`);
+    await expect(section).toHaveCount(1);
+    expect(
+      await section.evaluate((element) =>
+        Boolean(element.closest("[data-helix-journey]")),
+      ),
+    ).toBe(true);
+  }
 
-  const chapterOrder = await chapters.evaluateAll((elements) =>
-    elements.map((element) => element.getAttribute("data-chapter")),
+  await expect(page.getByTestId("journey-continuation")).toHaveAttribute(
+    "data-path-continuation",
+    "",
   );
 
-  expect(chapterOrder).toEqual(expectedChapters);
+  const skipLink = page.getByRole("link", { name: "Skip to portfolio content" });
+  await page.keyboard.press("Tab");
+  await expect(skipLink).toBeFocused();
+  await expect(skipLink).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#main-content$/);
 });
 
-test("moves from Arrival to the active Engineering node and reverses without browser errors", async ({
+test("progresses through every active node and reverses to the workspace", async ({
   page,
 }) => {
-  const browserErrors: string[] = [];
+  const browserMessages: string[] = [];
   page.on("console", (message) => {
-    if (message.type() === "error") {
-      browserErrors.push(message.text());
+    if (["error", "warning"].includes(message.type())) {
+      browserMessages.push(`${message.type()}: ${message.text()}`);
     }
   });
-  page.on("pageerror", (error) => browserErrors.push(error.message));
+  page.on("pageerror", (error) => browserMessages.push(`pageerror: ${error.message}`));
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const motionRoot = page.locator(
-    '[data-motion-root="arrival-orientation"]',
-  );
-  const arrival = page.locator('[data-chapter="arrival"]');
-  const orientation = page.locator('[data-chapter="orientation"]');
-  const engineering = page.locator('[data-chapter="engineering"]');
-  const engineeringContent = page.getByTestId("engineering-content");
-  const helix = page.getByTestId("helix-scene");
-
+  const motionRoot = page.locator('[data-motion-root="helix-experience"]');
+  const journey = page.getByTestId("helix-journey");
   await expect(motionRoot).toHaveAttribute("data-motion-state", "ready");
-  await expect(arrival).toBeVisible();
-  await expect(page.getByTestId("laptop-hero")).toBeVisible();
 
-  await orientation.scrollIntoViewIfNeeded();
-  await expect(
-    orientation.getByRole("heading", {
-      level: 2,
-      name: "Inside the system",
-    }),
-  ).toBeVisible();
+  for (const chapter of journeyChapters) {
+    await centerChapter(page, chapter);
+    await expect(journey).toHaveAttribute("data-active-chapter", chapter);
+    await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
+      "data-node-state",
+      "active",
+    );
+    await expect(
+      page
+        .getByTestId(`journey-chapter-${chapter}`)
+        .getByRole("heading", { level: 2, name: chapterHeadings[chapter] }),
+    ).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+  }
+
+  await expect(page.getByTestId("journey-continuation")).toBeVisible();
+
+  for (const chapter of [...journeyChapters].reverse()) {
+    await centerChapter(page, chapter);
+    await expect(journey).toHaveAttribute("data-active-chapter", chapter);
+    await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
+      "data-node-state",
+      "active",
+    );
+  }
+
   await expect(page.getByTestId("digital-workspace")).toBeVisible();
-
-  await helix.scrollIntoViewIfNeeded();
-  await expect(helix).toBeVisible();
-  await engineeringContent.scrollIntoViewIfNeeded();
-  await expect(
-    engineering.getByRole("heading", {
-      level: 2,
-      name: "Quality is part of the build, not a final check.",
-    }),
-  ).toBeVisible();
-  await expect(page.getByTestId("engineering-node")).toHaveAttribute(
-    "data-node-state",
-    "active",
-  );
-  await expect
-    .poll(() =>
-      engineeringContent.evaluate((element) =>
-        Number(getComputedStyle(element).opacity),
-      ),
-    )
-    .toBeGreaterThan(0.85);
-  await expect
-    .poll(() => page.evaluate(() => window.scrollY))
-    .toBeGreaterThan(0);
-  await expectNoHorizontalOverflow(page);
-
-  await page.mouse.wheel(0, -10000);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
-  await expect(arrival).toBeVisible();
   await expect(page.getByTestId("laptop-hero")).toBeVisible();
-  await expect
-    .poll(() =>
-      engineeringContent.evaluate((element) =>
-        Number(getComputedStyle(element).opacity),
-      ),
-    )
-    .toBeLessThan(0.2);
-  expect(browserErrors).toEqual([]);
+  expect(browserMessages).toEqual([]);
 });
 
-test("reduced motion keeps the workspace, helix, and Engineering in static flow", async ({
-  page,
-}) => {
+test("reduced motion renders the complete journey statically", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(
-    page.locator('[data-motion-root="arrival-orientation"]'),
+    page.locator('[data-motion-root="helix-experience"]'),
   ).toHaveAttribute("data-motion-state", "reduced");
-  await expect(page.locator('[data-chapter="arrival"]')).toBeAttached();
-
-  const orientation = page.locator('[data-chapter="orientation"]');
-  const engineering = page.locator('[data-chapter="engineering"]');
-  const engineeringContent = page.getByTestId("engineering-content");
-  const engineeringNode = page.getByTestId("engineering-node");
-  const helix = page.getByTestId("helix-scene");
-  await expect(orientation).toBeAttached();
-  await expect(engineering).toBeAttached();
-  await expect(helix).toBeAttached();
+  await expect(page.getByTestId("helix-journey")).toHaveAttribute(
+    "data-active-chapter",
+    "static",
+  );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
 
-  await orientation.scrollIntoViewIfNeeded();
-  await expect(
-    orientation.getByRole("heading", {
-      level: 2,
-      name: "Inside the system",
-    }),
-  ).toBeVisible();
-  await expect(
-    orientation.getByText(
-      "A guided look at how I approach software, quality, and thoughtful implementation.",
-    ),
-  ).toBeVisible();
+  for (const chapter of journeyChapters) {
+    const chapterElement = page.getByTestId(`journey-chapter-${chapter}`);
+    const content = chapterElement.locator('[data-motion="journey-content"]');
+    const node = page.getByTestId(`journey-node-${chapter}`);
+    await expect(chapterElement).toHaveAttribute("data-journey-state", "static");
+    await expect(node).toHaveAttribute("data-node-state", "static");
+    await expect(content).toHaveCSS("opacity", "1");
+    await expect(content).toHaveCSS("transform", "none");
+    await centerChapter(page, chapter);
+    await expect(
+      chapterElement.getByRole("heading", {
+        level: 2,
+        name: chapterHeadings[chapter],
+      }),
+    ).toBeVisible();
+  }
 
-  await helix.scrollIntoViewIfNeeded();
-  await expect(helix).toBeVisible();
-  await expect(helix).toHaveCSS("opacity", "1");
-  await expect(helix).toHaveCSS("transform", "none");
-
-  await engineeringContent.scrollIntoViewIfNeeded();
-  await expect(
-    engineering.getByRole("heading", {
-      level: 2,
-      name: "Quality is part of the build, not a final check.",
-    }),
-  ).toBeVisible();
-  await expect(engineering.getByRole("listitem")).toHaveCount(4);
-  await expect(engineeringContent).toHaveCSS("opacity", "1");
-  await expect(engineeringContent).toHaveCSS("transform", "none");
-  await expect(engineeringNode).toHaveAttribute("data-node-state", "active");
-  await expect(engineeringNode).toHaveCSS("opacity", "1");
-  await expect(engineeringNode).toHaveCSS("transform", "none");
+  await expect(page.getByTestId("journey-continuation")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
@@ -218,32 +225,35 @@ for (const viewport of [
   { name: "tablet", width: 768, height: 1024 },
   { name: "mobile", width: 390, height: 844 },
 ]) {
-  test(`has no horizontal overflow at ${viewport.name} width`, async ({ page }) => {
+  test(`keeps the complete journey in bounds at ${viewport.name} size`, async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
     await expectNoHorizontalOverflow(page);
 
-    const laptopBounds = await page.getByTestId("laptop-hero").boundingBox();
-    expect(laptopBounds).not.toBeNull();
-    expect(laptopBounds?.x).toBeGreaterThanOrEqual(0);
-    expect((laptopBounds?.x ?? 0) + (laptopBounds?.width ?? 0)).toBeLessThanOrEqual(
-      viewport.width,
-    );
+    const chapterPositions: number[] = [];
+    for (const chapter of journeyChapters) {
+      const chapterElement = page.getByTestId(`journey-chapter-${chapter}`);
+      await centerChapter(page, chapter);
+      await expect(chapterElement).toBeVisible();
+      await expectNoHorizontalOverflow(page);
+      chapterPositions.push(
+        await chapterElement.evaluate(
+          (element) => element.getBoundingClientRect().top + window.scrollY,
+        ),
+      );
+    }
 
-    const workspace = page.getByTestId("digital-workspace");
-    await workspace.scrollIntoViewIfNeeded();
-    await expect(workspace).toBeVisible();
-    await expectNoHorizontalOverflow(page);
+    expect(chapterPositions).toEqual([...chapterPositions].sort((a, b) => a - b));
 
-    const helix = page.getByTestId("helix-scene");
-    await helix.scrollIntoViewIfNeeded();
-    await expect(helix).toBeVisible();
-    await expectNoHorizontalOverflow(page);
-
-    const engineeringContent = page.getByTestId("engineering-content");
-    await engineeringContent.scrollIntoViewIfNeeded();
-    await expect(engineeringContent).toBeVisible();
-    await expectNoHorizontalOverflow(page);
+    if (viewport.name === "mobile") {
+      await expect(page.locator(".pin-spacer")).toHaveCount(0);
+      const positions = await page.locator("[data-journey-chapter]").evaluateAll(
+        (elements) => elements.map((element) => getComputedStyle(element).position),
+      );
+      expect(positions.every((position) => position === "relative")).toBe(true);
+    }
   });
 }
