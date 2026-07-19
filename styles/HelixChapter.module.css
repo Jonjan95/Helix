@@ -14,7 +14,7 @@
   z-index: 3;
   top: 33%;
   left: 45%;
-  width: clamp(4rem, 9vw, 8rem);
+  width: clamp(7rem, 14vw, 12rem);
   height: 1px;
   background: var(--color-accent);
   opacity: 0.7;
@@ -135,8 +135,8 @@
 
   .connector {
     top: 34%;
-    left: 47%;
-    width: 6vw;
+    left: 45%;
+    width: min(8vw, 6rem);
   }
 
   .content {
@@ -160,7 +160,7 @@
     top: 31rem;
     left: 50%;
     width: 1px;
-    height: 3rem;
+    height: 1.5rem;
     opacity: 0.5;
   }
 
