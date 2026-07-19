@@ -8,15 +8,7 @@
 .chapter[data-chapter="orientation"] {
   --chapter-min-height: 68svh;
 
-  background: var(--color-surface);
-}
-
-.chapter[data-chapter="orientation"]::before {
-  position: absolute;
-  inset: clamp(1rem, 2vw, 2rem);
-  border: 1px solid rgb(105 211 231 / 0.1);
-  content: "";
-  pointer-events: none;
+  background: #111719;
 }
 
 .chapter[data-chapter="engineering"] {

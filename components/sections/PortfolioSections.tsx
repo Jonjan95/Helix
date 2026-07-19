@@ -2,6 +2,7 @@ import {
   JourneyChapter,
   type ChapterName,
 } from "@/components/JourneyChapter";
+import { DigitalWorkspace } from "@/components/DigitalWorkspace";
 import { PortfolioSection } from "@/components/sections/PortfolioSection";
 import {
   portfolioSections,
@@ -26,6 +27,18 @@ export function PortfolioSections() {
   return (
     <div>
       {chapterSections.map(({ chapter, sectionId }, index) => {
+        if (chapter === "orientation") {
+          return (
+            <JourneyChapter
+              key={chapter}
+              name={chapter}
+              labelledBy="about-heading"
+            >
+              <DigitalWorkspace />
+            </JourneyChapter>
+          );
+        }
+
         const section = sectionsById.get(sectionId);
 
         if (!section) {

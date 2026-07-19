@@ -7,6 +7,12 @@
 .display {
   position: relative;
   padding: clamp(0.48rem, 1vw, 0.75rem);
+}
+
+.shell {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   border: 1px solid #52595f;
   border-radius: clamp(0.65rem, 1.5vw, 1rem) clamp(0.65rem, 1.5vw, 1rem)
     0.25rem 0.25rem;
@@ -15,7 +21,7 @@
 
 .camera {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: 0.35rem;
   left: 50%;
   width: 0.28rem;
@@ -26,25 +32,98 @@
 
 .screen {
   position: relative;
-  display: grid;
+  z-index: 1;
   aspect-ratio: 16 / 9.75;
   min-height: 0;
-  padding: clamp(1.15rem, 3vw, 2.5rem);
   overflow: hidden;
   border: 1px solid #30373b;
   background-color: #111719;
   background-image: linear-gradient(rgb(105 211 231 / 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgb(105 211 231 / 0.055) 1px, transparent 1px);
   background-size: clamp(1.75rem, 4vw, 2.5rem) clamp(1.75rem, 4vw, 2.5rem);
-  align-content: center;
 }
 
 .screen::after {
   position: absolute;
+  z-index: 4;
   inset: clamp(0.7rem, 2vw, 1rem);
   border: 1px solid rgb(105 211 231 / 0.22);
   content: "";
   pointer-events: none;
+}
+
+.screenIdentity {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  padding: clamp(1.15rem, 3vw, 2.5rem);
+  align-content: center;
+}
+
+.workspaceThreshold {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  padding: clamp(1.15rem, 3vw, 2.5rem);
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.96);
+  align-content: center;
+}
+
+.workspaceThreshold::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    transparent,
+    rgb(105 211 231 / 0.24),
+    transparent
+  );
+  content: "";
+}
+
+.thresholdLabel,
+.thresholdStatus {
+  position: absolute;
+  z-index: 1;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: clamp(0.55rem, 1.2vw, 0.7rem);
+  letter-spacing: 0.12em;
+}
+
+.thresholdLabel {
+  top: clamp(1.15rem, 2.5vw, 1.5rem);
+  left: clamp(1.15rem, 2.5vw, 1.5rem);
+}
+
+.thresholdStatus {
+  right: clamp(1.15rem, 2.5vw, 1.5rem);
+  bottom: clamp(1.15rem, 2.5vw, 1.5rem);
+}
+
+.thresholdPath {
+  position: absolute;
+  bottom: -44%;
+  left: 50%;
+  width: 34%;
+  height: 88%;
+  border-right: 1px solid rgb(105 211 231 / 0.22);
+  border-left: 1px solid rgb(105 211 231 / 0.22);
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent 1.5rem,
+    rgb(244 240 232 / 0.07) 1.5rem,
+    rgb(244 240 232 / 0.07) calc(1.5rem + 1px)
+  );
+  transform: translateX(-50%) perspective(20rem) rotateX(62deg);
+  transform-origin: bottom center;
 }
 
 .systemLabel,

@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   arrivalOrientationConfig,
   type SpatialMotionProfile,
+  type WorkspaceHandoffProfile,
 } from "@/components/motion/arrival-orientation.config";
 import styles from "@/styles/ArrivalOrientationTransition.module.css";
 
@@ -20,7 +21,13 @@ type MotionTargets = {
   frame: HTMLElement;
   indicator: HTMLElement;
   laptop: HTMLElement;
+  laptopBase: HTMLElement;
+  laptopCamera: HTMLElement;
+  laptopShell: HTMLElement;
   screen: HTMLElement;
+  screenIdentity: HTMLElement;
+  workspace: HTMLElement;
+  workspaceThreshold: HTMLElement;
 };
 
 type MotionConditions = {
@@ -38,7 +45,15 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
     frame: scope.querySelector<HTMLElement>(selectors.frame),
     indicator: scope.querySelector<HTMLElement>(selectors.indicator),
     laptop: scope.querySelector<HTMLElement>(selectors.laptop),
+    laptopBase: scope.querySelector<HTMLElement>(selectors.laptopBase),
+    laptopCamera: scope.querySelector<HTMLElement>(selectors.laptopCamera),
+    laptopShell: scope.querySelector<HTMLElement>(selectors.laptopShell),
     screen: scope.querySelector<HTMLElement>(selectors.screen),
+    screenIdentity: scope.querySelector<HTMLElement>(selectors.screenIdentity),
+    workspace: scope.querySelector<HTMLElement>(selectors.workspace),
+    workspaceThreshold: scope.querySelector<HTMLElement>(
+      selectors.workspaceThreshold,
+    ),
   };
 
   if (Object.values(targets).some((target) => target === null)) {
@@ -79,6 +94,7 @@ function getCameraTransform(
 function createSpatialTimeline(
   targets: MotionTargets,
   profile: SpatialMotionProfile,
+  handoff: WorkspaceHandoffProfile,
 ) {
   const { timeline } = arrivalOrientationConfig;
   const getTransform = () =>
@@ -127,24 +143,64 @@ function createSpatialTimeline(
         ease: "power1.inOut",
       },
       timeline.recedeStart,
+    )
+    .to(
+      targets.screenIdentity,
+      {
+        opacity: handoff.identityOpacity,
+        scale: 1.025,
+        duration: handoff.duration,
+        ease: "power1.inOut",
+      },
+      handoff.start,
+    )
+    .to(
+      targets.workspaceThreshold,
+      {
+        opacity: handoff.thresholdOpacity,
+        scale: 1,
+        duration: handoff.duration,
+        ease: "power1.inOut",
+      },
+      handoff.start,
+    )
+    .to(
+      [targets.laptopShell, targets.laptopCamera],
+      {
+        opacity: handoff.shellOpacity,
+        duration: handoff.duration,
+        ease: "power1.inOut",
+      },
+      handoff.start,
+    )
+    .to(
+      targets.laptopBase,
+      {
+        opacity: handoff.shellOpacity,
+        y: handoff.baseTravel,
+        duration: handoff.duration,
+        ease: "power1.inOut",
+      },
+      handoff.start,
     );
 
   return motion;
 }
 
 function createMobileTimeline(targets: MotionTargets) {
-  const { mobile } = arrivalOrientationConfig;
+  const { handoff, mobile } = arrivalOrientationConfig;
 
-  return gsap
-    .timeline({
-      scrollTrigger: {
-        end: "bottom top",
-        invalidateOnRefresh: true,
-        scrub: mobile.scrub,
-        start: "top top",
-        trigger: targets.arrival,
-      },
-    })
+  const motion = gsap.timeline({
+    scrollTrigger: {
+      end: "bottom top",
+      invalidateOnRefresh: true,
+      scrub: mobile.scrub,
+      start: "top top",
+      trigger: targets.arrival,
+    },
+  });
+
+  motion
     .to(
       targets.laptop,
       {
@@ -165,7 +221,47 @@ function createMobileTimeline(targets: MotionTargets) {
         ease: "none",
       },
       0.3,
+    )
+    .to(
+      targets.screenIdentity,
+      {
+        opacity: handoff.mobile.identityOpacity,
+        duration: handoff.mobile.duration,
+        ease: "none",
+      },
+      handoff.mobile.start,
+    )
+    .to(
+      targets.workspaceThreshold,
+      {
+        opacity: handoff.mobile.thresholdOpacity,
+        scale: 1,
+        duration: handoff.mobile.duration,
+        ease: "none",
+      },
+      handoff.mobile.start,
+    )
+    .to(
+      [targets.laptopShell, targets.laptopCamera],
+      {
+        opacity: handoff.mobile.shellOpacity,
+        duration: handoff.mobile.duration,
+        ease: "none",
+      },
+      handoff.mobile.start,
+    )
+    .to(
+      targets.laptopBase,
+      {
+        opacity: handoff.mobile.shellOpacity,
+        y: handoff.mobile.baseTravel,
+        duration: handoff.mobile.duration,
+        ease: "none",
+      },
+      handoff.mobile.start,
     );
+
+  return motion;
 }
 
 export function ArrivalOrientationTransition({
@@ -204,7 +300,13 @@ export function ArrivalOrientationTransition({
               targets.frame,
               targets.indicator,
               targets.laptop,
+              targets.laptopBase,
+              targets.laptopCamera,
+              targets.laptopShell,
               targets.screen,
+              targets.screenIdentity,
+              targets.workspace,
+              targets.workspaceThreshold,
             ],
             { clearProps: "all" },
           );
@@ -214,9 +316,17 @@ export function ArrivalOrientationTransition({
         scope.dataset.motionState = "ready";
 
         if (conditions.desktop) {
-          createSpatialTimeline(targets, arrivalOrientationConfig.desktop);
+          createSpatialTimeline(
+            targets,
+            arrivalOrientationConfig.desktop,
+            arrivalOrientationConfig.handoff.desktop,
+          );
         } else if (conditions.tablet) {
-          createSpatialTimeline(targets, arrivalOrientationConfig.tablet);
+          createSpatialTimeline(
+            targets,
+            arrivalOrientationConfig.tablet,
+            arrivalOrientationConfig.handoff.tablet,
+          );
         } else if (conditions.mobile) {
           createMobileTimeline(targets);
         }
