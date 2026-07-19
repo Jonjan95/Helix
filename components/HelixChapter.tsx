@@ -1,56 +1,42 @@
-import {
-  HelixScene,
-  type HelixNodeName,
-} from "@/components/HelixScene";
+import { HelixChapterContent } from "@/components/HelixChapterContent";
 import type { HelixChapterData } from "@/data/helix-chapters";
 import styles from "@/styles/HelixChapter.module.css";
 
 type HelixChapterProps = {
-  activeNode: HelixNodeName;
-  content: HelixChapterData;
+  chapter: HelixChapterData;
 };
 
-export function HelixChapter({ activeNode, content }: HelixChapterProps) {
+export function HelixChapter({ chapter }: HelixChapterProps) {
   return (
     <div
-      className={styles.chapter}
-      id={content.anchorId}
-      data-helix-chapter={content.chapter}
-      data-testid="engineering-helix-chapter"
+      className={styles.stop}
+      id={chapter.anchorId}
+      data-helix-chapter={chapter.chapter}
+      data-journey-chapter={chapter.chapter}
+      data-journey-state="static"
+      data-pacing={chapter.pacing}
+      data-placement={chapter.placement}
+      data-testid={`journey-chapter-${chapter.chapter}`}
     >
-      <HelixScene activeNode={activeNode} />
-
       <span
-        className={styles.connector}
-        data-motion="engineering-connector"
-        aria-hidden="true"
-      />
-
-      <div
-        className={styles.content}
-        data-motion="engineering-content"
-        data-testid="engineering-content"
-      >
-        <p className={styles.eyebrow}>
-          <span aria-hidden="true">{content.index}</span>
-          {content.label}
-        </p>
-        <h2 id={content.headingId}>{content.heading}</h2>
-        <p className={styles.introduction}>{content.introduction}</p>
-        <ul className={styles.principles}>
-          {content.principles.map((principle) => (
-            <li key={principle}>{principle}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div
-        className={styles.continuation}
-        data-motion="helix-continuation"
+        className={styles.node}
+        data-journey-node={chapter.chapter}
+        data-node-state="static"
+        data-motion="journey-node"
+        data-testid={`journey-node-${chapter.chapter}`}
         aria-hidden="true"
       >
         <span />
-        <p>PATH CONTINUES / SELECTED WORK</p>
+      </span>
+
+      <span
+        className={styles.connector}
+        data-motion="journey-connector"
+        aria-hidden="true"
+      />
+
+      <div className={styles.content} data-motion="journey-content">
+        <HelixChapterContent chapter={chapter} />
       </div>
     </div>
   );

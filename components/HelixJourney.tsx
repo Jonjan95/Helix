@@ -1,26 +1,44 @@
-import { DigitalWorkspace } from "@/components/DigitalWorkspace";
 import { HelixChapter } from "@/components/HelixChapter";
+import { HelixPath } from "@/components/HelixPath";
 import { JourneyChapter } from "@/components/JourneyChapter";
-import { engineeringChapter } from "@/data/helix-chapters";
+import { helixChapters } from "@/data/helix-chapters";
 import styles from "@/styles/HelixJourney.module.css";
 
 export function HelixJourney() {
   return (
     <div
       className={styles.journey}
+      data-active-chapter="static"
       data-helix-journey=""
       data-testid="helix-journey"
     >
-      <JourneyChapter name="orientation" labelledBy="about-heading">
-        <DigitalWorkspace />
-      </JourneyChapter>
+      <div className={styles.entryMarker} aria-hidden="true">
+        <span>WORKSPACE / JOURNEY 01–05</span>
+        <span>NATIVE SCROLL / PATH ACTIVE</span>
+      </div>
 
-      <JourneyChapter
-        name="engineering"
-        labelledBy={engineeringChapter.headingId}
+      <HelixPath />
+
+      {helixChapters.map((chapter) => (
+        <JourneyChapter
+          key={chapter.chapter}
+          name={chapter.narrativeChapter}
+          labelledBy={chapter.headingId}
+        >
+          <HelixChapter chapter={chapter} />
+        </JourneyChapter>
+      ))}
+
+      <div
+        className={styles.continuation}
+        data-motion="journey-continuation"
+        data-path-continuation=""
+        data-testid="journey-continuation"
+        aria-hidden="true"
       >
-        <HelixChapter activeNode="engineering" content={engineeringChapter} />
-      </JourneyChapter>
+        <span />
+        <p>PATH CONTINUES / OPEN DIRECTION</p>
+      </div>
     </div>
   );
 }
