@@ -1,0 +1,168 @@
+.scene {
+  position: relative;
+  width: min(100%, var(--content-width));
+  min-height: clamp(44rem, 92svh, 64rem);
+  margin: clamp(4rem, 10vw, 8rem) auto 0;
+  overflow: hidden;
+  border: 1px solid rgb(105 211 231 / 0.13);
+  background: #141a1c;
+  isolation: isolate;
+}
+
+.scene::before,
+.scene::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.scene::before {
+  inset: 1rem;
+  border: 1px solid rgb(244 240 232 / 0.05);
+}
+
+.scene::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgb(105 211 231 / 0.08);
+}
+
+.telemetry {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  right: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+}
+
+.stage {
+  position: absolute;
+  z-index: 1;
+  inset: clamp(4.5rem, 8vw, 7rem) clamp(1.5rem, 6vw, 5rem);
+  display: grid;
+  perspective: 60rem;
+  place-items: center;
+}
+
+.structure {
+  width: min(42rem, 76vw);
+  height: 100%;
+  max-height: 54rem;
+  overflow: visible;
+  transform: rotateX(4deg) scale(0.96);
+  transform-origin: center 60%;
+}
+
+.axis {
+  stroke: rgb(105 211 231 / 0.13);
+  stroke-dasharray: 2 12;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.backRail,
+.frontRail,
+.rungs,
+.nodes {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.backRail path {
+  stroke: rgb(168 173 178 / 0.45);
+  stroke-width: 1.35;
+}
+
+.frontRail path {
+  stroke: var(--color-accent);
+  stroke-width: 1.6;
+}
+
+.rungs line {
+  stroke: rgb(244 240 232 / 0.3);
+  stroke-width: 1;
+}
+
+.rungs line:nth-child(3n + 2) {
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  fill: #141a1c;
+  stroke: rgb(244 240 232 / 0.72);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.nodes .nodeCore {
+  fill: var(--color-accent);
+  stroke: none;
+}
+
+.continuation {
+  position: absolute;
+  z-index: 2;
+  right: 1.5rem;
+  bottom: 1.25rem;
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+}
+
+@media (max-width: 64rem) {
+  .scene {
+    min-height: clamp(40rem, 82svh, 50rem);
+  }
+
+  .structure {
+    width: min(36rem, 80vw);
+    transform: rotateX(2deg) scale(0.96);
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .scene {
+    min-height: 38rem;
+    margin-top: 4rem;
+  }
+
+  .telemetry span:last-child {
+    display: none;
+  }
+
+  .stage {
+    inset: 4rem 0.75rem 3.5rem;
+  }
+
+  .structure {
+    width: min(28rem, 92vw);
+    max-height: 31rem;
+    transform: none;
+  }
+
+  .continuation {
+    right: auto;
+    left: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene,
+  .backRail,
+  .frontRail,
+  .rungs,
+  .nodes {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
