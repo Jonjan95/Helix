@@ -1,6 +1,6 @@
 # Helix
 
-**WORK IN PROGRESS**
+** **WORK IN PROGRESS** **
 
 Helix is Jonathan Jansson's story-led software developer portfolio, with a focus on quality assurance, testing, usability, accessibility, and reliable implementation. It begins in front of a stylized computer and will eventually guide visitors through a memorable digital journey of background, experience, skills, and projects.
 
