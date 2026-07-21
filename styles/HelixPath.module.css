@@ -1,7 +1,7 @@
 .path {
   position: absolute;
   z-index: 0;
-  top: -6rem;
+  top: -2rem;
   bottom: 0;
   left: 50%;
   width: min(72vw, 64rem);
@@ -9,6 +9,21 @@
   pointer-events: none;
   transform: translateX(-50%);
   transform-origin: top center;
+}
+
+.path::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: clamp(7rem, 13vw, 11rem);
+  background: linear-gradient(
+    to bottom,
+    rgb(105 211 231 / 0.34),
+    rgb(105 211 231 / 0.08)
+  );
+  content: "";
+  transform: translateX(-50%);
 }
 
 .structure {
@@ -52,6 +67,10 @@
 @media (max-width: 64rem) {
   .path {
     width: min(78vw, 48rem);
+  }
+
+  .path::before {
+    display: none;
   }
 }
 

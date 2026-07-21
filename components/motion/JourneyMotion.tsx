@@ -10,7 +10,11 @@ import {
   type SpatialMotionProfile,
   type WorkspaceHandoffProfile,
 } from "@/components/motion/journey-motion.config";
-import { helixChapterIds } from "@/data/helix-chapters";
+import {
+  helixChapterIds,
+  helixChapters,
+  type HelixChapterId,
+} from "@/data/helix-chapters";
 import styles from "@/styles/JourneyMotion.module.css";
 
 type JourneyMotionProps = {
@@ -47,6 +51,25 @@ type MotionConditions = {
   mobile?: boolean;
   reduced?: boolean;
   tablet?: boolean;
+};
+
+type JourneyChapterState =
+  | "upcoming"
+  | "approaching"
+  | "active"
+  | "departing"
+  | "passed"
+  | "static";
+
+type JourneyStatePhase =
+  | "before-journey"
+  | "transitioning"
+  | "focused"
+  | "static";
+
+type ChapterTrigger = {
+  index: number;
+  trigger: ScrollTrigger;
 };
 
 function getMotionTargets(scope: HTMLElement): MotionTargets | null {
@@ -208,6 +231,15 @@ function createSpatialTimeline(
       handoff.start,
     )
     .to(
+      targets.screen,
+      {
+        "--screen-frame-opacity": handoff.screenFrameOpacity,
+        duration: handoff.duration,
+        ease: "power1.inOut",
+      },
+      handoff.start,
+    )
+    .to(
       [targets.laptopShell, targets.laptopCamera],
       {
         opacity: handoff.shellOpacity,
@@ -282,6 +314,15 @@ function createMobileTimeline(targets: MotionTargets) {
       handoff.mobile.start,
     )
     .to(
+      targets.screen,
+      {
+        "--screen-frame-opacity": handoff.mobile.screenFrameOpacity,
+        duration: handoff.mobile.duration,
+        ease: "none",
+      },
+      handoff.mobile.start,
+    )
+    .to(
       [targets.laptopShell, targets.laptopCamera],
       {
         opacity: handoff.mobile.shellOpacity,
@@ -302,32 +343,69 @@ function createMobileTimeline(targets: MotionTargets) {
     );
 }
 
-function setJourneyState(targets: MotionTargets, activeIndex: number) {
-  const activeChapter = helixChapterIds[activeIndex];
-
-  if (targets.journey.dataset.activeChapter === activeChapter) {
-    return;
-  }
-
+function applyJourneyState(
+  targets: MotionTargets,
+  activeChapter: HelixChapterId | "none" | "static",
+  phase: JourneyStatePhase,
+  getState: (index: number) => JourneyChapterState,
+) {
   targets.journey.dataset.activeChapter = activeChapter;
+  targets.journey.dataset.journeyPhase = phase;
   targets.journeyChapters.forEach((chapter, index) => {
-    chapter.dataset.journeyState =
-      index < activeIndex ? "past" : index === activeIndex ? "active" : "future";
+    chapter.dataset.journeyState = getState(index);
   });
   targets.journeyNodes.forEach((node, index) => {
-    node.dataset.nodeState =
-      index < activeIndex ? "past" : index === activeIndex ? "active" : "future";
+    node.dataset.nodeState = getState(index);
   });
 }
 
+function setUpcomingJourneyState(targets: MotionTargets) {
+  applyJourneyState(targets, "none", "before-journey", () => "upcoming");
+}
+
+function setApproachingJourneyState(targets: MotionTargets, index: number) {
+  const previousIndex = index - 1;
+
+  applyJourneyState(
+    targets,
+    previousIndex >= 0 ? helixChapterIds[previousIndex] : "none",
+    "transitioning",
+    (chapterIndex) => {
+      if (chapterIndex < previousIndex) {
+        return "passed";
+      }
+      if (chapterIndex === previousIndex) {
+        return "departing";
+      }
+      if (chapterIndex === index) {
+        return "approaching";
+      }
+
+      return "upcoming";
+    },
+  );
+}
+
+function setActiveJourneyState(targets: MotionTargets, activeIndex: number) {
+  applyJourneyState(
+    targets,
+    helixChapterIds[activeIndex],
+    "focused",
+    (index) => {
+      if (index < activeIndex) {
+        return "passed";
+      }
+      if (index === activeIndex) {
+        return "active";
+      }
+
+      return "upcoming";
+    },
+  );
+}
+
 function setStaticJourneyState(targets: MotionTargets) {
-  targets.journey.dataset.activeChapter = "static";
-  targets.journeyChapters.forEach((chapter) => {
-    chapter.dataset.journeyState = "static";
-  });
-  targets.journeyNodes.forEach((node) => {
-    node.dataset.nodeState = "static";
-  });
+  applyJourneyState(targets, "static", "static", () => "static");
 }
 
 function createJourneyPathTimeline(
@@ -380,23 +458,22 @@ function createChapterTimelines(
   targets: MotionTargets,
   profile: JourneyMotionProfile,
 ) {
-  targets.journeyChapters.forEach((chapter, index) => {
-    const activate = () => setJourneyState(targets, index);
+  return targets.journeyChapters.map((chapter, index): ChapterTrigger => {
+    const range = profile.chapters[helixChapters[index].pacing];
     const timeline = gsap.timeline({
       defaults: { ease: "none", overwrite: "auto" },
       scrollTrigger: {
-        end: profile.chapterEnd,
+        end: range.focusStart,
         invalidateOnRefresh: true,
-        onEnter: activate,
-        onEnterBack: activate,
-        onLeaveBack: () => setJourneyState(targets, Math.max(0, index - 1)),
-        onUpdate: (self) => {
-          if (self.isActive) {
-            activate();
-          }
-        },
+        onEnter: () => setApproachingJourneyState(targets, index),
+        onEnterBack: () => setApproachingJourneyState(targets, index),
+        onLeave: () => setActiveJourneyState(targets, index),
+        onLeaveBack: () =>
+          index === 0
+            ? setUpcomingJourneyState(targets)
+            : setActiveJourneyState(targets, index - 1),
         scrub: profile.scrub,
-        start: profile.chapterStart,
+        start: range.approachStart,
         trigger: chapter,
       },
     });
@@ -404,32 +481,116 @@ function createChapterTimelines(
     timeline
       .fromTo(
         targets.journeyNodes[index],
-        { opacity: profile.nodeOpacityFrom, scale: profile.nodeScaleFrom },
-        { opacity: 1, scale: 1, duration: 0.28 },
+        { scale: range.nodeScaleFrom },
+        { scale: 1, duration: 0.3 },
         0.06,
       )
       .fromTo(
         targets.journeyConnectors[index],
-        { opacity: profile.connectorOpacityFrom, scaleX: 0 },
-        { opacity: 0.68, scaleX: 1, duration: 0.3 },
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.32 },
         0.12,
       )
       .fromTo(
         targets.journeyContents[index],
-        { y: profile.contentTravel },
-        { y: 0, duration: 0.42 },
+        { y: range.contentTravel },
+        { y: 0, duration: 0.46 },
         0.18,
       );
 
     if (index === targets.journeyChapters.length - 1) {
       timeline.fromTo(
         targets.journeyContinuation,
-        { opacity: profile.connectorOpacityFrom, y: profile.contentTravel * 0.5 },
+        {
+          opacity: profile.continuationOpacityFrom,
+          y: range.contentTravel * 0.5,
+        },
         { opacity: 1, y: 0, duration: 0.3 },
         0.58,
       );
     }
+
+    return {
+      index,
+      trigger: timeline.scrollTrigger as ScrollTrigger,
+    };
   });
+}
+
+function syncJourneyState(
+  targets: MotionTargets,
+  chapterTriggers: ChapterTrigger[],
+) {
+  const scrollPosition = window.scrollY;
+  let activeIndex = -1;
+  let approachingIndex = -1;
+
+  for (const chapterTrigger of chapterTriggers) {
+    if (scrollPosition >= chapterTrigger.trigger.end) {
+      activeIndex = chapterTrigger.index;
+      continue;
+    }
+    if (scrollPosition >= chapterTrigger.trigger.start) {
+      approachingIndex = chapterTrigger.index;
+    }
+    break;
+  }
+
+  if (approachingIndex >= 0) {
+    setApproachingJourneyState(targets, approachingIndex);
+  } else if (activeIndex >= 0) {
+    setActiveJourneyState(targets, activeIndex);
+  } else {
+    setUpcomingJourneyState(targets);
+  }
+}
+
+function scheduleInitialJourneySync(
+  targets: MotionTargets,
+  chapterTriggers: ChapterTrigger[],
+) {
+  let hashFrame = 0;
+  let restoreFrame = 0;
+  let syncFrame = 0;
+  const sync = () => syncJourneyState(targets, chapterTriggers);
+  const restoreHashPosition = () => {
+    const hash = window.location.hash.slice(1);
+    const hashTarget = hash ? document.getElementById(hash) : null;
+
+    if (hashTarget && targets.journey.contains(hashTarget)) {
+      const documentRoot = document.documentElement;
+      const previousScrollBehavior = documentRoot.style.scrollBehavior;
+      const targetTop =
+        hashTarget.getBoundingClientRect().top +
+        window.scrollY -
+        window.innerHeight * 0.34;
+
+      documentRoot.style.scrollBehavior = "auto";
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "auto" });
+      documentRoot.style.scrollBehavior = previousScrollBehavior;
+      ScrollTrigger.update();
+    }
+    sync();
+  };
+  const handleHashChange = () => {
+    window.cancelAnimationFrame(hashFrame);
+    hashFrame = window.requestAnimationFrame(restoreHashPosition);
+  };
+
+  ScrollTrigger.addEventListener("refresh", sync);
+  window.addEventListener("hashchange", handleHashChange);
+  restoreFrame = window.requestAnimationFrame(() => {
+    ScrollTrigger.refresh();
+    syncFrame = window.requestAnimationFrame(restoreHashPosition);
+  });
+
+  return () => {
+    window.cancelAnimationFrame(hashFrame);
+    window.cancelAnimationFrame(restoreFrame);
+    window.cancelAnimationFrame(syncFrame);
+    window.removeEventListener("hashchange", handleHashChange);
+    ScrollTrigger.removeEventListener("refresh", sync);
+  };
 }
 
 function clearMotionStyles(targets: MotionTargets) {
@@ -500,7 +661,9 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
         }
 
         scope.dataset.motionState = "ready";
-        setJourneyState(targets, 0);
+        setUpcomingJourneyState(targets);
+
+        let chapterTriggers: ChapterTrigger[] = [];
 
         if (conditions.desktop) {
           createSpatialTimeline(
@@ -509,7 +672,10 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
             journeyMotionConfig.handoff.desktop,
           );
           createJourneyPathTimeline(targets, journeyMotionConfig.journey.desktop);
-          createChapterTimelines(targets, journeyMotionConfig.journey.desktop);
+          chapterTriggers = createChapterTimelines(
+            targets,
+            journeyMotionConfig.journey.desktop,
+          );
         } else if (conditions.tablet) {
           createSpatialTimeline(
             targets,
@@ -517,12 +683,20 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
             journeyMotionConfig.handoff.tablet,
           );
           createJourneyPathTimeline(targets, journeyMotionConfig.journey.tablet);
-          createChapterTimelines(targets, journeyMotionConfig.journey.tablet);
+          chapterTriggers = createChapterTimelines(
+            targets,
+            journeyMotionConfig.journey.tablet,
+          );
         } else if (conditions.mobile) {
           createMobileTimeline(targets);
           createJourneyPathTimeline(targets, journeyMotionConfig.journey.mobile);
-          createChapterTimelines(targets, journeyMotionConfig.journey.mobile);
+          chapterTriggers = createChapterTimelines(
+            targets,
+            journeyMotionConfig.journey.mobile,
+          );
         }
+
+        return scheduleInitialJourneySync(targets, chapterTriggers);
       });
     }, scope);
 

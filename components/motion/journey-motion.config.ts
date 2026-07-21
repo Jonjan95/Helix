@@ -1,3 +1,5 @@
+import type { HelixChapterPacing } from "@/data/helix-chapters";
+
 export type SpatialMotionProfile = {
   contentOpacity: number;
   contentTravel: number;
@@ -14,18 +16,22 @@ export type WorkspaceHandoffProfile = {
   baseTravel: number;
   duration: number;
   identityOpacity: number;
+  screenFrameOpacity: number;
   shellOpacity: number;
   start: number;
   thresholdOpacity: number;
 };
 
-export type JourneyMotionProfile = {
-  chapterEnd: string;
-  chapterStart: string;
-  connectorOpacityFrom: number;
+export type ChapterMotionRange = {
+  approachStart: string;
   contentTravel: number;
-  nodeOpacityFrom: number;
+  focusStart: string;
   nodeScaleFrom: number;
+};
+
+export type JourneyMotionProfile = {
+  chapters: Record<HelixChapterPacing, ChapterMotionRange>;
+  continuationOpacityFrom: number;
   pathBackOpacityFrom: number;
   pathEnd: string;
   pathFrontOpacityFrom: number;
@@ -83,7 +89,7 @@ export const journeyMotionConfig = {
     scrub: 0.55,
   } satisfies SpatialMotionProfile,
   tablet: {
-    contentOpacity: 0.24,
+    contentOpacity: 0.16,
     contentTravel: -24,
     maxScale: 2.05,
     minScale: 1.4,
@@ -105,6 +111,7 @@ export const journeyMotionConfig = {
       baseTravel: 22,
       duration: 0.24,
       identityOpacity: 0,
+      screenFrameOpacity: 0,
       shellOpacity: 0.12,
       start: 0.72,
       thresholdOpacity: 1,
@@ -113,7 +120,8 @@ export const journeyMotionConfig = {
       baseTravel: 14,
       duration: 0.2,
       identityOpacity: 0.02,
-      shellOpacity: 0.24,
+      screenFrameOpacity: 0.08,
+      shellOpacity: 0.12,
       start: 0.76,
       thresholdOpacity: 0.92,
     } satisfies WorkspaceHandoffProfile,
@@ -121,6 +129,7 @@ export const journeyMotionConfig = {
       baseTravel: 8,
       duration: 0.34,
       identityOpacity: 0.18,
+      screenFrameOpacity: 0.3,
       shellOpacity: 0.58,
       start: 0.56,
       thresholdOpacity: 0.82,
@@ -128,54 +137,135 @@ export const journeyMotionConfig = {
   },
   journey: {
     desktop: {
-      chapterEnd: "bottom 38%",
-      chapterStart: "top 72%",
-      connectorOpacityFrom: 0.08,
-      contentTravel: 28,
-      nodeOpacityFrom: 0.38,
-      nodeScaleFrom: 0.74,
+      chapters: {
+        entry: {
+          approachStart: "top 96%",
+          contentTravel: 22,
+          focusStart: "top 62%",
+          nodeScaleFrom: 0.84,
+        },
+        featured: {
+          approachStart: "top 90%",
+          contentTravel: 28,
+          focusStart: "top 64%",
+          nodeScaleFrom: 0.8,
+        },
+        expanded: {
+          approachStart: "top 92%",
+          contentTravel: 26,
+          focusStart: "top 66%",
+          nodeScaleFrom: 0.82,
+        },
+        standard: {
+          approachStart: "top 90%",
+          contentTravel: 22,
+          focusStart: "top 64%",
+          nodeScaleFrom: 0.84,
+        },
+        exit: {
+          approachStart: "top 94%",
+          contentTravel: 18,
+          focusStart: "top 70%",
+          nodeScaleFrom: 0.86,
+        },
+      },
+      continuationOpacityFrom: 0.16,
       pathBackOpacityFrom: 0.2,
-      pathEnd: "top 28%",
+      pathEnd: "top 58%",
       pathFrontOpacityFrom: 0.3,
       pathOpacityFrom: 0.46,
       pathRungOpacityFrom: 0.16,
       pathScaleFrom: 0.985,
-      pathStart: "top 92%",
-      pathTravelFrom: 48,
+      pathStart: "top 104%",
+      pathTravelFrom: 36,
       scrub: 0.46,
     } satisfies JourneyMotionProfile,
     tablet: {
-      chapterEnd: "bottom 42%",
-      chapterStart: "top 78%",
-      connectorOpacityFrom: 0.16,
-      contentTravel: 20,
-      nodeOpacityFrom: 0.5,
-      nodeScaleFrom: 0.82,
+      chapters: {
+        entry: {
+          approachStart: "top 98%",
+          contentTravel: 14,
+          focusStart: "top 70%",
+          nodeScaleFrom: 0.9,
+        },
+        featured: {
+          approachStart: "top 92%",
+          contentTravel: 20,
+          focusStart: "top 68%",
+          nodeScaleFrom: 0.86,
+        },
+        expanded: {
+          approachStart: "top 94%",
+          contentTravel: 18,
+          focusStart: "top 70%",
+          nodeScaleFrom: 0.88,
+        },
+        standard: {
+          approachStart: "top 92%",
+          contentTravel: 16,
+          focusStart: "top 68%",
+          nodeScaleFrom: 0.9,
+        },
+        exit: {
+          approachStart: "top 96%",
+          contentTravel: 12,
+          focusStart: "top 74%",
+          nodeScaleFrom: 0.92,
+        },
+      },
+      continuationOpacityFrom: 0.24,
       pathBackOpacityFrom: 0.32,
-      pathEnd: "top 34%",
+      pathEnd: "top 62%",
       pathFrontOpacityFrom: 0.42,
       pathOpacityFrom: 0.58,
       pathRungOpacityFrom: 0.25,
       pathScaleFrom: 0.992,
-      pathStart: "top 94%",
-      pathTravelFrom: 28,
+      pathStart: "top 104%",
+      pathTravelFrom: 22,
       scrub: 0.34,
     } satisfies JourneyMotionProfile,
     mobile: {
-      chapterEnd: "bottom 46%",
-      chapterStart: "top 88%",
-      connectorOpacityFrom: 0.42,
-      contentTravel: 10,
-      nodeOpacityFrom: 0.72,
-      nodeScaleFrom: 0.94,
+      chapters: {
+        entry: {
+          approachStart: "top 96%",
+          contentTravel: 8,
+          focusStart: "top 64%",
+          nodeScaleFrom: 0.96,
+        },
+        featured: {
+          approachStart: "top 92%",
+          contentTravel: 10,
+          focusStart: "top 68%",
+          nodeScaleFrom: 0.94,
+        },
+        expanded: {
+          approachStart: "top 92%",
+          contentTravel: 10,
+          focusStart: "top 70%",
+          nodeScaleFrom: 0.94,
+        },
+        standard: {
+          approachStart: "top 92%",
+          contentTravel: 8,
+          focusStart: "top 68%",
+          nodeScaleFrom: 0.96,
+        },
+        exit: {
+          approachStart: "top 94%",
+          contentTravel: 6,
+          focusStart: "top 72%",
+          nodeScaleFrom: 0.96,
+        },
+      },
+      continuationOpacityFrom: 0.48,
       pathBackOpacityFrom: 1,
-      pathEnd: "top 62%",
+      pathEnd: "top 70%",
       pathFrontOpacityFrom: 1,
       pathOpacityFrom: 0.72,
       pathRungOpacityFrom: 1,
       pathScaleFrom: 1,
-      pathStart: "top 96%",
-      pathTravelFrom: 12,
+      pathStart: "top 98%",
+      pathTravelFrom: 8,
       scrub: 0.2,
     } satisfies JourneyMotionProfile,
   },
