@@ -25,6 +25,14 @@ const chapterHeadings = {
   projects: "Building systems by solving real problems.",
 } as const;
 
+const chapterAnchors = {
+  contact: "contact",
+  engineering: "skills",
+  environment: "about",
+  experience: "experience",
+  projects: "projects",
+} as const;
+
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -38,6 +46,27 @@ async function centerChapter(page: Page, chapter: (typeof journeyChapters)[numbe
   await page.getByTestId(`journey-chapter-${chapter}`).evaluate((element) => {
     element.scrollIntoView({ block: "center", behavior: "auto" });
   });
+}
+
+async function positionChapterAtViewportRatio(
+  page: Page,
+  chapter: (typeof journeyChapters)[number],
+  viewportRatio: number,
+) {
+  await page
+    .getByTestId(`journey-chapter-${chapter}`)
+    .evaluate((element, ratio) => {
+      const documentRoot = document.documentElement;
+      const previousScrollBehavior = documentRoot.style.scrollBehavior;
+      const targetTop =
+        element.getBoundingClientRect().top +
+        window.scrollY -
+        window.innerHeight * ratio;
+
+      documentRoot.style.scrollBehavior = "auto";
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "auto" });
+      documentRoot.style.scrollBehavior = previousScrollBehavior;
+    }, viewportRatio);
 }
 
 test("renders the complete semantic Helix journey", async ({ page }) => {
@@ -151,8 +180,40 @@ test("progresses through every active node and reverses to the workspace", async
   const motionRoot = page.locator('[data-motion-root="helix-experience"]');
   const journey = page.getByTestId("helix-journey");
   await expect(motionRoot).toHaveAttribute("data-motion-state", "ready");
-
+  await expect(journey).toHaveAttribute("data-active-chapter", "none");
+  await expect(journey).toHaveAttribute(
+    "data-journey-phase",
+    "before-journey",
+  );
   for (const chapter of journeyChapters) {
+    await expect(page.getByTestId(`journey-chapter-${chapter}`)).toHaveAttribute(
+      "data-journey-state",
+      "upcoming",
+    );
+  }
+
+  for (const [index, chapter] of journeyChapters.entries()) {
+    await positionChapterAtViewportRatio(page, chapter, 0.8);
+    await expect(page.getByTestId(`journey-chapter-${chapter}`)).toHaveAttribute(
+      "data-journey-state",
+      "approaching",
+    );
+    await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
+      "data-node-state",
+      "approaching",
+    );
+
+    if (index > 0) {
+      const previousChapter = journeyChapters[index - 1];
+      await expect(journey).toHaveAttribute(
+        "data-active-chapter",
+        previousChapter,
+      );
+      await expect(
+        page.getByTestId(`journey-chapter-${previousChapter}`),
+      ).toHaveAttribute("data-journey-state", "departing");
+    }
+
     await centerChapter(page, chapter);
     await expect(journey).toHaveAttribute("data-active-chapter", chapter);
     await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
@@ -182,7 +243,41 @@ test("progresses through every active node and reverses to the workspace", async
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
   await expect(page.getByTestId("laptop-hero")).toBeVisible();
+  await expect(journey).toHaveAttribute("data-active-chapter", "none");
+  await expect(page.getByTestId("journey-node-environment")).toHaveAttribute(
+    "data-node-state",
+    "upcoming",
+  );
   expect(browserMessages).toEqual([]);
+});
+
+test("restores calibrated chapter focus for direct links", async ({ page }) => {
+  for (const viewport of [
+    { height: 1000, width: 1440 },
+    { height: 844, width: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+
+    for (const chapter of journeyChapters) {
+      await page.goto(`/#${chapterAnchors[chapter]}`, {
+        waitUntil: "domcontentloaded",
+      });
+      await expect(page.getByTestId("helix-journey")).toHaveAttribute(
+        "data-active-chapter",
+        chapter,
+      );
+      await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
+        "data-node-state",
+        "active",
+      );
+      await expect(
+        page
+          .getByTestId(`journey-chapter-${chapter}`)
+          .getByRole("heading", { level: 2, name: chapterHeadings[chapter] }),
+      ).toBeVisible();
+      await expectNoHorizontalOverflow(page);
+    }
+  }
 });
 
 test("reduced motion renders the complete journey statically", async ({ page }) => {
@@ -194,6 +289,10 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
   ).toHaveAttribute("data-motion-state", "reduced");
   await expect(page.getByTestId("helix-journey")).toHaveAttribute(
     "data-active-chapter",
+    "static",
+  );
+  await expect(page.getByTestId("helix-journey")).toHaveAttribute(
+    "data-journey-phase",
     "static",
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
