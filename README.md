@@ -52,7 +52,7 @@ npm run validate
 
 ## Current status
 
-The complete Helix journey now exists as an integrated graybox. On larger viewports, a short reversible scroll sequence moves toward the laptop display and into one shared workspace. Native scrolling then follows a continuous SVG path through Environment, Engineering Mindset, Selected Projects, Experience, and Continue stops. Each stop keeps its semantic chapter content outside the decorative path and uses the same maintainable attachment pattern.
+The complete Helix journey now exists as a calibrated integrated graybox. On larger viewports, a short reversible scroll sequence moves toward the laptop display and into one shared workspace. Native scrolling then follows a continuous SVG path through Environment, Engineering Mindset, Selected Projects, Experience, and Continue stops. Each stop keeps its semantic chapter content outside the decorative path and uses the same maintainable attachment pattern. Approach, active, departure, and passed states create a clear focus hierarchy without hiding content, and direct chapter links resolve after the pinned layout is established.
 
 Tablet reduces the path-to-content separation, mobile keeps the journey in a clear native-flow composition, and reduced-motion visitors receive the entire static chapter sequence without camera movement, chapter motion, or pinning. Project case studies, final personal content, interactive nodes, final visual polish, and any 3D implementation remain intentionally deferred. See [the helix concept](docs/helix-concept.md) for the current boundary and [the roadmap](docs/roadmap.md) for the planned sequence.
 
