@@ -44,6 +44,19 @@ The scoped GSAP controller owns the entire progressive enhancement. One path tim
 
 Desktop shows the complete alternating node-to-content relationship. Tablet reduces horizontal separation. Mobile places a simple vertical path beside content in normal flow, with shorter travel and no journey pinning. Reduced-motion visitors receive the complete static path and every semantic chapter with no camera movement, journey timeline, or pinning.
 
+## Calibration audit
+
+The complete graybox establishes the correct order and shared path, but its first integrated review identified several pacing issues that should be resolved before visual polish:
+
+- Environment is reported as active while the visitor is still at the laptop, before its node becomes a visible destination.
+- The workspace threshold, journey marker, and first path geometry create a visible seam instead of one spatial handoff.
+- The current future, active, and past states change abruptly and do not describe approach or departure.
+- Initial hash navigation can resolve before laptop pin geometry is established, leaving direct chapter links at the wrong scroll position.
+- Tablet leaves too much path-only space before Environment and weakens the node-to-content relationship.
+- Continue has less settling distance than the middle chapters, particularly when travelling backward from the end.
+
+Calibration should preserve the single motion owner and semantic structure while introducing a five-state chapter model, per-chapter pacing profiles, clearer active-node hierarchy, earlier path continuity, reliable initial-anchor restoration, and responsive spacing adjustments. These changes refine the existing system; they do not introduce final content or a new helix design.
+
 ## Intentionally deferred
 
 - helix navigation, direct manipulation, or clickable node controls;
