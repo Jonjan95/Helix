@@ -1,7 +1,7 @@
 .journey {
   position: relative;
-  padding-top: clamp(4rem, 8vw, 7rem);
-  padding-bottom: clamp(5rem, 9vw, 8rem);
+  padding-top: clamp(1.75rem, 3vw, 3rem);
+  padding-bottom: clamp(6rem, 10vw, 9rem);
   overflow: hidden;
   background-color: #111719;
   background-image: linear-gradient(rgb(105 211 231 / 0.045) 1px, transparent 1px),
@@ -16,8 +16,8 @@
   top: 0;
   right: 0;
   left: 0;
-  height: clamp(12rem, 30vw, 24rem);
-  background: linear-gradient(to bottom, rgb(18 20 22 / 0.92), transparent);
+  height: clamp(16rem, 34vw, 28rem);
+  background: linear-gradient(to bottom, rgb(18 20 22 / 0.96), transparent);
   content: "";
   pointer-events: none;
 }
@@ -28,13 +28,26 @@
   display: flex;
   width: min(100%, var(--content-width));
   margin: 0 auto;
-  padding: 0 var(--page-gutter) 1.5rem;
-  border-bottom: 1px solid rgb(105 211 231 / 0.16);
+  padding: 0 var(--page-gutter);
   color: var(--color-muted);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.11em;
   justify-content: space-between;
+}
+
+.entryMarker::after {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 50%;
+  width: 1px;
+  height: clamp(3rem, 7vw, 5rem);
+  background: linear-gradient(rgb(105 211 231 / 0.32), transparent);
+  content: "";
+}
+
+.journey[data-journey-phase="before-journey"] .entryMarker {
+  color: rgb(168 173 178 / 0.72);
 }
 
 .continuation {
@@ -64,13 +77,18 @@
 
 @media (max-width: 47.999rem) {
   .journey {
-    padding-top: 3.5rem;
+    padding-top: 2.25rem;
     padding-bottom: 4rem;
     background-size: 2.5rem 2.5rem;
   }
 
   .entryMarker span:last-child {
     display: none;
+  }
+
+  .entryMarker::after {
+    left: calc(var(--page-gutter) + 0.45rem);
+    height: 3rem;
   }
 
   .continuation {

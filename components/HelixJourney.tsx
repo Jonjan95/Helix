@@ -10,6 +10,7 @@ export function HelixJourney() {
       className={styles.journey}
       data-active-chapter="static"
       data-helix-journey=""
+      data-journey-phase="static"
       data-testid="helix-journey"
     >
       <div className={styles.entryMarker} aria-hidden="true">

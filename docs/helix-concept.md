@@ -44,6 +44,31 @@ The scoped GSAP controller owns the entire progressive enhancement. One path tim
 
 Desktop shows the complete alternating node-to-content relationship. Tablet reduces horizontal separation. Mobile places a simple vertical path beside content in normal flow, with shorter travel and no journey pinning. Reduced-motion visitors receive the complete static path and every semantic chapter with no camera movement, journey timeline, or pinning.
 
+## Calibration audit
+
+The complete graybox establishes the correct order and shared path, but its first integrated review identified several pacing issues that should be resolved before visual polish:
+
+- Environment is reported as active while the visitor is still at the laptop, before its node becomes a visible destination.
+- The workspace threshold, journey marker, and first path geometry create a visible seam instead of one spatial handoff.
+- The current future, active, and past states change abruptly and do not describe approach or departure.
+- Initial hash navigation can resolve before laptop pin geometry is established, leaving direct chapter links at the wrong scroll position.
+- Tablet leaves too much path-only space before Environment and weakens the node-to-content relationship.
+- Continue has less settling distance than the middle chapters, particularly when travelling backward from the end.
+
+The calibration preserves the single motion owner and semantic structure while introducing a five-state chapter model, per-chapter pacing profiles, clearer active-node hierarchy, earlier path continuity, reliable initial-anchor restoration, and responsive spacing adjustments. These changes refine the existing system; they do not introduce final content or a new helix design.
+
+## Calibrated journey behavior
+
+The calibration resolves those issues without changing the approved journey architecture. Before the workspace handoff, no chapter is presented as active. The laptop screen frame recedes as the workspace layer becomes dominant, and a short centreline carries the screen geometry into the shared path. Environment can then approach before it becomes the first active destination.
+
+Each stop now moves through five explicit visual states: `upcoming`, `approaching`, `active`, `departing`, and `passed`. The active stop receives the clearest cyan node and full content emphasis. Adjacent stops retain enough presence to explain direction, while distant stops are quieter. These states are orientation signals rather than content states; the prose and links remain readable in the document regardless of motion.
+
+Pacing is configured by chapter role instead of one universal trigger range. Environment settles quickly after entry, Engineering and Selected Projects receive longer reading spans, Experience returns to a standard cadence, and Continue has additional space to resolve the route. Desktop retains the complete spatial sequence, tablet shortens travel and separation, and mobile keeps an unpinned vertical flow with minimal movement. Reduced motion bypasses the five-state sequence and exposes every stop statically.
+
+Direct chapter fragments are restored only after ScrollTrigger has established the final document geometry. The target is placed inside its stable focus range instead of at an arbitrary pinned offset. This keeps refreshes and links to `#about`, `#skills`, `#projects`, `#experience`, and `#contact` predictable across desktop and mobile.
+
+The visual review evidence is stored in [`docs/media/journey-calibration`](media/journey-calibration). It includes the desktop handoff and every focused stop, a reverse transition, tablet and mobile compositions, and the complete reduced-motion route. These images record the calibrated graybox; they are not final art-direction references.
+
 ## Intentionally deferred
 
 - helix navigation, direct manipulation, or clickable node controls;
