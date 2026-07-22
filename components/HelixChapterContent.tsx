@@ -1,4 +1,5 @@
 import type { HelixChapterData } from "@/data/helix-chapters";
+import { ProjectShowcase } from "@/components/ProjectShowcase";
 import styles from "@/styles/HelixChapterContent.module.css";
 
 type HelixChapterContentProps = {
@@ -50,20 +51,9 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
 
   if (chapter.chapter === "projects") {
     return (
-      <div className={styles.content}>
+      <div className={`${styles.content} ${styles.projectsContent}`}>
         <ChapterHeader chapter={chapter} />
-        <ul className={styles.projectList} aria-label="Provisional projects">
-          {chapter.projects.map((project) => (
-            <li key={project.name}>
-              <article className={styles.project}>
-                <p className={styles.itemMeta}>{project.category}</p>
-                <h3>{project.name}</h3>
-                <p>{project.description}</p>
-                <span className={styles.planned}>CASE STUDY / PLANNED</span>
-              </article>
-            </li>
-          ))}
-        </ul>
+        <ProjectShowcase projects={chapter.projects} />
       </div>
     );
   }

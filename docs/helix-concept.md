@@ -6,7 +6,7 @@ This note defines the current boundary of the helix journey. It should be read w
 
 The helix is the structural spine of the digital journey. It makes the relationship between chapters spatial: the visitor enters the workspace, follows one continuous path, pauses where an idea earns attention, and sees that the path continues.
 
-The integrated graybox now proves the complete narrative route without presenting its content or visual composition as final:
+The integrated journey now proves the complete narrative route without presenting every chapter or the visual composition as final:
 
 `workspace → Environment → Engineering → Selected Projects → Experience → Continue`
 
@@ -32,11 +32,21 @@ The SVG remains decorative, non-focusable, and hidden from assistive technology.
 
 The pattern is intentionally bounded rather than a generic page builder. Stops alternate around the path and can change spacing or density to serve their content. Reuse preserves narrative continuity without producing identical cards along a rail.
 
-## Graybox content boundary
+## Current content boundary
 
-Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects establishes space for three future case studies: AI-Powered Test Engineer, CortexGrid, and Helix. Experience establishes three provisional areas for software development and testing studies, embedded systems and networking, and technical service and field troubleshooting. Continue provides one verified GitHub route and clearly labels LinkedIn and email as pending final content.
+Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects is the first content-complete destination: AI-Powered Test Engineer leads the chapter, with CortexGrid and Helix as supporting engineering evidence. Experience still establishes three provisional areas for software development and testing studies, embedded systems and networking, and technical service and field troubleshooting. Continue provides one verified GitHub route and clearly labels LinkedIn and email as pending final content.
 
-All nodes are stops along the path, not interactive controls. Provisional project summaries are deliberately non-interactive so the graybox does not imply case studies that do not yet exist. Final claims, outcomes, imagery, contact routes, and case-study interaction design require a later content milestone.
+All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Final Experience claims, personal outcomes, imagery, contact routes, and case-study interaction design require later content milestones.
+
+## Selected Projects destination
+
+The chapter demonstrates the design system through hierarchy rather than three matching cards. AI-Powered Test Engineer receives the longest problem, approach, technical, and quality narrative. CortexGrid and Helix use the same semantic evidence vocabulary with less visual weight. Fine separators, numbered metadata, restrained status labels, and one consistent link treatment keep all three attached to the existing left-side Projects stop.
+
+Project claims are a maintained snapshot of the public source repositories, not live repository data. Status and boundary copy distinguish implemented workflows from prototypes, active development, and planned work. Every public repository receives a descriptive HTTPS link; a future unavailable or private project must be presented as text, never as a placeholder link.
+
+The expanded content increases the chapter's natural document height, so the existing Projects pacing profile has room to remain primary through the final supporting project. Desktop uses the available side of the path for a featured/supporting hierarchy, tablet simplifies the internal grids, and mobile stacks the same semantic articles beside the vertical path. Reduced motion exposes the identical hierarchy statically and introduces no project-specific animation.
+
+The visual review evidence is stored in [`docs/media/selected-projects`](media/selected-projects). It records the forward desktop handoffs, featured and supporting evidence, tablet and mobile compositions, repository-link target review, and the complete reduced-motion chapter.
 
 ## Motion boundary
 
@@ -72,7 +82,7 @@ The visual review evidence is stored in [`docs/media/journey-calibration`](media
 ## Intentionally deferred
 
 - helix navigation, direct manipulation, or clickable node controls;
-- real project case studies, imagery, evidence, and interactions;
+- project detail routes, imagery, galleries, modals, and case-study interactions;
 - final Experience claims, outcomes, and contact content;
 - chapter-specific interaction patterns beyond shared journey progression;
 - final spacing, art direction, and visual polish;

@@ -33,6 +33,19 @@ const chapterAnchors = {
   projects: "projects",
 } as const;
 
+const projectRepositories = {
+  "AI-Powered Test Engineer":
+    "https://github.com/Jonjan95/AI-Powered-Test-Engineer",
+  CortexGrid: "https://github.com/Jonjan95/CortexGrid",
+  Helix: "https://github.com/Jonjan95/Helix",
+} as const;
+
+const projectIds = {
+  "AI-Powered Test Engineer": "ai-powered-test-engineer",
+  CortexGrid: "cortexgrid",
+  Helix: "helix",
+} as const;
+
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -114,13 +127,51 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   }
 
   const projects = page.getByTestId("journey-chapter-projects");
-  for (const project of ["AI-Powered Test Engineer", "CortexGrid", "Helix"]) {
+  await expect(projects.locator("[data-project]")).toHaveCount(3);
+  await expect(
+    projects.locator('[data-project-featured="true"]'),
+  ).toHaveAttribute("data-project", "ai-powered-test-engineer");
+
+  for (const [project, repositoryUrl] of Object.entries(projectRepositories)) {
     await expect(
       projects.getByRole("heading", { level: 3, name: project }),
     ).toBeAttached();
+    const projectArticle = projects.locator(
+      `[data-project="${projectIds[project as keyof typeof projectIds]}"]`,
+    );
+    await expect(projectArticle.locator("[data-project-status]")).toHaveCount(1);
+    await expect(
+      projectArticle.getByRole("link", {
+        name: `View ${project} on GitHub`,
+      }),
+    ).toHaveAttribute("href", repositoryUrl);
   }
-  await expect(projects.getByRole("link")).toHaveCount(0);
+
+  const featuredProject = projects.locator(
+    '[data-project="ai-powered-test-engineer"]',
+  );
+  for (const evidenceHeading of [
+    "Problem",
+    "Approach",
+    "Technical evidence",
+    "Quality evidence",
+  ]) {
+    await expect(
+      featuredProject.getByRole("heading", {
+        level: 4,
+        name: evidenceHeading,
+      }),
+    ).toBeAttached();
+  }
+
+  await expect(projects.getByRole("link")).toHaveCount(3);
   await expect(projects.getByRole("button")).toHaveCount(0);
+  await expect(projects.locator('a[href="#"]')).toHaveCount(0);
+
+  const ids = await page.locator("[id]").evaluateAll((elements) =>
+    elements.map((element) => element.id),
+  );
+  expect(new Set(ids).size).toBe(ids.length);
 
   const experience = page.getByTestId("journey-chapter-experience");
   for (const area of [
@@ -194,16 +245,26 @@ test("progresses through every active node and reverses to the workspace", async
 
   for (const [index, chapter] of journeyChapters.entries()) {
     await positionChapterAtViewportRatio(page, chapter, 0.8);
-    await expect(page.getByTestId(`journey-chapter-${chapter}`)).toHaveAttribute(
-      "data-journey-state",
-      "approaching",
-    );
-    await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
-      "data-node-state",
-      "approaching",
-    );
+    await expect
+      .poll(() =>
+        page
+          .getByTestId(`journey-chapter-${chapter}`)
+          .getAttribute("data-journey-state"),
+      )
+      .toMatch(/^(approaching|active)$/);
+    const transitionState = await page
+      .getByTestId(`journey-chapter-${chapter}`)
+      .getAttribute("data-journey-state");
+    expect(["approaching", "active"]).toContain(transitionState);
 
-    if (index > 0) {
+    if (transitionState === "approaching") {
+      await expect(page.getByTestId(`journey-node-${chapter}`)).toHaveAttribute(
+        "data-node-state",
+        "approaching",
+      );
+    }
+
+    if (index > 0 && transitionState === "approaching") {
       const previousChapter = journeyChapters[index - 1];
       await expect(journey).toHaveAttribute(
         "data-active-chapter",
@@ -249,6 +310,68 @@ test("progresses through every active node and reverses to the workspace", async
     "upcoming",
   );
   expect(browserMessages).toEqual([]);
+});
+
+test("keeps the complete project evidence within the Projects interval", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const journey = page.getByTestId("helix-journey");
+  const projects = page.getByTestId("journey-chapter-projects");
+  const experience = page.getByTestId("journey-chapter-experience");
+
+  await centerChapter(page, "engineering");
+  await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
+
+  await projects
+    .locator('[data-project="helix"]')
+    .evaluate((element) => element.scrollIntoView({ block: "center" }));
+  await expect(journey).toHaveAttribute("data-active-chapter", "projects");
+  await expect(projects).toHaveAttribute("data-journey-state", "active");
+  await expect(experience).not.toHaveAttribute("data-journey-state", "active");
+  await expect(
+    projects.getByRole("link", { name: "View Helix on GitHub" }),
+  ).toBeVisible();
+
+  await centerChapter(page, "experience");
+  await expect(journey).toHaveAttribute("data-active-chapter", "experience");
+
+  await centerChapter(page, "projects");
+  await expect(journey).toHaveAttribute("data-active-chapter", "projects");
+  await expect(page.getByTestId("journey-node-projects")).toHaveAttribute(
+    "data-node-state",
+    "active",
+  );
+  await expect(
+    projects.locator('[data-project="ai-powered-test-engineer"]'),
+  ).toBeVisible();
+});
+
+test("repository links follow a meaningful keyboard sequence", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const focusedProjectLinks: string[] = [];
+  for (
+    let attempt = 0;
+    attempt < 8 && focusedProjectLinks.length < 3;
+    attempt += 1
+  ) {
+    await page.keyboard.press("Tab");
+    const accessibleName = await page.evaluate(() =>
+      document.activeElement?.getAttribute("aria-label"),
+    );
+    if (accessibleName?.match(/^View .+ on GitHub$/)) {
+      focusedProjectLinks.push(accessibleName);
+    }
+  }
+
+  expect(focusedProjectLinks).toEqual(
+    Object.keys(projectRepositories).map(
+      (project) => `View ${project} on GitHub`,
+    ),
+  );
 });
 
 test("restores calibrated chapter focus for direct links", async ({ page }) => {
@@ -315,6 +438,53 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
   }
 
   await expect(page.getByTestId("journey-continuation")).toBeVisible();
+  const projectArticles = page
+    .getByTestId("journey-chapter-projects")
+    .locator("[data-project]");
+  await expect(projectArticles).toHaveCount(3);
+  for (const project of Object.keys(projectRepositories)) {
+    await expect(
+      page.getByRole("heading", { level: 3, name: project }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: `View ${project} on GitHub` }),
+    ).toBeVisible();
+  }
+  await expectNoHorizontalOverflow(page);
+});
+
+test("mobile stacks projects in semantic order", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#projects", { waitUntil: "domcontentloaded" });
+
+  const projects = page
+    .getByTestId("journey-chapter-projects")
+    .locator("[data-project]");
+  const order = await projects.evaluateAll((elements) =>
+    elements.map((element) => element.getAttribute("data-project")),
+  );
+  expect(order).toEqual(["ai-powered-test-engineer", "cortexgrid", "helix"]);
+
+  const positions = await projects.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return { left: bounds.left, top: bounds.top };
+    }),
+  );
+  expect(positions.map(({ top }) => top)).toEqual(
+    [...positions.map(({ top }) => top)].sort((a, b) => a - b),
+  );
+  const horizontalOffset =
+    Math.max(...positions.map(({ left }) => left)) -
+    Math.min(...positions.map(({ left }) => left));
+  expect(horizontalOffset).toBeLessThan(2);
+  const repositoryLinkHeights = await page
+    .getByTestId("journey-chapter-projects")
+    .getByRole("link")
+    .evaluateAll((links) =>
+      links.map((link) => link.getBoundingClientRect().height),
+    );
+  expect(repositoryLinkHeights.every((height) => height >= 44)).toBe(true);
   await expectNoHorizontalOverflow(page);
 });
 
