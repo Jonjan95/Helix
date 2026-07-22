@@ -1,4 +1,5 @@
 import type { ChapterName } from "@/components/JourneyChapter";
+import { portfolioProjects, type PortfolioProject } from "@/data/projects";
 
 export const helixChapterIds = [
   "environment",
@@ -42,16 +43,10 @@ export type EngineeringChapterData = HelixChapterBase & {
   principles: readonly string[];
 };
 
-export type ProjectPlaceholder = {
-  category: string;
-  description: string;
-  name: string;
-};
-
 export type ProjectsChapterData = HelixChapterBase & {
   chapter: "projects";
   narrativeChapter: "selected-work";
-  projects: readonly ProjectPlaceholder[];
+  projects: readonly PortfolioProject[];
 };
 
 export type ExperienceChapterData = HelixChapterBase & {
@@ -121,31 +116,12 @@ export const helixChapters = [
     headingId: "projects-heading",
     index: "03",
     introduction:
-      "Three provisional stops establish the scale and rhythm for future project stories without pretending the case studies are finished.",
+      "Three working systems show how product intent, technical decisions, and quality evidence connect in practice.",
     label: "SELECTED PROJECTS",
     narrativeChapter: "selected-work",
     pacing: "expanded",
     placement: "left",
-    projects: [
-      {
-        category: "QUALITY ENGINEERING / AI-ASSISTED TOOLING",
-        description:
-          "An exploratory test-engineering project centred on turning requirements into traceable, reviewable test work.",
-        name: "AI-Powered Test Engineer",
-      },
-      {
-        category: "SOFTWARE SYSTEMS",
-        description:
-          "A systems project exploring how services, interfaces, and operational signals fit together.",
-        name: "CortexGrid",
-      },
-      {
-        category: "EXPERIENCE ENGINEERING",
-        description:
-          "This portfolio, built as a testable and accessible narrative system rather than a disconnected gallery.",
-        name: "Helix",
-      },
-    ],
+    projects: portfolioProjects,
   },
   {
     anchorId: "experience",
