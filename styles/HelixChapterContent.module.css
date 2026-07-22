@@ -405,6 +405,11 @@
     font-size: clamp(2.2rem, 11vw, 3.2rem);
   }
 
+  .repositoryLink {
+    min-height: 2.75rem;
+    padding-block: 0.65rem;
+  }
+
   .contactList a,
   .contactList div {
     display: grid;
