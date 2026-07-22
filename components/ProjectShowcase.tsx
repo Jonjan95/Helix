@@ -25,7 +25,9 @@ function ProjectArticle({
           <span aria-hidden="true">{projectNumber}</span>
           {project.role}
         </p>
-        <p className={styles.projectStatus}>{project.status}</p>
+        <p className={styles.projectStatus} data-project-status={project.status}>
+          {project.status}
+        </p>
       </header>
 
       <h3>{project.name}</h3>
