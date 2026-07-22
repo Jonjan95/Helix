@@ -34,7 +34,7 @@ Each milestone should produce a coherent, testable improvement. The order can ev
 
 The current graybox connects all five journey stops with one accessible, responsive path and a reversible motion layer. Final art direction, content, node interaction, and any decision about 3D rendering remain open.
 
-## 6. Project showcases — Selected Projects and Experience content complete
+## 6. Content destinations — Selected Projects, Experience, and Continue complete
 
 - Maintain verified project data, roles, decisions, quality evidence, current status, and honest scope boundaries.
 - Preserve the featured AI-Powered Test Engineer narrative and the supporting CortexGrid and Helix hierarchy as the projects evolve.
@@ -43,6 +43,8 @@ The current graybox connects all five journey stops with one accessible, respons
 The first chapter-level showcase is complete: three typed project records render as semantic, responsive articles with verified public repository links and a static reduced-motion path. Detail routes, galleries, project media, repository statistics, and project-specific interactions remain deferred.
 
 Experience is the second content-complete chapter. Three typed tracks connect current software-and-quality studies, previous embedded-systems studies, and practical field troubleshooting without reproducing a chronological CV. Claims remain bounded to verified study, public project, and field-service evidence; client identities, guessed dates, exhaustive employment history, and unsupported outcomes remain excluded. The chapter reuses the expanded journey pacing role, keeps every article in semantic document flow, and introduces no Experience-specific motion. A downloadable CV remains deferred until its final content and privacy boundary are verified separately.
+
+Continue is the third content-complete chapter. A purpose-built contact model renders verified GitHub, LinkedIn, and professional email routes as native links in one calm semantic list. GitHub receives restrained evidence emphasis; every route remains keyboard-reachable, touch-safe, and immediately visible with reduced motion. The chapter retains the exit pacing role and visible path continuation without adding a footer panel, contact form, service integration, or Continue-specific motion. Final copy polish, scheduling tools, analytics, and downloadable CV functionality remain deferred.
 
 ## 7. Accessibility and reduced motion
 
@@ -58,6 +60,6 @@ Experience is the second content-complete chapter. Three typed tracks connect cu
 
 ## 9. Final content and deployment
 
-- Replace all placeholder copy and contact information.
+- Refine final copy and verify that all public content remains current.
 - Complete metadata, social previews, analytics decisions, and privacy review.
 - Run final cross-browser checks and deploy the production portfolio.

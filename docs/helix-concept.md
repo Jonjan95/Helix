@@ -34,9 +34,9 @@ The pattern is intentionally bounded rather than a generic page builder. Stops a
 
 ## Current content boundary
 
-Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects and Experience are the first two content-complete destinations. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue provides one verified GitHub route and clearly labels LinkedIn and email as pending final content.
+Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects, Experience, and Continue are the first three content-complete destinations. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue resolves the current journey into verified GitHub, LinkedIn, and professional email routes while the path remains visibly open.
 
-All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Experience is a professional narrative rather than a complete CV: it excludes exhaustive employment history, exact dates that are not needed and verified, client identities, inflated responsibilities, and invented business impact. Final contact routes, project imagery, and case-study interaction design require later content milestones.
+All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Experience is a professional narrative rather than a complete CV: it excludes exhaustive employment history, exact dates that are not needed and verified, client identities, inflated responsibilities, and invented business impact. Continue uses normal links and makes no promise of form processing, scheduling, immediate availability, or private contact channels. Project imagery and case-study interaction design require later content milestones.
 
 ## Selected Projects destination
 
@@ -59,6 +59,18 @@ Claims are intentionally bounded. Public coursework and project sources support 
 The chapter reuses the existing expanded pacing role so its natural document height remains owned by Experience through the final field-service evidence and settles before Continue becomes primary. Desktop preserves the right-side node and connector relationship. Laptop and tablet simplify metadata before it competes with evidence, while mobile stacks every track in semantic order beside the static vertical path. Reduced motion exposes the same articles immediately and adds no Experience-specific animation or pinning.
 
 The visual review evidence is stored in [`docs/media/experience`](media/experience). It records the Projects handoff, each desktop evidence track, the Continue handoff, tablet and mobile compositions, and the complete static reduced-motion chapter.
+
+## Continue destination
+
+Continue closes the current narrative without becoming a marketing footer. Its composition moves from a concise current-direction statement into three verified routes: GitHub for public engineering evidence, LinkedIn for professional context, and Email for direct conversation. The order is stable on every viewport, and each destination is a native anchor with a descriptive accessible name rather than a card, icon-only control, copied-address interaction, or fake button.
+
+GitHub receives a restrained cyan emphasis because it offers the strongest public evidence, while LinkedIn and Email remain adjacent and equally discoverable. Fine separators and generous negative space lower the visual energy after the denser Experience chapter. A short closing note and the existing continuation geometry keep the final viewport from reading as a dead end; the path itself remains decorative and non-interactive.
+
+The contact boundary is intentionally narrow. The GitHub and LinkedIn URLs were matched to Jonathan's public professional identity, and the email address was verified as intentionally published for professional contact. The chapter exposes no phone number, home address, private social profile, employer route, customer detail, or tracking widget. A contact form was not added because native routes already provide clear contact choices without collecting data, adding a backend, or creating an unverified promise of response handling.
+
+The existing exit pacing role gives the full route list room to settle and preserves a readable continuation after it, so no new pacing profile or contact-specific ScrollTrigger is required. Desktop retains the left-side node and connector relationship. Laptop and tablet simplify route-row alignment before it becomes cramped, mobile stacks label, description, and action into touch-safe rows beside the vertical path, and reduced motion exposes the same list immediately with no transforms, opacity dependency, or pinning.
+
+The visual review evidence is stored in [`docs/media/continue-contact`](media/continue-contact). It records the Experience handoff, active Continue composition, each public route, final path continuation, responsive states, and the complete static reduced-motion destination.
 
 ## Motion boundary
 
@@ -96,7 +108,8 @@ The visual review evidence is stored in [`docs/media/journey-calibration`](media
 - helix navigation, direct manipulation, or clickable node controls;
 - project detail routes, imagery, galleries, modals, and case-study interactions;
 - downloadable CV, exhaustive employment history, and route-based biography content;
-- final contact content;
+- contact forms, scheduling integrations, copied-email controls, and analytics;
+- final copy polish and downloadable CV functionality;
 - chapter-specific interaction patterns beyond shared journey progression;
 - final spacing, art direction, and visual polish;
 - Three.js, React Three Fiber, WebGL, canvas, and external 3D assets;
