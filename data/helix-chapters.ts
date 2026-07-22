@@ -1,4 +1,5 @@
 import type { ChapterName } from "@/components/JourneyChapter";
+import { experienceTracks, type ExperienceTrack } from "@/data/experience";
 import { portfolioProjects, type PortfolioProject } from "@/data/projects";
 
 export const helixChapterIds = [
@@ -50,9 +51,9 @@ export type ProjectsChapterData = HelixChapterBase & {
 };
 
 export type ExperienceChapterData = HelixChapterBase & {
-  areas: readonly string[];
   chapter: "experience";
   narrativeChapter: "proof";
+  tracks: readonly ExperienceTrack[];
 };
 
 export type ContactOption = {
@@ -125,21 +126,17 @@ export const helixChapters = [
   },
   {
     anchorId: "experience",
-    areas: [
-      "Software development and testing studies",
-      "Embedded systems and networking",
-      "Technical service and field troubleshooting",
-    ],
     chapter: "experience",
     heading: "Technical work across software, systems, and service.",
     headingId: "experience-heading",
     index: "04",
     introduction:
-      "A provisional view of the environments that have shaped how I investigate problems, verify behaviour, and support reliable outcomes.",
+      "My path into software has moved through code, connected devices, and hands-on troubleshooting. Each environment has strengthened the same habit: understand the system, isolate the problem, and verify the result.",
     label: "EXPERIENCE",
     narrativeChapter: "proof",
-    pacing: "standard",
+    pacing: "expanded",
     placement: "right",
+    tracks: experienceTracks,
   },
   {
     anchorId: "contact",

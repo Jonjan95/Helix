@@ -34,13 +34,15 @@ Each milestone should produce a coherent, testable improvement. The order can ev
 
 The current graybox connects all five journey stops with one accessible, responsive path and a reversible motion layer. Final art direction, content, node interaction, and any decision about 3D rendering remain open.
 
-## 6. Project showcases — Selected Projects content complete
+## 6. Project showcases — Selected Projects and Experience content complete
 
 - Maintain verified project data, roles, decisions, quality evidence, current status, and honest scope boundaries.
 - Preserve the featured AI-Powered Test Engineer narrative and the supporting CortexGrid and Helix hierarchy as the projects evolve.
 - Design detail routes, imagery, or deeper case-study interactions only after those content needs are verified.
 
 The first chapter-level showcase is complete: three typed project records render as semantic, responsive articles with verified public repository links and a static reduced-motion path. Detail routes, galleries, project media, repository statistics, and project-specific interactions remain deferred.
+
+Experience is the second content-complete chapter. Three typed tracks connect current software-and-quality studies, previous embedded-systems studies, and practical field troubleshooting without reproducing a chronological CV. Claims remain bounded to verified study, public project, and field-service evidence; client identities, guessed dates, exhaustive employment history, and unsupported outcomes remain excluded. The chapter reuses the expanded journey pacing role, keeps every article in semantic document flow, and introduces no Experience-specific motion. A downloadable CV remains deferred until its final content and privacy boundary are verified separately.
 
 ## 7. Accessibility and reduced motion
 

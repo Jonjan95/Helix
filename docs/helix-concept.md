@@ -34,9 +34,9 @@ The pattern is intentionally bounded rather than a generic page builder. Stops a
 
 ## Current content boundary
 
-Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects is the first content-complete destination: AI-Powered Test Engineer leads the chapter, with CortexGrid and Helix as supporting engineering evidence. Experience still establishes three provisional areas for software development and testing studies, embedded systems and networking, and technical service and field troubleshooting. Continue provides one verified GitHub route and clearly labels LinkedIn and email as pending final content.
+Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects and Experience are the first two content-complete destinations. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue provides one verified GitHub route and clearly labels LinkedIn and email as pending final content.
 
-All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Final Experience claims, personal outcomes, imagery, contact routes, and case-study interaction design require later content milestones.
+All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Experience is a professional narrative rather than a complete CV: it excludes exhaustive employment history, exact dates that are not needed and verified, client identities, inflated responsibilities, and invented business impact. Final contact routes, project imagery, and case-study interaction design require later content milestones.
 
 ## Selected Projects destination
 
@@ -47,6 +47,18 @@ Project claims are a maintained snapshot of the public source repositories, not 
 The expanded content increases the chapter's natural document height, so the existing Projects pacing profile has room to remain primary through the final supporting project. Desktop uses the available side of the path for a featured/supporting hierarchy, tablet simplifies the internal grids, and mobile stacks the same semantic articles beside the vertical path. Reduced motion exposes the identical hierarchy statically and introduces no project-specific animation.
 
 The visual review evidence is stored in [`docs/media/selected-projects`](media/selected-projects). It records the forward desktop handoffs, featured and supporting evidence, tablet and mobile compositions, repository-link target review, and the complete reduced-motion chapter.
+
+## Experience destination
+
+Experience acts as evidence for the Engineering Mindset rather than as a chronological résumé. Its three tracks move from present direction to supporting foundations: software development and quality engineering, embedded systems and connected devices, then technical service and field troubleshooting. Every track pairs a concise summary with selected evidence and a direct statement of what that environment contributes to current software and quality work.
+
+The first track receives greater typographic weight and the clearest current-state metadata. Tracks two and three remain quieter but use the same semantic vocabulary, making their relationship explicit without presenting three matching cards. Fine separators, monospace metadata, restrained environment labels, and short cyan evidence markers create one continuous reading rhythm. The shared Helix remains the only timeline-like path; Experience adds no second spine, date bubbles, logos, accordions, or hover-dependent detail.
+
+Claims are intentionally bounded. Public coursework and project sources support the current software-and-quality direction. Previous embedded studies and practical field-service work are described only within their verified high-level boundaries. The chapter names no clients or employers, guesses no dates, claims no professional software or QA employment, and does not turn study or project practice into production impact.
+
+The chapter reuses the existing expanded pacing role so its natural document height remains owned by Experience through the final field-service evidence and settles before Continue becomes primary. Desktop preserves the right-side node and connector relationship. Laptop and tablet simplify metadata before it competes with evidence, while mobile stacks every track in semantic order beside the static vertical path. Reduced motion exposes the same articles immediately and adds no Experience-specific animation or pinning.
+
+The visual review evidence is stored in [`docs/media/experience`](media/experience). It records the Projects handoff, each desktop evidence track, the Continue handoff, tablet and mobile compositions, and the complete static reduced-motion chapter.
 
 ## Motion boundary
 
@@ -73,7 +85,7 @@ The calibration resolves those issues without changing the approved journey arch
 
 Each stop now moves through five explicit visual states: `upcoming`, `approaching`, `active`, `departing`, and `passed`. The active stop receives the clearest cyan node and full content emphasis. Adjacent stops retain enough presence to explain direction, while distant stops are quieter. These states are orientation signals rather than content states; the prose and links remain readable in the document regardless of motion.
 
-Pacing is configured by chapter role instead of one universal trigger range. Environment settles quickly after entry, Engineering and Selected Projects receive longer reading spans, Experience returns to a standard cadence, and Continue has additional space to resolve the route. Desktop retains the complete spatial sequence, tablet shortens travel and separation, and mobile keeps an unpinned vertical flow with minimal movement. Reduced motion bypasses the five-state sequence and exposes every stop statically.
+Pacing is configured by chapter role instead of one universal trigger range. Environment settles quickly after entry, Engineering receives a featured span, Selected Projects and Experience reuse the expanded span for their content-complete reading intervals, and Continue has additional space to resolve the route. Desktop retains the complete spatial sequence, tablet shortens travel and separation, and mobile keeps an unpinned vertical flow with minimal movement. Reduced motion bypasses the five-state sequence and exposes every stop statically.
 
 Direct chapter fragments are restored only after ScrollTrigger has established the final document geometry. The target is placed inside its stable focus range instead of at an arbitrary pinned offset. This keeps refreshes and links to `#about`, `#skills`, `#projects`, `#experience`, and `#contact` predictable across desktop and mobile.
 
@@ -83,7 +95,8 @@ The visual review evidence is stored in [`docs/media/journey-calibration`](media
 
 - helix navigation, direct manipulation, or clickable node controls;
 - project detail routes, imagery, galleries, modals, and case-study interactions;
-- final Experience claims, outcomes, and contact content;
+- downloadable CV, exhaustive employment history, and route-based biography content;
+- final contact content;
 - chapter-specific interaction patterns beyond shared journey progression;
 - final spacing, art direction, and visual polish;
 - Three.js, React Three Fiber, WebGL, canvas, and external 3D assets;
