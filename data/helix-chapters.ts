@@ -1,4 +1,5 @@
 import type { ChapterName } from "@/components/JourneyChapter";
+import { contactRoutes, type ContactRoute } from "@/data/contact";
 import { experienceTracks, type ExperienceTrack } from "@/data/experience";
 import { portfolioProjects, type PortfolioProject } from "@/data/projects";
 
@@ -56,16 +57,13 @@ export type ExperienceChapterData = HelixChapterBase & {
   tracks: readonly ExperienceTrack[];
 };
 
-export type ContactOption = {
-  href?: string;
-  label: string;
-  note: string;
-};
-
 export type ContactChapterData = HelixChapterBase & {
   chapter: "contact";
+  closing: string;
+  direction: string;
+  directionLabel: string;
   narrativeChapter: "future";
-  options: readonly ContactOption[];
+  routes: readonly ContactRoute[];
 };
 
 export type HelixChapterData =
@@ -141,29 +139,19 @@ export const helixChapters = [
   {
     anchorId: "contact",
     chapter: "contact",
+    closing: "The path remains open.",
+    direction:
+      "Open to conversations about LIA, junior software and QA opportunities, test automation, and practical technical collaboration.",
+    directionLabel: "CURRENT DIRECTION",
     heading: "Let’s build something reliable.",
     headingId: "contact-heading",
     index: "05",
     introduction:
-      "The journey ends with an open path: a quiet invitation to continue the conversation around useful software, quality, and thoughtful systems.",
+      "I’m currently developing toward roles in software development, testing, and quality engineering. If my work or background feels relevant, the next step can be a conversation.",
     label: "CONTINUE",
     narrativeChapter: "future",
-    options: [
-      {
-        href: "https://github.com/Jonjan95",
-        label: "GitHub",
-        note: "Inspect public work",
-      },
-      {
-        label: "LinkedIn",
-        note: "Profile link pending final content",
-      },
-      {
-        label: "Email",
-        note: "Contact route pending final content",
-      },
-    ],
     pacing: "exit",
     placement: "left",
+    routes: contactRoutes,
   },
 ] as const satisfies readonly HelixChapterData[];
