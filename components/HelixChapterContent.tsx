@@ -1,3 +1,4 @@
+import { ContactRoutes } from "@/components/ContactRoutes";
 import { ExperienceTracks } from "@/components/ExperienceTracks";
 import type { HelixChapterData } from "@/data/helix-chapters";
 import { ProjectShowcase } from "@/components/ProjectShowcase";
@@ -69,28 +70,14 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
   }
 
   return (
-    <div className={styles.content}>
+    <div className={`${styles.content} ${styles.contactContent}`}>
       <ChapterHeader chapter={chapter} />
-      <ul className={styles.contactList} aria-label="Contact options">
-        {chapter.options.map((option) => (
-          <li key={option.label}>
-            {option.href ? (
-              <a
-                href={option.href}
-                aria-label="View Jonjan95’s public GitHub profile"
-              >
-                <span>{option.label}</span>
-                <small>{option.note}</small>
-              </a>
-            ) : (
-              <div>
-                <span>{option.label}</span>
-                <small>{option.note}</small>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+      <ContactRoutes
+        closing={chapter.closing}
+        direction={chapter.direction}
+        directionLabel={chapter.directionLabel}
+        routes={chapter.routes}
+      />
     </div>
   );
 }
