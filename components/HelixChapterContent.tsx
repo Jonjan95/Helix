@@ -1,3 +1,4 @@
+import { ExperienceTracks } from "@/components/ExperienceTracks";
 import type { HelixChapterData } from "@/data/helix-chapters";
 import { ProjectShowcase } from "@/components/ProjectShowcase";
 import styles from "@/styles/HelixChapterContent.module.css";
@@ -60,16 +61,9 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
 
   if (chapter.chapter === "experience") {
     return (
-      <div className={styles.content}>
+      <div className={`${styles.content} ${styles.experienceContent}`}>
         <ChapterHeader chapter={chapter} />
-        <ul className={styles.experienceList}>
-          {chapter.areas.map((area, index) => (
-            <li key={area}>
-              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              {area}
-            </li>
-          ))}
-        </ul>
+        <ExperienceTracks tracks={chapter.tracks} />
       </div>
     );
   }

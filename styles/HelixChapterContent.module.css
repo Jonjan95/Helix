@@ -7,6 +7,11 @@
   max-width: 37rem;
 }
 
+.experienceContent {
+  width: 100%;
+  max-width: 37rem;
+}
+
 .eyebrow {
   display: flex;
   gap: 1rem;
@@ -55,7 +60,6 @@
 }
 
 .principles,
-.experienceList,
 .contactList {
   margin: 2rem 0 0;
   padding: 0;
@@ -298,23 +302,155 @@
   border-left: 1px solid rgb(244 240 232 / 0.1);
 }
 
-.experienceList {
+.experienceTracks {
+  margin-top: clamp(2.75rem, 5vw, 4rem);
+}
+
+.experienceTrack {
+  padding: 2rem 0 2.75rem;
   border-top: 1px solid rgb(244 240 232 / 0.14);
 }
 
-.experienceList li {
-  display: grid;
-  gap: 1rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid rgb(244 240 232 / 0.1);
-  color: var(--color-muted);
-  grid-template-columns: 2.5rem minmax(0, 1fr);
+.experienceTrack[data-experience-current="true"] {
+  padding-top: 2.5rem;
+  border-top-color: rgb(105 211 231 / 0.52);
 }
 
-.experienceList span {
-  color: var(--color-accent);
+.experienceTrackHeader {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.experienceIdentity,
+.experienceTimeframe,
+.experienceEvidence h4,
+.experiencePerspective span {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.experienceIdentity {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 20rem;
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.experienceIdentity > span:first-child,
+.experienceTrack[data-experience-current="true"] .experienceTimeframe {
+  color: var(--color-accent);
+}
+
+.experienceTimeframe {
+  flex: 0 0 auto;
+  max-width: 12rem;
+  margin: 0;
+  color: rgb(168 173 178 / 0.78);
+  text-align: right;
+}
+
+.experienceTrack h3 {
+  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  font-weight: 460;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.experienceTrack[data-experience-current="true"] h3 {
+  font-size: clamp(2.2rem, 3.7vw, 3.35rem);
+}
+
+.experienceSummary {
+  max-width: 35rem;
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  letter-spacing: -0.012em;
+  line-height: 1.6;
+}
+
+.experienceEvidence {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(244 240 232 / 0.1);
+}
+
+.experienceEvidence h4 {
+  margin: 0 0 0.9rem;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.experienceEvidence ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.experienceEvidence li {
+  position: relative;
+  padding-left: 1rem;
+  color: var(--color-muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.experienceEvidence li + li {
+  margin-top: 0.7rem;
+}
+
+.experienceEvidence li::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 0.4rem;
+  height: 1px;
+  background: rgb(105 211 231 / 0.72);
+  content: "";
+}
+
+.experienceEnvironments {
+  display: flex;
+  gap: 0.45rem 0.7rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+  line-height: 1.5;
+  list-style: none;
+  flex-wrap: wrap;
+  text-transform: uppercase;
+}
+
+.experienceEnvironments li + li::before {
+  margin-right: 0.7rem;
+  color: rgb(168 173 178 / 0.52);
+  content: "/";
+}
+
+.experiencePerspective {
+  margin: 1.6rem 0 0;
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 1px solid rgb(105 211 231 / 0.42);
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.experiencePerspective span {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: rgb(244 240 232 / 0.78);
 }
 
 .contactList {
@@ -395,6 +531,20 @@
   .projectHeader {
     display: grid;
     gap: 0.6rem;
+  }
+
+  .experienceTrackHeader {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .experienceTimeframe {
+    max-width: none;
+    text-align: left;
+  }
+
+  .experienceTrack[data-experience-current="true"] h3 {
+    font-size: clamp(2.1rem, 10vw, 3rem);
   }
 
   .projectStatus {
