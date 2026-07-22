@@ -67,6 +67,36 @@ const experienceTracks = [
   },
 ] as const;
 
+const contactRoutes = [
+  {
+    accessibleName:
+      "Explore Jonathan Jansson's public repositories on GitHub",
+    href: "https://github.com/Jonjan95",
+    id: "github",
+    label: "GitHub",
+    primary: true,
+    type: "external",
+  },
+  {
+    accessibleName:
+      "View Jonathan Jansson's professional profile on LinkedIn",
+    href: "https://se.linkedin.com/in/jonathan-jansson-b94783270",
+    id: "linkedin",
+    label: "LinkedIn",
+    primary: false,
+    type: "external",
+  },
+  {
+    accessibleName:
+      "Email Jonathan Jansson about LIA, junior opportunities, or technical collaboration",
+    href: "mailto:jonis.jansson@hotmail.com",
+    id: "email",
+    label: "Email",
+    primary: false,
+    type: "email",
+  },
+] as const;
+
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -231,11 +261,30 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   await expect(experience.locator("[data-client], [data-employer]")).toHaveCount(0);
 
   const contact = page.getByTestId("journey-chapter-contact");
-  await expect(
-    contact.getByRole("link", { name: "View Jonjan95’s public GitHub profile" }),
-  ).toHaveAttribute("href", "https://github.com/Jonjan95");
-  await expect(contact.getByText("Profile link pending final content")).toBeAttached();
-  await expect(contact.getByText("Contact route pending final content")).toBeAttached();
+  const contactItems = contact.locator("[data-contact-route]");
+  await expect(contactItems).toHaveCount(3);
+  expect(
+    await contactItems.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("data-contact-route")),
+    ),
+  ).toEqual(contactRoutes.map(({ id }) => id));
+
+  for (const route of contactRoutes) {
+    const item = contact.locator(`[data-contact-route="${route.id}"]`);
+    const link = item.getByRole("link", { name: route.accessibleName });
+    await expect(item).toHaveAttribute("data-contact-type", route.type);
+    await expect(item).toHaveAttribute(
+      "data-contact-primary",
+      route.primary ? "true" : "false",
+    );
+    await expect(item.getByText(route.label, { exact: true })).toBeAttached();
+    await expect(link).toHaveAttribute("href", route.href);
+  }
+  await expect(contact.getByRole("list", { name: "Contact routes" })).toHaveCount(1);
+  await expect(contact.getByRole("link")).toHaveCount(3);
+  await expect(contact.getByRole("button")).toHaveCount(0);
+  await expect(contact.locator('a[href="#"]')).toHaveCount(0);
+  await expect(contact.getByText("The path remains open.")).toBeAttached();
 
   for (const id of ["projects", "experience"]) {
     const section = page.locator(`#${id}`);
@@ -420,6 +469,29 @@ test("repository links follow a meaningful keyboard sequence", async ({ page }) 
   );
 });
 
+test("contact routes follow a meaningful keyboard sequence", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const focusedContactRoutes: string[] = [];
+  for (
+    let attempt = 0;
+    attempt < 16 && focusedContactRoutes.length < contactRoutes.length;
+    attempt += 1
+  ) {
+    await page.keyboard.press("Tab");
+    const routeId = await page.evaluate(() =>
+      document.activeElement
+        ?.closest("[data-contact-route]")
+        ?.getAttribute("data-contact-route"),
+    );
+    if (routeId) {
+      focusedContactRoutes.push(routeId);
+    }
+  }
+
+  expect(focusedContactRoutes).toEqual(contactRoutes.map(({ id }) => id));
+});
+
 test("keeps every Experience track within the Experience interval", async ({
   page,
 }) => {
@@ -476,6 +548,63 @@ test("keeps every Experience track within the Experience interval", async ({
     .getByRole("link", { name: "View Helix on GitHub" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(journey).toHaveAttribute("data-active-chapter", "projects");
+});
+
+test("keeps every contact route within the Continue interval", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const journey = page.getByTestId("helix-journey");
+  const experience = page.getByTestId("journey-chapter-experience");
+  const contact = page.getByTestId("journey-chapter-contact");
+  const firstRoute = contact.locator('[data-contact-route="github"]');
+
+  await experience
+    .locator('[data-experience-track="field-troubleshooting"]')
+    .evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+  await expect(journey).toHaveAttribute("data-active-chapter", "experience");
+
+  await firstRoute.evaluate((element) => {
+    const targetTop =
+      element.getBoundingClientRect().top +
+      window.scrollY -
+      window.innerHeight * 0.86;
+    window.scrollTo({ top: targetTop, behavior: "auto" });
+  });
+  await expect(journey).toHaveAttribute("data-active-chapter", "contact");
+  await expect(firstRoute).toBeVisible();
+
+  for (const route of contactRoutes) {
+    const item = contact.locator(`[data-contact-route="${route.id}"]`);
+    await item.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(journey).toHaveAttribute("data-active-chapter", "contact");
+    await expect(contact).toHaveAttribute("data-journey-state", "active");
+    await expect(item.getByRole("link")).toBeVisible();
+  }
+
+  await page
+    .getByTestId("journey-continuation")
+    .evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+  await expect(page.getByTestId("journey-continuation")).toBeVisible();
+  await expect(journey).toHaveAttribute("data-active-chapter", "contact");
+
+  await firstRoute.evaluate((element) =>
+    element.scrollIntoView({ block: "center", behavior: "auto" }),
+  );
+  await expect(journey).toHaveAttribute("data-active-chapter", "contact");
+
+  await experience
+    .locator('[data-experience-track="field-troubleshooting"]')
+    .evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+  await expect(journey).toHaveAttribute("data-active-chapter", "experience");
 });
 
 test("restores calibrated chapter focus for direct links", async ({ page }) => {
@@ -569,6 +698,21 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
     );
     await expect(article).toBeVisible();
   }
+
+  const reducedContactRoutes = page
+    .getByTestId("journey-chapter-contact")
+    .locator("[data-contact-route]");
+  await expect(reducedContactRoutes).toHaveCount(3);
+  for (const route of contactRoutes) {
+    const link = reducedContactRoutes
+      .filter({ has: page.getByText(route.label, { exact: true }) })
+      .getByRole("link");
+    await link.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("href", route.href);
+  }
   await expectNoHorizontalOverflow(page);
 });
 
@@ -647,6 +791,39 @@ test("mobile stacks Experience tracks in semantic order", async ({ page }) => {
     await expect(article).toBeVisible();
     await expectNoHorizontalOverflow(page);
   }
+});
+
+test("mobile stacks usable contact routes in semantic order", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#contact", { waitUntil: "domcontentloaded" });
+
+  const routes = page
+    .getByTestId("journey-chapter-contact")
+    .locator("[data-contact-route]");
+  await expect(routes).toHaveCount(3);
+
+  const layout = await routes.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      const link = element.querySelector("a");
+      return {
+        height: link?.getBoundingClientRect().height ?? 0,
+        id: element.getAttribute("data-contact-route"),
+        left: bounds.left,
+        top: bounds.top,
+      };
+    }),
+  );
+  expect(layout.map(({ id }) => id)).toEqual(contactRoutes.map(({ id }) => id));
+  expect(layout.map(({ top }) => top)).toEqual(
+    [...layout.map(({ top }) => top)].sort((a, b) => a - b),
+  );
+  expect(layout.every(({ height }) => height >= 44)).toBe(true);
+  const horizontalOffset =
+    Math.max(...layout.map(({ left }) => left)) -
+    Math.min(...layout.map(({ left }) => left));
+  expect(horizontalOffset).toBeLessThan(2);
+  await expectNoHorizontalOverflow(page);
 });
 
 for (const viewport of [
