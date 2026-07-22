@@ -46,6 +46,27 @@ const projectIds = {
   Helix: "helix",
 } as const;
 
+const experienceTracks = [
+  {
+    category: "Software & quality",
+    current: true,
+    id: "software-quality",
+    title: "Software development and quality engineering",
+  },
+  {
+    category: "Embedded & connected systems",
+    current: false,
+    id: "embedded-connected",
+    title: "Embedded systems and connected devices",
+  },
+  {
+    category: "Technical service",
+    current: false,
+    id: "field-troubleshooting",
+    title: "Technical service and field troubleshooting",
+  },
+] as const;
+
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -174,15 +195,40 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   expect(new Set(ids).size).toBe(ids.length);
 
   const experience = page.getByTestId("journey-chapter-experience");
-  for (const area of [
-    "Software development and testing studies",
-    "Embedded systems and networking",
-    "Technical service and field troubleshooting",
-  ]) {
+  const experienceArticles = experience.locator("[data-experience-track]");
+  await expect(experienceArticles).toHaveCount(3);
+  expect(
+    await experienceArticles.evaluateAll((elements) =>
+      elements.map((element) =>
+        element.getAttribute("data-experience-track"),
+      ),
+    ),
+  ).toEqual(experienceTracks.map(({ id }) => id));
+
+  for (const track of experienceTracks) {
+    const article = experience.locator(
+      `[data-experience-track="${track.id}"]`,
+    );
+    await expect(article).toHaveAttribute(
+      "data-experience-current",
+      track.current ? "true" : "false",
+    );
     await expect(
-      experience.locator("li").filter({ hasText: area }),
+      article.locator(`[data-experience-category="${track.category}"]`),
+    ).toHaveCount(1);
+    await expect(
+      article.getByRole("heading", { level: 3, name: track.title }),
     ).toBeAttached();
+    await expect(article.getByRole("heading", {
+      level: 4,
+      name: "Evidence in practice",
+    })).toBeAttached();
+    await expect(article.locator("section li")).toHaveCount(3);
+    await expect(article.getByText("What it contributes now")).toBeAttached();
   }
+  await expect(experience.getByRole("link")).toHaveCount(0);
+  await expect(experience.getByRole("button")).toHaveCount(0);
+  await expect(experience.locator("[data-client], [data-employer]")).toHaveCount(0);
 
   const contact = page.getByTestId("journey-chapter-contact");
   await expect(
@@ -326,7 +372,7 @@ test("keeps the complete project evidence within the Projects interval", async (
   await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
 
   await projects
-    .locator('[data-project="helix"]')
+    .getByRole("link", { name: "View Helix on GitHub" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(journey).toHaveAttribute("data-active-chapter", "projects");
   await expect(projects).toHaveAttribute("data-journey-state", "active");
@@ -372,6 +418,64 @@ test("repository links follow a meaningful keyboard sequence", async ({ page }) 
       (project) => `View ${project} on GitHub`,
     ),
   );
+});
+
+test("keeps every Experience track within the Experience interval", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const journey = page.getByTestId("helix-journey");
+  const projects = page.getByTestId("journey-chapter-projects");
+  const experience = page.getByTestId("journey-chapter-experience");
+  const contact = page.getByTestId("journey-chapter-contact");
+  const firstTrack = experience.locator(
+    '[data-experience-track="software-quality"]',
+  );
+
+  await projects
+    .getByRole("link", { name: "View Helix on GitHub" })
+    .evaluate((element) => element.scrollIntoView({ block: "center" }));
+  await expect(journey).toHaveAttribute("data-active-chapter", "projects");
+
+  await firstTrack.evaluate((element) => {
+    const targetTop =
+      element.getBoundingClientRect().top +
+      window.scrollY -
+      window.innerHeight * 0.86;
+    window.scrollTo({ top: targetTop, behavior: "auto" });
+  });
+  await expect(journey).toHaveAttribute("data-active-chapter", "experience");
+  await expect(firstTrack).toBeVisible();
+
+  for (const track of experienceTracks) {
+    const article = experience.locator(
+      `[data-experience-track="${track.id}"]`,
+    );
+    await article.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(journey).toHaveAttribute("data-active-chapter", "experience");
+    await expect(experience).toHaveAttribute("data-journey-state", "active");
+    await expect(article).toBeVisible();
+    await expect(contact).not.toHaveAttribute("data-journey-state", "active");
+  }
+
+  await centerChapter(page, "contact");
+  await expect(journey).toHaveAttribute("data-active-chapter", "contact");
+
+  await experience
+    .locator('[data-experience-track="field-troubleshooting"]')
+    .evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+  await expect(journey).toHaveAttribute("data-active-chapter", "experience");
+
+  await projects
+    .getByRole("link", { name: "View Helix on GitHub" })
+    .evaluate((element) => element.scrollIntoView({ block: "center" }));
+  await expect(journey).toHaveAttribute("data-active-chapter", "projects");
 });
 
 test("restores calibrated chapter focus for direct links", async ({ page }) => {
@@ -450,6 +554,21 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
       page.getByRole("link", { name: `View ${project} on GitHub` }),
     ).toBeVisible();
   }
+
+  const reducedExperienceTracks = page
+    .getByTestId("journey-chapter-experience")
+    .locator("[data-experience-track]");
+  await expect(reducedExperienceTracks).toHaveCount(3);
+  for (const track of experienceTracks) {
+    const article = reducedExperienceTracks.filter({
+      has: page.getByRole("heading", { level: 3, name: track.title }),
+    });
+    await centerChapter(page, "experience");
+    await article.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(article).toBeVisible();
+  }
   await expectNoHorizontalOverflow(page);
 });
 
@@ -486,6 +605,48 @@ test("mobile stacks projects in semantic order", async ({ page }) => {
     );
   expect(repositoryLinkHeights.every((height) => height >= 44)).toBe(true);
   await expectNoHorizontalOverflow(page);
+});
+
+test("mobile stacks Experience tracks in semantic order", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#experience", { waitUntil: "domcontentloaded" });
+
+  const tracks = page
+    .getByTestId("journey-chapter-experience")
+    .locator("[data-experience-track]");
+  await expect(tracks).toHaveCount(3);
+
+  const positions = await tracks.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return {
+        id: element.getAttribute("data-experience-track"),
+        left: bounds.left,
+        top: bounds.top,
+      };
+    }),
+  );
+  expect(positions.map(({ id }) => id)).toEqual(
+    experienceTracks.map(({ id }) => id),
+  );
+  expect(positions.map(({ top }) => top)).toEqual(
+    [...positions.map(({ top }) => top)].sort((a, b) => a - b),
+  );
+  const horizontalOffset =
+    Math.max(...positions.map(({ left }) => left)) -
+    Math.min(...positions.map(({ left }) => left));
+  expect(horizontalOffset).toBeLessThan(2);
+
+  for (const track of experienceTracks) {
+    const article = tracks.filter({
+      has: page.getByRole("heading", { level: 3, name: track.title }),
+    });
+    await article.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(article).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+  }
 });
 
 for (const viewport of [
