@@ -301,12 +301,19 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     "",
   );
 
-  const skipLink = page.getByRole("link", { name: "Skip to portfolio content" });
+  const skipLink = page.getByRole("link", { name: "Skip to portfolio journey" });
   await page.keyboard.press("Tab");
   await expect(skipLink).toBeFocused();
   await expect(skipLink).toBeVisible();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/#main-content$/);
+  await expect(page).toHaveURL(/#about$/);
+  await expect(page.getByTestId("helix-journey")).toHaveAttribute(
+    "data-active-chapter",
+    "environment",
+  );
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Inside the system" }),
+  ).toBeVisible();
 });
 
 test("progresses through every active node and reverses to the workspace", async ({
@@ -828,9 +835,11 @@ test("mobile stacks usable contact routes in semantic order", async ({ page }) =
 
 for (const viewport of [
   { name: "desktop", width: 1440, height: 1000 },
+  { name: "compact desktop", width: 1280, height: 800 },
   { name: "laptop", width: 1024, height: 768 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "mobile", width: 390, height: 844 },
+  { name: "narrow mobile", width: 360, height: 800 },
 ]) {
   test(`keeps the complete journey in bounds at ${viewport.name} size`, async ({
     page,
@@ -855,12 +864,17 @@ for (const viewport of [
 
     expect(chapterPositions).toEqual([...chapterPositions].sort((a, b) => a - b));
 
-    if (viewport.name === "mobile") {
+    if (viewport.width <= 390) {
       await expect(page.locator(".pin-spacer")).toHaveCount(0);
       const positions = await page.locator("[data-journey-chapter]").evaluateAll(
         (elements) => elements.map((element) => getComputedStyle(element).position),
       );
       expect(positions.every((position) => position === "relative")).toBe(true);
+
+      const entryLinkHeight = await page
+        .getByRole("link", { name: "Scroll to About" })
+        .evaluate((link) => link.getBoundingClientRect().height);
+      expect(entryLinkHeight).toBeGreaterThanOrEqual(44);
     }
   });
 }
