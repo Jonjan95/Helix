@@ -103,6 +103,12 @@ Direct chapter fragments are restored only after ScrollTrigger has established t
 
 The visual review evidence is stored in [`docs/media/journey-calibration`](media/journey-calibration). It includes the desktop handoff and every focused stop, a reverse transition, tablet and mobile compositions, and the complete reduced-motion route. These images record the calibrated graybox; they are not final art-direction references.
 
+## Full journey audit
+
+The first portfolio-wide audit reviewed the calibrated path after Projects, Experience, and Continue became content complete. Forward and reverse ownership remained coherent, all approved pacing roles continued to fit their content, and no new motion threshold or controller was justified. The audit therefore preserves the current `entry`, `featured`, `expanded`, and `exit` distribution.
+
+The selected refinements are outside the motion model: the skip link now bypasses the immersive entry, the visible mobile entry cue has a touch-safe target, and the responsive regression matrix includes the required compact-desktop and narrow-mobile sizes. Link, console, reduced-motion, and static-generation checks found no journey-specific defect. Findings and deferred content work are maintained in the [full journey audit](full-journey-audit.md), with visual evidence in [`docs/media/full-journey-audit`](media/full-journey-audit).
+
 ## Intentionally deferred
 
 - helix navigation, direct manipulation, or clickable node controls;
