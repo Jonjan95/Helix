@@ -58,6 +58,8 @@ Selected Projects, Experience, and Continue are the first three content-complete
 
 Project claims and links were checked against current public repositories. Experience claims remain scoped to verified study, project, and field-service boundaries: it does not imply professional software employment, completed ongoing education, named client work, or invented outcomes. Contact publishing is similarly narrow: the chapter exposes only intentionally public professional routes and adds no form, tracking service, phone number, address, or private social account. Tablet and mobile simplify the completed chapter compositions in normal document flow, while reduced-motion visitors receive the entire static sequence without camera movement, chapter motion, or pinning. Project detail routes, a downloadable CV, exhaustive employment history, final copy polish, interactive nodes, final visual polish, and any 3D implementation remain intentionally deferred. See [the helix concept](docs/helix-concept.md) for the current boundary and [the roadmap](docs/roadmap.md) for the planned sequence.
 
+The first portfolio-wide journey audit is complete. It verified the forward and reverse sequence, all current routes, six representative viewport sizes, reduced motion, semantic hierarchy, console safety, and static generation. The focused refinements correct the skip-link destination and the mobile entry cue’s touch target; the established chapter pacing and centralized motion architecture did not require changes. See [the full journey audit](docs/full-journey-audit.md) for prioritized findings and deferred content work.
+
 ## Project documentation
 
 - [Design system](docs/design-system.md) — primary visual and interaction reference
@@ -65,4 +67,5 @@ Project claims and links were checked against current public repositories. Exper
 - [Design principles](docs/design-principles.md)
 - [Architecture](docs/architecture.md)
 - [Helix concept](docs/helix-concept.md)
+- [Full journey audit](docs/full-journey-audit.md)
 - [Roadmap](docs/roadmap.md)

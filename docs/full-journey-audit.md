@@ -78,6 +78,8 @@ Verified destinations:
 
 No `href="#"`, empty anchor, fake button, malformed `mailto:`, or unimplemented route claim was found. External links consistently use native same-tab navigation.
 
+The GitHub profile and all three repositories returned HTTP 200 during the final audit. The LinkedIn URL remains the identity-matched public route verified for PR #13; LinkedIn returned its automated-request status 999 to the command-line probe, so that response is recorded as an automation limitation rather than evidence of a broken destination. The email route is a valid native `mailto:` value and requires the visitor to have a mail client configured.
+
 ## Performance and console findings
 
 - `/` remains statically prerendered.
@@ -85,6 +87,39 @@ No `href="#"`, empty anchor, fake button, malformed `mailto:`, or unimplemented 
 - The implementation retains one scoped GSAP context, one responsive match-media boundary, one path timeline, and one chapter timeline per stop.
 - No duplicate scroll listener, runtime profile request, hydration mismatch, large runtime asset, or new dependency was found.
 - Baseline browser review produced 0 warnings and 0 errors.
+
+## Final validation
+
+`npm run validate` passed after the selected fixes:
+
+- `npm run lint` — passed;
+- `npm run typecheck` — passed;
+- `npm run build` — passed; `/` remains statically prerendered;
+- `npm run test:e2e` — passed; 18/18 Chromium tests.
+
+The final browser review reported 0 console warnings and 0 console errors. All six approved viewport sizes reported zero horizontal overflow. The 360px entry cue measured 44px high after the fix, mobile remained unpinned, reduced motion exposed the complete static route, and forward and reverse ownership checks passed.
+
+## Visual evidence
+
+The 16-image review sequence and forward/reverse recording are stored in [`docs/media/full-journey-audit`](media/full-journey-audit):
+
+1. Desktop Arrival.
+2. Desktop workspace entry.
+3. Engineering transitioning toward Projects.
+4. Projects active.
+5. Projects transitioning toward Experience.
+6. Experience active.
+7. Experience transitioning toward Continue.
+8. Continue and the final path ending.
+9. Laptop Projects.
+10. Laptop Experience.
+11. Tablet Experience.
+12. Mobile early journey.
+13. Mobile Projects.
+14. Mobile Experience.
+15. Mobile Continue and final ending.
+16. Complete reduced-motion sequence.
+17. Forward-and-reverse journey recording (`.webm`).
 
 ## Fixes completed in this PR
 

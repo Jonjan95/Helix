@@ -46,17 +46,21 @@ Experience is the second content-complete chapter. Three typed tracks connect cu
 
 Continue is the third content-complete chapter. A purpose-built contact model renders verified GitHub, LinkedIn, and professional email routes as native links in one calm semantic list. GitHub receives restrained evidence emphasis; every route remains keyboard-reachable, touch-safe, and immediately visible with reduced motion. The chapter retains the exit pacing role and visible path continuation without adding a footer panel, contact form, service integration, or Continue-specific motion. Final copy polish, scheduling tools, analytics, and downloadable CV functionality remain deferred.
 
-## 7. Accessibility and reduced motion
+## 7. Accessibility and reduced motion — first portfolio-wide audit complete
 
-- Audit keyboard navigation, focus order, headings, landmarks, and labels.
-- Design and test the complete reduced-motion journey.
+- Continue auditing keyboard navigation, focus order, headings, landmarks, labels, zoom, and screen-reader output.
+- Maintain and extend the tested complete reduced-motion journey.
 - Test contrast, zoom, screen readers, and alternate input methods.
 
-## 8. Testing and performance
+The first complete audit verified semantic order, direct chapter routes, link behaviour, responsive bounds, reduced-motion visibility, and forward/reverse ownership. It corrected the skip destination and the undersized mobile entry cue without changing the calibrated motion system. Final screen-reader, browser-zoom, alternate-input, and cross-browser testing remains for the pre-deployment audit.
 
-- Expand end-to-end coverage across responsive presentations.
+## 8. Testing and performance — journey baseline complete
+
+- Maintain end-to-end coverage across the six approved responsive presentations.
 - Add automated accessibility checks and focused interaction tests.
 - Measure Core Web Vitals, animation smoothness, and asset weight.
+
+The current suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. Performance measurement and broader browser coverage remain separate milestones.
 
 ## 9. Final content and deployment
 
