@@ -6,7 +6,7 @@ This note defines the current boundary of the helix journey. It should be read w
 
 The helix is the structural spine of the digital journey. It makes the relationship between chapters spatial: the visitor enters the workspace, follows one continuous path, pauses where an idea earns attention, and sees that the path continues.
 
-The integrated journey now proves the complete narrative route without presenting every chapter or the visual composition as final:
+The integrated journey now carries a content-complete narrative route without presenting the visual composition as final:
 
 `workspace → Environment → Engineering → Selected Projects → Experience → Continue`
 
@@ -34,7 +34,9 @@ The pattern is intentionally bounded rather than a generic page builder. Stops a
 
 ## Current content boundary
 
-Environment introduces the shared field. Engineering explains the quality mindset. Selected Projects, Experience, and Continue are the first three content-complete destinations. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue resolves the current journey into verified GitHub, LinkedIn, and professional email routes while the path remains visibly open.
+Arrival identifies Jonathan Jansson, his Malmö context, and his current software-development studies with a testing and quality focus. Environment then explains the working conditions behind that direction through structured iteration, visible evidence, and practical experimentation. Engineering turns those habits into a compact Understand → Isolate → Observe → Verify sequence and closes with a direct handoff into Projects. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue resolves the current journey into verified GitHub, LinkedIn, and professional email routes while the path remains visibly open.
+
+The early chapters establish a lens rather than trying to prove every claim immediately. Arrival remains the lightest composition, Environment uses three concise principle rows, and Engineering gains a stronger progressive rhythm before the denser project evidence. The copy stays within verified study, project, and troubleshooting boundaries: it does not claim completed studies, professional software or QA employment, seniority, production ownership, or quantified impact.
 
 All nodes remain stops along the path, not interactive controls. The project destination uses normal repository links, but does not imply detail routes, galleries, production usage, or outcomes that do not exist. Experience is a professional narrative rather than a complete CV: it excludes exhaustive employment history, exact dates that are not needed and verified, client identities, inflated responsibilities, and invented business impact. Continue uses normal links and makes no promise of form processing, scheduling, immediate availability, or private contact channels. Project imagery and case-study interaction design require later content milestones.
 
@@ -98,6 +100,8 @@ The calibration resolves those issues without changing the approved journey arch
 Each stop now moves through five explicit visual states: `upcoming`, `approaching`, `active`, `departing`, and `passed`. The active stop receives the clearest cyan node and full content emphasis. Adjacent stops retain enough presence to explain direction, while distant stops are quieter. These states are orientation signals rather than content states; the prose and links remain readable in the document regardless of motion.
 
 Pacing is configured by chapter role instead of one universal trigger range. Environment settles quickly after entry, Engineering receives a featured span, Selected Projects and Experience reuse the expanded span for their content-complete reading intervals, and Continue has additional space to resolve the route. Desktop retains the complete spatial sequence, tablet shortens travel and separation, and mobile keeps an unpinned vertical flow with minimal movement. Reduced motion bypasses the five-state sequence and exposes every stop statically.
+
+The early-journey content pass did not change these roles. Natural document height contains all three Environment principles, all four Engineering steps, and the Projects handoff inside their owning chapters. Forward review keeps Projects secondary until the handoff is read; reverse review restores Engineering before Environment. No local trigger, dead interval, or central pacing adjustment was required.
 
 Direct chapter fragments are restored only after ScrollTrigger has established the final document geometry. The target is placed inside its stable focus range instead of at an arbitrary pinned offset. This keeps refreshes and links to `#about`, `#skills`, `#projects`, `#experience`, and `#contact` predictable across desktop and mobile.
 
