@@ -1,3 +1,4 @@
+import { arrivalIdentity } from "@/data/early-journey";
 import styles from "@/styles/Laptop.module.css";
 
 export function Laptop() {
@@ -21,11 +22,11 @@ export function Laptop() {
         <div className={styles.screen} data-motion="laptop-screen">
           <div className={styles.screenIdentity} data-motion="screen-identity">
             <span className={styles.systemLabel}>
-              JONATHAN JANSSON / PORTFOLIO
+              {arrivalIdentity.location} / Portfolio
             </span>
-            <h1 className={styles.name}>Jonathan</h1>
+            <h1 className={styles.name}>{arrivalIdentity.name}</h1>
             <span className={styles.cursor} aria-hidden="true" />
-            <span className={styles.status}>Quality · Testing · Usability</span>
+            <span className={styles.status}>Test · Quality · Reliability</span>
           </div>
 
           <div

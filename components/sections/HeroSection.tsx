@@ -1,5 +1,6 @@
 import { Laptop } from "@/components/Laptop";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
+import { arrivalIdentity } from "@/data/early-journey";
 import styles from "@/styles/HeroSection.module.css";
 
 export function HeroSection() {
@@ -15,22 +16,26 @@ export function HeroSection() {
         aria-hidden="true"
       >
         <span>01 / ENTRY</span>
-        <span>SOFTWARE · QUALITY · EXPERIENCE</span>
+        <span>{arrivalIdentity.focus}</span>
       </div>
 
       <div className={styles.visual}>
         <Laptop />
       </div>
 
-      <div className={styles.copy} data-motion="arrival-copy">
-        <p className={styles.eyebrow}>Software developer portfolio</p>
+      <div
+        className={styles.copy}
+        data-arrival-identity
+        data-motion="arrival-copy"
+      >
+        <p className={styles.eyebrow}>
+          {arrivalIdentity.location} · {arrivalIdentity.focus}
+        </p>
         <h2 id="hero-introduction" className={styles.introduction}>
-          I build thoughtful software experiences with a focus on quality,
-          usability, and reliable implementation.
+          {arrivalIdentity.title}
         </h2>
         <p className={styles.supportingText}>
-          Testing, technical problem solving, and user experience—brought
-          together with care.
+          {arrivalIdentity.summary}
         </p>
       </div>
 

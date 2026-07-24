@@ -1,5 +1,11 @@
 import type { ChapterName } from "@/components/JourneyChapter";
 import { contactRoutes, type ContactRoute } from "@/data/contact";
+import {
+  engineeringSteps,
+  environmentPrinciples,
+  type EngineeringStep,
+  type EnvironmentPrinciple,
+} from "@/data/early-journey";
 import { experienceTracks, type ExperienceTrack } from "@/data/experience";
 import { portfolioProjects, type PortfolioProject } from "@/data/projects";
 
@@ -35,14 +41,15 @@ type HelixChapterBase = {
 
 export type EnvironmentChapterData = HelixChapterBase & {
   chapter: "environment";
-  detail: string;
   narrativeChapter: "orientation";
+  principles: readonly EnvironmentPrinciple[];
 };
 
 export type EngineeringChapterData = HelixChapterBase & {
   chapter: "engineering";
+  handoff: string;
   narrativeChapter: "engineering";
-  principles: readonly string[];
+  steps: readonly EngineeringStep[];
 };
 
 export type ProjectsChapterData = HelixChapterBase & {
@@ -77,36 +84,31 @@ export const helixChapters = [
   {
     anchorId: "about",
     chapter: "environment",
-    detail:
-      "The workspace establishes one shared field for the path, its chapter stops, and the evidence that follows.",
-    heading: "Inside the system",
+    heading: "A workspace built around learning by doing.",
     headingId: "about-heading",
     index: "01",
     introduction:
-      "A guided look at how I approach software, quality, and thoughtful implementation.",
+      "I make progress through structured iteration, visible evidence, and practical experiments—not through a fixed list of tools.",
     label: "ENVIRONMENT",
     narrativeChapter: "orientation",
     pacing: "entry",
     placement: "left",
+    principles: environmentPrinciples,
   },
   {
     anchorId: "skills",
     chapter: "engineering",
-    heading: "Quality is part of the build, not a final check.",
+    handoff: "The projects below show that process in practice.",
+    heading: "Reliability starts with understanding the system.",
     headingId: "skills-heading",
     index: "02",
     introduction:
-      "I approach software through clear requirements, testable behaviour, reliable implementation, and continuous learning.",
+      "Whether the problem is in an API, a database, a connected device, or a field installation, I follow the same sequence: understand the boundaries, isolate the cause, make behaviour observable, and verify the result.",
     label: "ENGINEERING MINDSET",
     narrativeChapter: "engineering",
     pacing: "featured",
     placement: "right",
-    principles: [
-      "Understand the problem before choosing the solution.",
-      "Make behaviour testable.",
-      "Prefer clear systems over clever complexity.",
-      "Use feedback to improve the implementation.",
-    ],
+    steps: engineeringSteps,
   },
   {
     anchorId: "projects",
