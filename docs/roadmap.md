@@ -8,11 +8,13 @@ Each milestone should produce a coherent, testable improvement. The order can ev
 - Create the responsive laptop hero and semantic content sections.
 - Define the visual tokens and initial reduced-motion policy.
 
-## 2. Laptop hero refinement — in progress
+## 2. Laptop hero refinement — content complete
 
 - Replace provisional identity and introduction copy.
 - Refine the laptop proportions and responsive compositions.
 - Test hierarchy, contrast, keyboard flow, and screen-reader output.
+
+Jonathan Jansson is now the single public identity. The finite Arrival scene pairs his full name with a verified Malmö location, a study-level professional title, current testing-and-quality direction, and one concise systems-focused summary. Desktop and mobile preserve the semantic laptop, visible entry cue, one logical `h1`, and reduced-motion access without adding imagery, calls to action, or role rotation.
 
 ## 3. Scroll-driven laptop zoom — prototype complete
 
@@ -34,7 +36,7 @@ Each milestone should produce a coherent, testable improvement. The order can ev
 
 The current graybox connects all five journey stops with one accessible, responsive path and a reversible motion layer. Final art direction, content, node interaction, and any decision about 3D rendering remain open.
 
-## 6. Content destinations — Selected Projects, Experience, and Continue complete
+## 6. Content destinations — complete
 
 - Maintain verified project data, roles, decisions, quality evidence, current status, and honest scope boundaries.
 - Preserve the featured AI-Powered Test Engineer narrative and the supporting CortexGrid and Helix hierarchy as the projects evolve.
@@ -45,6 +47,8 @@ The first chapter-level showcase is complete: three typed project records render
 Experience is the second content-complete chapter. Three typed tracks connect current software-and-quality studies, previous embedded-systems studies, and practical field troubleshooting without reproducing a chronological CV. Claims remain bounded to verified study, public project, and field-service evidence; client identities, guessed dates, exhaustive employment history, and unsupported outcomes remain excluded. The chapter reuses the expanded journey pacing role, keeps every article in semantic document flow, and introduces no Experience-specific motion. A downloadable CV remains deferred until its final content and privacy boundary are verified separately.
 
 Continue is the third content-complete chapter. A purpose-built contact model renders verified GitHub, LinkedIn, and professional email routes as native links in one calm semantic list. GitHub receives restrained evidence emphasis; every route remains keyboard-reachable, touch-safe, and immediately visible with reduced motion. The chapter retains the exit pacing role and visible path continuation without adding a footer panel, contact form, service integration, or Continue-specific motion. Final copy polish, scheduling tools, analytics, and downloadable CV functionality remain deferred.
+
+Environment and Engineering Mindset complete the early journey without competing with those evidence chapters. Three typed Environment principles describe structured iteration, visible evidence, and practical experimentation. Four typed Engineering steps describe a transferable Understand, Isolate, Observe, Verify sequence, followed by one restrained handoff into Projects. Both chapters remain semantic, server rendered, responsive, static under reduced motion, and governed only by the existing centralized pacing roles.
 
 ## 7. Accessibility and reduced motion — first portfolio-wide audit complete
 
@@ -64,6 +68,6 @@ The current suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 39
 
 ## 9. Final content and deployment
 
-- Refine final copy and verify that all public content remains current.
+- Run a portfolio-wide voice and concision pass while keeping every claim verified.
 - Complete metadata, social previews, analytics decisions, and privacy review.
 - Run final cross-browser checks and deploy the production portfolio.

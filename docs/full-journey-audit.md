@@ -24,14 +24,14 @@ The review covered the laptop entry, workspace handoff, five Helix stops, direct
 | TEST-01 | Responsive regression coverage | Important | The required 1280 × 800 and 360 × 800 audit sizes are not in the automated overflow matrix. Manual review found no overflow after a fresh layout. | Add both sizes to the existing outcome-based viewport test and cover the entry-link target. | Fixed in this PR |
 | VIS-01 | Direct chapter entry | Polish | Direct fragments preserve the active node and show the chapter heading with useful preceding context, but the amount of previous-chapter content varies by chapter and viewport. | Keep the calibrated fragment restoration; revisit only if final content changes chapter height materially. | Deferred |
 | VIS-02 | Tablet density | Polish | At 768px, the alternating composition remains readable but Experience metadata and long headings use a narrow measure. No overlap or overflow occurs. | Preserve the current side relationship; re-evaluate during final visual polish rather than introducing a breakpoint-only layout rewrite. | Deferred |
-| CNT-01 | Arrival and early chapters | Content later | Arrival identity copy and the lighter Environment and Engineering chapters remain less complete than the three evidence chapters. | Address in the planned content pass; do not use spacing or motion to disguise incomplete content. | Deferred |
+| CNT-01 | Arrival and early chapters | Content later | Arrival identity copy and the lighter Environment and Engineering chapters remain less complete than the three evidence chapters. | Complete the identity, three working principles, four-step method, and Projects handoff without changing the journey architecture. | Resolved in the early-journey content pass |
 | CNT-02 | Evidence prose | Content later | Some project and experience explanations are formal and repeated evidence labels create a dense reading rhythm. Claims remain accurate and the hierarchy remains usable. | Refine tone and concision in a dedicated copy pass with claim verification. | Deferred |
 
 ## Forward journey findings
 
-- Arrival is calm, immediately identifies Jonathan, and makes the laptop the clear gateway. The entry cue is visible, but its touch target needs correction.
+- Arrival is calm, identifies Jonathan Jansson and his current study direction, and makes the laptop the clear gateway. The entry cue remains touch-safe.
 - The laptop-to-workspace handoff remains understandable and finite. No chapter is reported active before the workspace sequence begins.
-- Environment and Engineering are intentionally lighter than later chapters. Their spacing creates progression without a broken or trapped interval.
+- Environment and Engineering are content-complete while remaining intentionally lighter than later evidence chapters. Three working principles lead into a four-step reasoning sequence and a clear Projects handoff without a broken or trapped interval.
 - Projects retains a clear featured/supporting hierarchy. The featured project carries the deepest narrative; the two supporting projects remain visibly subordinate and owned by Projects.
 - Experience preserves Track 01 emphasis while keeping Tracks 02 and 03 discoverable. The final field-service perspective is read before Continue becomes dominant.
 - Continue lowers density appropriately, keeps all three routes readable, and leaves the path visibly open without excessive final dead space.
@@ -40,7 +40,7 @@ The review covered the laptop entry, workspace handoff, five Helix stops, direct
 ## Reverse journey findings
 
 - Continue restores to Experience before Experience restores to Projects.
-- Projects restores before Engineering, and the earlier nodes return with coherent `active`, `upcoming`, and `passed` states.
+- Projects restores before Engineering, and Engineering restores before Environment with coherent `active`, `upcoming`, and `passed` states.
 - No content remains emphasized under the wrong node during the reviewed reverse sequence.
 - The laptop and workspace return without an invalid transform, blank interval, or path jump.
 - Reverse behaviour uses the same centralized state model as forward travel; no reverse-specific fix is required.
@@ -56,7 +56,7 @@ The review covered the laptop entry, workspace handoff, five Helix stops, direct
 
 ## Accessibility findings
 
-- One logical `h1` identifies Jonathan; chapter headings use `h2`, and project and experience titles use `h3`.
+- One logical `h1` identifies Jonathan Jansson; chapter headings use `h2`, and early principles, method steps, project titles, and experience titles use `h3`.
 - Landmarks, semantic articles, lists, native links, unique IDs, and document order remain coherent.
 - The Helix SVG is decorative, non-focusable, and hidden from assistive technology.
 - Focus treatment remains visible and uses the approved cyan outline.
@@ -95,9 +95,11 @@ The GitHub profile and all three repositories returned HTTP 200 during the final
 - `npm run lint` — passed;
 - `npm run typecheck` — passed;
 - `npm run build` — passed; `/` remains statically prerendered;
-- `npm run test:e2e` — passed; 18/18 Chromium tests.
+- `npm run test:e2e` — passed; 20/20 Chromium tests after the early-journey follow-up.
 
 The final browser review reported 0 console warnings and 0 console errors. All six approved viewport sizes reported zero horizontal overflow. The 360px entry cue measured 44px high after the fix, mobile remained unpinned, reduced motion exposed the complete static route, and forward and reverse ownership checks passed.
+
+The early-journey follow-up was reviewed from base commit `5a9940a4ea76af82ea52d6b380dcbf3aad41fa3f`. Arrival, Environment, and Engineering Mindset are content-complete; their typed records live in `data/early-journey.ts`. The established `entry` and `featured` pacing roles remain unchanged because natural document height contains all new content coherently. Visual evidence is stored in [`docs/media/arrival-early-journey`](media/arrival-early-journey).
 
 ## Visual evidence
 
@@ -131,8 +133,7 @@ The 16-image review sequence and forward/reverse recording are stored in [`docs/
 ## Intentionally deferred
 
 - portfolio-wide voice and concision work;
-- final Arrival identity and biography copy;
-- content completion for Environment and Engineering;
+- full portfolio-wide voice and concision work;
 - tablet metadata polish that does not currently impair use;
 - project detail routes, imagery, and case-study interactions;
 - downloadable CV and exhaustive employment history;
@@ -141,4 +142,4 @@ The 16-image review sequence and forward/reverse recording are stored in [`docs/
 
 ## Remaining recommendations
 
-The next milestone should be a focused Arrival and early-journey content pass. It should replace the remaining provisional identity and early-chapter copy, confirm the Orientation-to-Engineering narrative handoff, and re-run this audit without changing the established motion architecture.
+The next milestone should be a verified portfolio-wide voice and concision pass. It should reduce formal or repetitive evidence prose without expanding claims, changing chapter ownership, or redesigning the calibrated journey.

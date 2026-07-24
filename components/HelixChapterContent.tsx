@@ -30,10 +30,31 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
         data-testid="digital-workspace"
       >
         <ChapterHeader chapter={chapter} />
-        <p className={styles.detail}>{chapter.detail}</p>
-        <p className={styles.systemNote} aria-hidden="true">
-          ENTRY LAYER / PATH ESTABLISHED
-        </p>
+        <ol
+          className={styles.environmentPrinciples}
+          aria-label="Working environment principles"
+        >
+          {chapter.principles.map((principle) => (
+            <li
+              key={principle.id}
+              data-environment-principle={principle.id}
+            >
+              <article>
+                <p className={styles.itemIndex} aria-hidden="true">
+                  {principle.index}
+                </p>
+                <div>
+                  <h3>{principle.title}</h3>
+                  <p>{principle.summary}</p>
+                  <p className={styles.practice}>
+                    <span>Practice</span>
+                    {principle.practice}
+                  </p>
+                </div>
+              </article>
+            </li>
+          ))}
+        </ol>
       </div>
     );
   }
@@ -42,11 +63,27 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
     return (
       <div className={styles.content} data-testid="engineering-content">
         <ChapterHeader chapter={chapter} />
-        <ul className={styles.principles}>
-          {chapter.principles.map((principle) => (
-            <li key={principle}>{principle}</li>
+        <ol
+          className={styles.engineeringSteps}
+          aria-label="Engineering reasoning sequence"
+        >
+          {chapter.steps.map((step) => (
+            <li key={step.id} data-engineering-step={step.id}>
+              <article>
+                <p className={styles.itemIndex} aria-hidden="true">
+                  {step.index}
+                </p>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.summary}</p>
+                </div>
+              </article>
+            </li>
           ))}
-        </ul>
+        </ol>
+        <p className={styles.handoff} data-engineering-handoff>
+          {chapter.handoff}
+        </p>
       </div>
     );
   }

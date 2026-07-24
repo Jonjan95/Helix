@@ -166,11 +166,12 @@
 
 .name {
   z-index: 1;
+  max-width: 9ch;
   margin: 0;
-  font-size: clamp(3.25rem, 11vw, 7.75rem);
+  font-size: clamp(2.3rem, 7.6vw, 5.4rem);
   font-weight: 540;
-  letter-spacing: -0.075em;
-  line-height: 0.9;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
 }
 
 .cursor {
