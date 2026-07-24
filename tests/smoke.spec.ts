@@ -19,11 +19,24 @@ const journeyChapters = [
 
 const chapterHeadings = {
   contact: "Let’s build something reliable.",
-  engineering: "Quality is part of the build, not a final check.",
-  environment: "Inside the system",
+  engineering: "Reliability starts with understanding the system.",
+  environment: "A workspace built around learning by doing.",
   experience: "Technical work across software, systems, and service.",
   projects: "Building systems by solving real problems.",
 } as const;
+
+const environmentPrinciples = [
+  "structured-iteration",
+  "visible-evidence",
+  "practical-experimentation",
+] as const;
+
+const engineeringSteps = [
+  "understand",
+  "isolate",
+  "observe",
+  "verify",
+] as const;
 
 const chapterAnchors = {
   contact: "contact",
@@ -137,10 +150,25 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page).toHaveTitle(/Helix/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(
-    page.getByRole("heading", { level: 1, name: "Jonathan" }),
+    page.getByRole("heading", { level: 1, name: "Jonathan Jansson" }),
   ).toBeVisible();
   await expect(page.getByTestId("laptop-hero")).toBeVisible();
+  const arrival = page.locator("[data-arrival-identity]");
+  await expect(arrival).toBeVisible();
+  await expect(
+    arrival.getByRole("heading", {
+      level: 2,
+      name: "Software development student focused on testing and quality.",
+    }),
+  ).toBeVisible();
+  await expect(
+    arrival.getByText(
+      "I build projects across software, APIs, databases, automation, and connected systems—learning how they behave, where they fail, and how to verify the result.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Jonis", exact: true })).toHaveCount(0);
 
   const journey = page.getByTestId("helix-journey");
   await expect(journey).toBeAttached();
@@ -176,6 +204,43 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
       }),
     ).toBeAttached();
   }
+
+  const environment = page.getByTestId("journey-chapter-environment");
+  const environmentItems = environment.locator("[data-environment-principle]");
+  await expect(environmentItems).toHaveCount(3);
+  expect(
+    await environmentItems.evaluateAll((elements) =>
+      elements.map((element) =>
+        element.getAttribute("data-environment-principle"),
+      ),
+    ),
+  ).toEqual(environmentPrinciples);
+  for (const heading of [
+    "Structured iteration",
+    "Visible evidence",
+    "Practical experimentation",
+  ]) {
+    await expect(
+      environment.getByRole("heading", { level: 3, name: heading }),
+    ).toBeAttached();
+  }
+
+  const engineering = page.getByTestId("journey-chapter-engineering");
+  const engineeringItems = engineering.locator("[data-engineering-step]");
+  await expect(engineeringItems).toHaveCount(4);
+  expect(
+    await engineeringItems.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("data-engineering-step")),
+    ),
+  ).toEqual(engineeringSteps);
+  for (const heading of ["Understand", "Isolate", "Observe", "Verify"]) {
+    await expect(
+      engineering.getByRole("heading", { level: 3, name: heading }),
+    ).toBeAttached();
+  }
+  await expect(
+    engineering.getByText("The projects below show that process in practice."),
+  ).toBeAttached();
 
   const projects = page.getByTestId("journey-chapter-projects");
   await expect(projects.locator("[data-project]")).toHaveCount(3);
@@ -312,8 +377,54 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     "environment",
   );
   await expect(
-    page.getByRole("heading", { level: 2, name: "Inside the system" }),
+    page.getByRole("heading", {
+      level: 2,
+      name: "A workspace built around learning by doing.",
+    }),
   ).toBeVisible();
+});
+
+test("keeps early content within its chapter ownership", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const journey = page.getByTestId("helix-journey");
+  const environment = page.getByTestId("journey-chapter-environment");
+  const engineering = page.getByTestId("journey-chapter-engineering");
+  const projects = page.getByTestId("journey-chapter-projects");
+
+  for (const principle of environmentPrinciples) {
+    const item = environment.locator(
+      `[data-environment-principle="${principle}"]`,
+    );
+    await item.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(journey).toHaveAttribute("data-active-chapter", "environment");
+    await expect(item).toBeVisible();
+  }
+
+  for (const step of engineeringSteps) {
+    const item = engineering.locator(`[data-engineering-step="${step}"]`);
+    await item.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
+    await expect(projects).not.toHaveAttribute("data-journey-state", "active");
+    await expect(item).toBeVisible();
+  }
+
+  await engineering.locator("[data-engineering-handoff]").evaluate((element) =>
+    element.scrollIntoView({ block: "center", behavior: "auto" }),
+  );
+  await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
+
+  await centerChapter(page, "projects");
+  await expect(journey).toHaveAttribute("data-active-chapter", "projects");
+  await centerChapter(page, "engineering");
+  await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
+  await centerChapter(page, "environment");
+  await expect(journey).toHaveAttribute("data-active-chapter", "environment");
 });
 
 test("progresses through every active node and reverses to the workspace", async ({
@@ -659,6 +770,21 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
     "static",
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  await expect(page.locator("[data-arrival-identity]")).toBeVisible();
+  await expect(page.locator("[data-environment-principle]")).toHaveCount(3);
+  await expect(page.locator("[data-engineering-step]")).toHaveCount(4);
+  for (const selector of [
+    ...environmentPrinciples.map(
+      (id) => `[data-environment-principle="${id}"]`,
+    ),
+    ...engineeringSteps.map((id) => `[data-engineering-step="${id}"]`),
+  ]) {
+    const item = page.locator(selector);
+    await item.evaluate((element) =>
+      element.scrollIntoView({ block: "center", behavior: "auto" }),
+    );
+    await expect(item).toBeVisible();
+  }
 
   for (const chapter of journeyChapters) {
     const chapterElement = page.getByTestId(`journey-chapter-${chapter}`);
@@ -720,6 +846,37 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
     await expect(link).toBeVisible();
     await expect(link).toHaveAttribute("href", route.href);
   }
+  await expectNoHorizontalOverflow(page);
+});
+
+test("mobile preserves the complete early journey order", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await expect(page.locator("[data-arrival-identity]")).toBeVisible();
+
+  const earlyItems = page.locator(
+    "[data-environment-principle], [data-engineering-step]",
+  );
+  await expect(earlyItems).toHaveCount(7);
+  const layout = await earlyItems.evaluateAll((elements) =>
+    elements.map((element) => {
+      const bounds = element.getBoundingClientRect();
+      return {
+        id:
+          element.getAttribute("data-environment-principle") ??
+          element.getAttribute("data-engineering-step"),
+        top: bounds.top + window.scrollY,
+      };
+    }),
+  );
+  expect(layout.map(({ id }) => id)).toEqual([
+    ...environmentPrinciples,
+    ...engineeringSteps,
+  ]);
+  expect(layout.map(({ top }) => top)).toEqual(
+    [...layout.map(({ top }) => top)].sort((a, b) => a - b),
+  );
   await expectNoHorizontalOverflow(page);
 });
 
