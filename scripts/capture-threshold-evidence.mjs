@@ -4,8 +4,10 @@ import path from "node:path";
 import next from "next";
 import { chromium } from "@playwright/test";
 
-const mode = process.argv.includes("--correction-after")
-  ? "correction-after"
+const mode = process.argv.includes("--grid-review")
+  ? "grid-alignment"
+  : process.argv.includes("--correction-after")
+    ? "correction-after"
   : process.argv.includes("--correction-before")
     ? "correction-before"
     : process.argv.includes("--after")
@@ -266,6 +268,178 @@ async function recordCorrectionSequence() {
   await unlink(temporaryVideo);
 }
 
+async function captureGridAlignmentReview() {
+  await copyFile(
+    path.join(
+      process.cwd(),
+      "docs",
+      "media",
+      "the-threshold",
+      "correction-after",
+      "05-former-seam-location.png",
+    ),
+    path.join(outputDirectory, "01-current-misaligned.png"),
+  );
+
+  const desktopContext = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const desktopPage = await desktopContext.newPage();
+  await desktopPage.goto(baseUrl, { waitUntil: "networkidle" });
+  const desktopDistance = await thresholdDistance(desktopPage);
+
+  await desktopPage.addStyleTag({
+    content: `
+      :root { --candidate-grid-size: 4rem; }
+      [data-motion="screen-grid"] {
+        background-size: var(--candidate-grid-size)
+          var(--candidate-grid-size) !important;
+        opacity: 1 !important;
+      }
+      [data-helix-journey]::before {
+        background-color: #111719 !important;
+        background-image:
+          linear-gradient(rgb(105 211 231 / 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(105 211 231 / 0.055) 1px, transparent 1px)
+          !important;
+        background-position: 0 0 !important;
+        background-size: var(--candidate-grid-size)
+          var(--candidate-grid-size) !important;
+      }
+    `,
+  });
+  await desktopPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(desktopDistance + 150),
+  );
+  await desktopPage.waitForTimeout(700);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "02-synchronized-token-candidate.png"),
+  });
+
+  await desktopPage.reload({ waitUntil: "networkidle" });
+  await desktopPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(desktopDistance + 150),
+  );
+  await desktopPage.waitForTimeout(700);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "03-fade-candidate.png"),
+  });
+  await settleAt(desktopPage, 0.78, desktopDistance);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "04-chosen-desktop-handoff.png"),
+  });
+  await desktopPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(desktopDistance + 150),
+  );
+  await desktopPage.waitForTimeout(700);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "06-pin-release.png"),
+  });
+  await desktopPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(desktopDistance + 80),
+  );
+  await desktopPage.waitForTimeout(700);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "07-reverse-crossing.png"),
+  });
+  await desktopContext.close();
+
+  const compactContext = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 768, width: 1024 },
+  });
+  const compactPage = await compactContext.newPage();
+  await compactPage.goto(baseUrl, { waitUntil: "networkidle" });
+  const compactDistance = await thresholdDistance(compactPage);
+  await compactPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(compactDistance + 120),
+  );
+  await compactPage.waitForTimeout(700);
+  await compactPage.screenshot({
+    path: path.join(outputDirectory, "05-chosen-compact-handoff.png"),
+  });
+  await compactContext.close();
+
+  const mobileContext = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 844, width: 390 },
+  });
+  const mobilePage = await mobileContext.newPage();
+  await mobilePage.goto(baseUrl, { waitUntil: "networkidle" });
+  await mobilePage.screenshot({
+    path: path.join(outputDirectory, "08-mobile-result.png"),
+  });
+  await mobileContext.close();
+
+  const reducedContext = await browser.newContext({
+    colorScheme: "dark",
+    reducedMotion: "reduce",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const reducedPage = await reducedContext.newPage();
+  await reducedPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await reducedPage.screenshot({
+    fullPage: true,
+    path: path.join(outputDirectory, "09-reduced-motion.png"),
+  });
+  await reducedContext.close();
+}
+
+async function recordGridAlignmentReview() {
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    recordVideo: {
+      dir: outputDirectory,
+      size: { height: 800, width: 1280 },
+    },
+    viewport: { height: 800, width: 1280 },
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const distance = await thresholdDistance(page);
+  const end = distance + 280;
+
+  for (let step = 0; step <= 50; step += 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) =>
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        }),
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(350);
+  for (let step = 50; step >= 0; step -= 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) =>
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        }),
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(350);
+
+  const video = page.video();
+  await context.close();
+  const temporaryVideo = await video.path();
+  await copyFile(
+    temporaryVideo,
+    path.join(outputDirectory, "10-chosen-forward-reverse.webm"),
+  );
+  await unlink(temporaryVideo);
+}
+
 async function createSeamComparison() {
   const beforePath = path.join(
     process.cwd(),
@@ -374,7 +548,10 @@ async function captureAfterReview() {
 }
 
 try {
-  if (mode.startsWith("correction-")) {
+  if (mode === "grid-alignment") {
+    await captureGridAlignmentReview();
+    await recordGridAlignmentReview();
+  } else if (mode.startsWith("correction-")) {
     await captureCorrectionSequence();
     await captureCorrectionResponsive();
     await recordCorrectionSequence();

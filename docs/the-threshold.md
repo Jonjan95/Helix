@@ -92,8 +92,13 @@ forward. The laptop shell, camera, and base attenuate over the same interval.
   it completely, so the crossing retains a restrained plane cue.
 - Removed the final screen-edge and shell shadow at desktop and tablet
   resolution so neither becomes a full-width line after enlargement.
-- Allowed the screen plane to overlap the normal-flow workspace at pin release
-  and aligned a shared transition grid behind that overlap.
+- Allowed the screen plane to overlap the normal-flow workspace at pin release.
+- Separated the screen grid into its own decorative layer so it can recede
+  before the workspace grid becomes visible.
+- Removed the resolved desktop/tablet inner screen-frame edge and restored a
+  grid-free workspace entry veil.
+- Matched the tablet Arrival surface to the threshold background where the
+  smaller camera profile intentionally leaves more of the section visible.
 - Reduced the final presence of the surrounding desktop Arrival copy from
   `0.16` to `0.025`, and tablet from `0.16` to `0.05`.
 - Reduced base travel from 22 px to 16 px on desktop and from 14 px to 12 px on
@@ -156,15 +161,65 @@ made two continuous layers read as stacked sections.
 
 The correction lets the screen plane overlap the workspace, clips only the
 horizontal page axis at the motion root, moves the shadow to the fading shell,
-removes the resolved screen edge, and aligns one shared transition grid behind
-the overlap. The workspace still enters normal flow at the same point; the
-overlapping screen surface conceals the document boundary without a second
-pin, extra page height, or an overlay wipe.
+and removes the resolved screen edge. The workspace still enters normal flow
+at the same point; the overlapping screen surface conceals the document
+boundary without a second pin, extra page height, or an overlay wipe.
 
 Matched correction evidence is stored in
 [`correction-before`](media/the-threshold/correction-before) and
 [`correction-after`](media/the-threshold/correction-after). The revised folder
 includes a side-by-side former-seam comparison and a forward/reverse recording.
+
+## Grid alignment review
+
+Human review of the seam correction found that its two visible grids did not
+share a coordinate system. The laptop grid was defined in local screen
+coordinates and then enlarged by the camera transform. The temporary workspace
+overlay used viewport-height spacing and a manually offset viewport origin.
+The normal journey grid used a third responsive spacing rule from the journey
+element's own origin.
+
+At the inspected 1280 × 720 state, the local laptop spacing was 40 px before
+camera scaling, the handoff overlay spacing was 66.24 px, and the normal
+workspace spacing was 64 px. Even where two values happened to be close, their
+origins and transform phases differed. At 1024 × 768 the tablet camera profile
+made the divergence larger. Device-pixel rounding could only add variance; it
+was not the root cause.
+
+### Candidates evaluated
+
+The synchronized-token candidate assigned the same 64 px token and origin to
+both declared grid backgrounds. It still failed because one grid was inside
+the transformed laptop while the other remained in normal viewport space.
+Matching CSS tokens therefore produced different apparent spacing after
+camera scaling and could not remain aligned across 1440 × 1000, 1280 × 800,
+and 1024 × 768 without per-viewport compensation.
+
+The sequential-fade candidate made the laptop grid a dedicated decorative
+layer and faded it during the existing threshold interval. The screen's solid
+surface then carries the crossing without grid lines. The normal workspace
+grid appears only after the screen has moved on, through a grid-free top veil.
+There is never a point at which two grid origins compete.
+
+### Chosen approach
+
+The sequential fade is quieter and structurally more robust. Desktop and
+tablet resolve the screen grid and inner frame edge to zero; the screen overlap
+and shared `#111719` surface preserve the threshold composition. Tablet uses
+that surface for Arrival as well because its intentionally smaller camera
+coverage leaves more surrounding section visible. Mobile keeps its existing
+static grid and unpinned motion profile. Reduced motion keeps the complete
+static laptop and journey in normal document order.
+
+No grid-specific ScrollTrigger, second pin, resize calculation, arbitrary
+per-viewport offset, or production toggle was added. The synchronized candidate
+exists only in the evidence script.
+
+Matched candidate and final evidence is stored in
+[`grid-alignment`](media/the-threshold/grid-alignment). It includes the
+reviewed misalignment, synchronized-token candidate, fade candidate, desktop
+and compact handoffs, pin release, reverse crossing, mobile, reduced motion,
+and the chosen forward/reverse recording.
 
 ## Comparison
 
@@ -194,7 +249,8 @@ Desktop and compact desktop receive the complete shallow-depth treatment.
 Tablet uses smaller depth distances and the existing shorter camera profile.
 Mobile remains native and unpinned; it receives no camera-like perspective
 movement and only retains the static glass treatment already present in the
-laptop composition. No horizontal transform travel was added.
+laptop composition. Desktop and tablet use the sequential grid handoff; mobile
+retains the static screen grid. No horizontal transform travel was added.
 
 ### Reduced motion
 
@@ -205,17 +261,20 @@ decorative glass does not cover or replace content.
 
 ## Performance
 
-The production change adds one empty decorative element, CSS-only layer
-styling, and values inside the existing GSAP timeline. It adds no dependency,
-asset, request, event listener, ScrollTrigger owner, render loop, canvas, or
-WebGL. Only transform and opacity are animated. The production homepage does
-not request the lab-only Three.js chunk.
+The production change adds one empty decorative grid element, CSS-only layer
+styling, and one opacity value inside the existing GSAP timeline. It adds no
+dependency, asset, request, event listener, ScrollTrigger owner, render loop,
+canvas, or WebGL. Only transform and opacity are animated. The production
+homepage does not request the lab-only Three.js chunk.
 
 The correction changes markup, CSS, existing configuration values, tests, and
 the local evidence script. It adds no production dependency, request, event
 listener, animation owner, or client state. Final bundle measurements are
 recorded in the pull request because decoded resource sizes vary by build and
-local server session.
+local server session. Using the same local decoded-resource method as the
+previous correction, the grid revision moved `/` from 652,486 to 652,734
+decoded JavaScript bytes: +248 bytes. The route still requests seven JavaScript
+chunks and no Three.js chunk.
 
 ## Validation and known limitations
 
@@ -265,8 +324,9 @@ Three.js remains outside the production portfolio.
 
 ## Recommendation
 
-**Keep.** The accepted spatial concept is unchanged, while the two review
-defects have direct structural corrections. The identity no longer depends on
-a magnified 3D texture during its readable phase, and the screen/workspace
-overlap removes the full-width release seam in forward and reverse travel.
-The matched correction evidence should remain part of the PR record.
+**Keep.** The accepted spatial concept and text-rendering correction are
+unchanged. The grid handoff no longer attempts to align transformed and
+normal-flow coordinate systems; it uses a controlled absence between them.
+The screen/workspace overlap remains continuous in forward and reverse travel
+without a visible grid restart. The matched candidate evidence should remain
+part of the PR record.
