@@ -195,3 +195,9 @@ No new recording was created. The earlier forward-and-reverse recording remains 
 ## Recommendation
 
 The next milestone should be production readiness: metadata and social previews, analytics/privacy decision, final browser-chrome zoom, screen-reader and alternate-input checks, cross-browser and real-device review, then deployment. New art direction should remain separate from that release work.
+
+## Production-readiness follow-up
+
+Production readiness is now complete at the local release-candidate level. The follow-up adds no new visual direction and leaves every polish decision, motion value, path geometry, chapter placement, and visitor-facing claim unchanged.
+
+Repository-owned icons and the Open Graph preview carry the restrained visual language into browser and sharing surfaces. Chromium, Firefox, and WebKit release checks pass; forced-colors and 200%/400% reflow equivalents preserve the semantic composition; the configured Lighthouse build scores 100 for Accessibility, Best Practices, and SEO. A real production URL, physical device, hands-on screen-reader, and browser-chrome zoom review remain part of the deployment smoke test. See the [production-readiness audit](production-readiness-audit.md).

@@ -138,3 +138,11 @@ The SVG geometry, chapter placements, laptop-to-workspace sequence, pacing roles
 - new art direction beyond the completed first visual-polish pass;
 - Three.js, React Three Fiber, WebGL, canvas, and external 3D assets;
 - ambient rotation, continuous background motion, particles, and decorative effects.
+
+## Production readiness
+
+The current concept is packaged as a locally validated release candidate without changing its visual or narrative boundary. Repository-owned icons and a restrained social preview extend the graphite, warm-white, and cyan identity into browser and sharing surfaces. Production metadata, canonical behavior, robots, and sitemap are static and require no client execution.
+
+The public origin remains a deployment concern. `NEXT_PUBLIC_SITE_URL` must be set to the verified HTTPS origin before building; an unconfigured build blocks indexing and publishes no canonical. Analytics remains intentionally absent, and the release introduces no tracker, cookie state, external font, runtime profile request, new motion owner, or hosting SDK.
+
+Chromium keeps the complete product suite while a focused release matrix covers Firefox and Playwright WebKit. The [production-readiness audit](production-readiness-audit.md) records the exact automated, emulated, and unavailable physical checks. The [deployment guide](deployment.md) defines the remaining public-URL smoke test.
