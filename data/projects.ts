@@ -39,7 +39,8 @@ export const portfolioProjects = [
       "Playwright covers the main interface flow; CI also runs backend tests, frontend checks, builds, and browser tests.",
     ],
     repository: {
-      accessibleLabel: "View AI-Powered Test Engineer on GitHub",
+      accessibleLabel:
+        "View source on GitHub for AI-Powered Test Engineer",
       label: "View source on GitHub",
       url: "https://github.com/Jonjan95/AI-Powered-Test-Engineer",
     },
@@ -78,7 +79,7 @@ export const portfolioProjects = [
       "Playwright covers desktop and mobile workflows; CI adds linting, type checks, Prisma validation, builds, and browser tests.",
     ],
     repository: {
-      accessibleLabel: "View CortexGrid on GitHub",
+      accessibleLabel: "View source on GitHub for CortexGrid",
       label: "View source on GitHub",
       url: "https://github.com/Jonjan95/CortexGrid",
     },
@@ -118,7 +119,7 @@ export const portfolioProjects = [
       "Static rendering, native scrolling, visible focus, and semantic content remain intact without motion.",
     ],
     repository: {
-      accessibleLabel: "View Helix on GitHub",
+      accessibleLabel: "View source on GitHub for Helix",
       label: "View source on GitHub",
       url: "https://github.com/Jonjan95/Helix",
     },

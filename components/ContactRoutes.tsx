@@ -29,7 +29,7 @@ export function ContactRoutes({
             data-contact-type={route.type}
             data-contact-primary={route.primary}
           >
-            <a href={route.href} aria-label={route.accessibleLabel}>
+            <a href={route.href}>
               <span className={styles.contactRouteLabel}>{route.label}</span>
               <span className={styles.contactRouteDescription}>
                 {route.description}

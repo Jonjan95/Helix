@@ -6,7 +6,7 @@ export function ScrollIndicator() {
       className={styles.indicator}
       href="#about"
       data-motion="arrival-indicator"
-      aria-label="Enter portfolio journey"
+      aria-label="Scroll to enter the portfolio journey"
     >
       <span>Scroll to enter</span>
       <span className={styles.line} aria-hidden="true" />

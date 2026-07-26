@@ -88,7 +88,6 @@ const experienceTracks = [
 
 const contactRoutes = [
   {
-    accessibleName: "View Jonathan Jansson on GitHub",
     href: "https://github.com/Jonjan95",
     id: "github",
     label: "GitHub",
@@ -96,7 +95,6 @@ const contactRoutes = [
     type: "external",
   },
   {
-    accessibleName: "View Jonathan Jansson on LinkedIn",
     href: "https://se.linkedin.com/in/jonathan-jansson-b94783270",
     id: "linkedin",
     label: "LinkedIn",
@@ -104,7 +102,6 @@ const contactRoutes = [
     type: "external",
   },
   {
-    accessibleName: "Email Jonathan Jansson",
     href: "mailto:jonis.jansson@hotmail.com",
     id: "email",
     label: "Email",
@@ -265,7 +262,7 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     await expect(projectArticle.getByText("Current scope")).toBeAttached();
     await expect(
       projectArticle.getByRole("link", {
-        name: `View ${project} on GitHub`,
+        name: `View source on GitHub for ${project}`,
       }),
     ).toHaveAttribute("href", repositoryUrl);
   }
@@ -351,7 +348,7 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
 
   for (const route of contactRoutes) {
     const item = contact.locator(`[data-contact-route="${route.id}"]`);
-    const link = item.getByRole("link", { name: route.accessibleName });
+    const link = item.getByRole("link");
     await expect(item).toHaveAttribute("data-contact-type", route.type);
     await expect(item).toHaveAttribute(
       "data-contact-primary",
@@ -554,13 +551,15 @@ test("keeps the complete project evidence within the Projects interval", async (
   await expect(journey).toHaveAttribute("data-active-chapter", "engineering");
 
   await projects
-    .getByRole("link", { name: "View Helix on GitHub" })
+    .getByRole("link", { name: "View source on GitHub for Helix" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(journey).toHaveAttribute("data-active-chapter", "projects");
   await expect(projects).toHaveAttribute("data-journey-state", "active");
   await expect(experience).not.toHaveAttribute("data-journey-state", "active");
   await expect(
-    projects.getByRole("link", { name: "View Helix on GitHub" }),
+    projects.getByRole("link", {
+      name: "View source on GitHub for Helix",
+    }),
   ).toBeVisible();
 
   await centerChapter(page, "experience");
@@ -590,14 +589,14 @@ test("repository links follow a meaningful keyboard sequence", async ({ page }) 
     const accessibleName = await page.evaluate(() =>
       document.activeElement?.getAttribute("aria-label"),
     );
-    if (accessibleName?.match(/^View .+ on GitHub$/)) {
+    if (accessibleName?.match(/^View source on GitHub for .+$/)) {
       focusedProjectLinks.push(accessibleName);
     }
   }
 
   expect(focusedProjectLinks).toEqual(
     Object.keys(projectRepositories).map(
-      (project) => `View ${project} on GitHub`,
+      (project) => `View source on GitHub for ${project}`,
     ),
   );
 });
@@ -689,7 +688,7 @@ test("keeps every Experience track within the Experience interval", async ({
   );
 
   await projects
-    .getByRole("link", { name: "View Helix on GitHub" })
+    .getByRole("link", { name: "View source on GitHub for Helix" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(journey).toHaveAttribute("data-active-chapter", "projects");
 
@@ -727,7 +726,7 @@ test("keeps every Experience track within the Experience interval", async ({
   await expect(journey).toHaveAttribute("data-active-chapter", "experience");
 
   await projects
-    .getByRole("link", { name: "View Helix on GitHub" })
+    .getByRole("link", { name: "View source on GitHub for Helix" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(journey).toHaveAttribute("data-active-chapter", "projects");
 });
@@ -877,7 +876,9 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
       page.getByRole("heading", { level: 3, name: project }),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: `View ${project} on GitHub` }),
+      page.getByRole("link", {
+        name: `View source on GitHub for ${project}`,
+      }),
     ).toBeVisible();
   }
 
@@ -1101,7 +1102,9 @@ for (const viewport of [
       expect(positions.every((position) => position === "relative")).toBe(true);
 
       const entryLinkHeight = await page
-        .getByRole("link", { name: "Enter portfolio journey" })
+        .getByRole("link", {
+          name: "Scroll to enter the portfolio journey",
+        })
         .evaluate((link) => link.getBoundingClientRect().height);
       expect(entryLinkHeight).toBeGreaterThanOrEqual(44);
     }
