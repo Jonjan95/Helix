@@ -11,6 +11,7 @@
     "start": "next start",
     "evidence:capture": "node scripts/capture-release-evidence.mjs",
     "evidence:spatial": "node scripts/capture-spatial-evidence.mjs",
+    "evidence:threshold": "node scripts/capture-threshold-evidence.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "assets:generate": "node scripts/generate-release-assets.mjs",
