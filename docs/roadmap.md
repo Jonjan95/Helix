@@ -52,23 +52,23 @@ Environment and Engineering Mindset complete the early journey without competing
 
 The portfolio-wide voice and concision pass is complete. All six chapters now use one direct, personal voice; repeated process terminology and duplicated qualification have been reduced without changing project statuses, study or employment boundaries, contact routes, layout, pacing, or motion. The [content voice audit](content-voice-audit.md) records the inventory, terminology choices, and before-and-after measurements.
 
-## 7. Accessibility and reduced motion — first portfolio-wide audit complete
+## 7. Accessibility and reduced motion — release-candidate audit complete
 
 - Continue auditing keyboard navigation, focus order, headings, landmarks, labels, zoom, and screen-reader output.
 - Maintain and extend the tested complete reduced-motion journey.
 - Test contrast, zoom, screen readers, and alternate input methods.
 
-The first complete audit verified semantic order, direct chapter routes, link behaviour, responsive bounds, reduced-motion visibility, and forward/reverse ownership. It corrected the skip destination and the undersized mobile entry cue without changing the calibrated motion system. Final screen-reader, browser-zoom, alternate-input, and cross-browser testing remains for the pre-deployment audit.
+The release audit extends the first complete audit with accessibility-tree inspection, keyboard and reverse-focus review, forced-colors emulation, 200% and 400% reflow equivalents, and reduced-motion checks in Chromium, Firefox, and WebKit. A hands-on screen-reader session, physical browser-chrome zoom, alternate input, and real-device review remain post-deployment checks.
 
-## 8. Testing and performance — journey baseline complete
+## 8. Testing and performance — release candidate complete
 
 - Maintain end-to-end coverage across the six approved responsive presentations.
 - Add automated accessibility checks and focused interaction tests.
 - Measure Core Web Vitals, animation smoothness, and asset weight.
 
-The current suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. Performance measurement and broader browser coverage remain separate milestones.
+The current Chromium suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. A focused 18-check release matrix now passes in Chromium, Firefox, and WebKit and adds mobile landscape, metadata resources, headers, 404 behavior, forced colors, zoom-equivalent reflow, and reduced motion. Lighthouse 13.0.3 measured 98/100 mobile and 100/100 desktop Performance, with 100 Accessibility, Best Practices, and SEO on the configured build.
 
-## 9. Final content and deployment — voice pass complete
+## 9. Final content and deployment — locally deployment-ready
 
 - Maintain the approved voice and claim boundaries as project details evolve.
 - Complete metadata, social previews, analytics decisions, and privacy review.
@@ -76,4 +76,6 @@ The current suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 39
 
 The focused visual-polish milestone is complete. Typography, editorial measure, supporting-project composition, cyan discipline, separators, path contrast, action states, laptop finish, and the final ending were refined without changing motion or adding dependencies. The [visual polish audit](visual-polish-audit.md) records the decisions and evidence.
 
-The next focused milestone should prepare production metadata and social previews, make the analytics and privacy decision explicit, then complete cross-browser, screen-reader, browser-chrome zoom, and real-device checks before deployment.
+Production metadata, favicon and Apple icon, the 1200 × 630 social preview, safe canonical handling, robots, sitemap, response headers, CI, dependency cleanup, deployment documentation, and release evidence are complete. Analytics is intentionally excluded for privacy. No platform or domain is guessed; the production build must receive `NEXT_PUBLIC_SITE_URL`.
+
+The next focused milestone is deployment rather than further implementation: select the host, configure the verified origin, deploy the reviewed release candidate, then smoke-test the public URL, browser tab, social preview, redirects, a hands-on screen reader, physical zoom, and real devices. Only after that should richer spatial or 3D experiments resume.

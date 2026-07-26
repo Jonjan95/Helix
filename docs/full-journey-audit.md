@@ -149,3 +149,9 @@ The next milestone should prepare production metadata and social previews, make 
 The subsequent visual-polish pass retained the audited journey ownership, pacing roles, direct fragments, and centralized motion configuration. It raised inactive-content legibility, quieted path contrast, stacked supporting projects to protect reading measure, restrained cyan to featured/current states, unified separators, and made repository actions at least 44px high at all six approved sizes.
 
 The updated suite passes 21 Chromium tests, including computed featured/supporting hierarchy, visible focus treatment, repository targets, reduced motion, forward/reverse ownership, direct fragments, and the complete overflow matrix. Findings and the 22-image after sequence are recorded in the [visual polish audit](visual-polish-audit.md).
+
+## Production-readiness follow-up
+
+The subsequent release audit preserves the journey ownership, pacing, path, motion, visitor copy, and typed chapter data. It completes metadata, repository-owned browser and social assets, safe canonical configuration, robots, sitemap, conservative response headers, CI, dependency remediation, and focused release coverage.
+
+The current core suite passes 27 Chromium tests. A separate 18-check matrix passes in Chromium, Firefox, and WebKit, covering production resources, 404 behavior, console safety, reduced motion, forced colors, high-zoom reflow equivalents, and desktop/mobile traversal. The previously deferred cross-browser and zoom work is therefore complete at the emulation level; physical browser-chrome zoom, hands-on screen-reader use, and real-device testing remain accurately deferred. See the [production-readiness audit](production-readiness-audit.md).

@@ -33,7 +33,8 @@ data/
 docs/                      Product and technical documentation
 styles/                    Component-scoped CSS Modules
 tests/                     Playwright end-to-end tests
-utils/                     Small reusable, framework-independent helpers
+utils/
+  site-url.ts              Canonical origin validation and normalization
 ```
 
 ## Rendering and content
@@ -46,7 +47,7 @@ Selected Projects has a purpose-built `PortfolioProject` model in `data/projects
 
 Experience follows the same local, chapter-specific approach through the `ExperienceTrack` model in `data/experience.ts`. Each record defines its category, broad timeframe, summary, grounded examples, relevant environments, and what Jonathan carries into his current work. `ExperienceTracks` renders exactly three semantic articles in narrative order. The data is not a generic résumé schema: it deliberately excludes employers, client identities, guessed dates, quantified impact, and unsupported responsibilities. Ongoing studies are described as ongoing, project practice is not presented as employment, and no runtime résumé service is involved.
 
-Continue uses a purpose-built `ContactRoute` model in `data/contact.ts`. Each route defines a stable identity, visible label, description, native destination, link type, accessible name, external state, and primary state. `ContactRoutes` renders the records as one semantic list in GitHub, LinkedIn, and Email order. The data is intentionally not a navigation CMS: it records only verified, intentionally public professional destinations and introduces no runtime profile lookup, contact API, or client state. A native `mailto:` route keeps direct contact available without a form or JavaScript dependency.
+Continue uses a purpose-built `ContactRoute` model in `data/contact.ts`. Each route defines a stable identity, visible label, description, native destination, link type, external state, and primary state. `ContactRoutes` renders the records as one semantic list in GitHub, LinkedIn, and Email order. The complete visible row supplies the accessible link name, avoiding an overriding label that could diverge from its visible action. The data is intentionally not a navigation CMS: it records only verified, intentionally public professional destinations and introduces no runtime profile lookup, contact API, or client state. A native `mailto:` route keeps direct contact available without a form or JavaScript dependency.
 
 The page follows the six chapters defined by the [Experience Architecture](experience-architecture.md): arrival, orientation, engineering, selected work, proof, and future. Each chapter is a semantic `<section>` labelled by its visible heading and carries a stable internal `data-chapter` value. These attributes describe narrative structure; they are not visible navigation labels or animation behavior. Existing URL fragments remain on the content within each chapter.
 
@@ -83,6 +84,16 @@ GSAP contexts, ScrollTriggers, and match-media registrations are reverted when t
 Playwright starts the built production server and verifies the final identity, single `h1`, Arrival positioning, laptop, shared path, all five semantic journey stops, chapter order, expected headings, and node-to-content associations. Early-journey checks cover exactly three Environment principles, exactly four Engineering steps, semantic order, chapter ownership, mobile order, reduced-motion visibility, the Projects handoff, and coherent reverse restoration. Selected Projects checks cover the featured identity, exactly three semantic articles, project order, unchanged statuses, scope text, verified HTTPS repository links, the explicit CortexGrid no-live-AI boundary, keyboard order, mobile stacking, reduced-motion visibility, and the absence of placeholder links. Experience checks cover exactly three ordered tracks, heading hierarchy, ongoing-study wording, grounded examples, the absence of professional-QA or client claims, mobile order, reduced-motion visibility, and ownership through the final track. Continue checks cover the exact three-route order, verified native destinations, concise accessible names, semantic list and link behavior, keyboard order, mobile touch targets, reduced-motion visibility, path continuation, and ownership while reading or reversing through the route list.
 
 Portfolio-wide checks cover the corrected skip destination, the entry cue’s minimum mobile target, console safety, forward and reverse journey ownership, direct fragments, static generation, and horizontal overflow at 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800. Tests assert stable state outcomes rather than intermediate transform values or fragile screenshots. The evidence and decisions behind this matrix are recorded in the [full journey audit](full-journey-audit.md).
+
+Release checks protect metadata, icons, the social image, environment-aware canonical behavior, robots, sitemap, response headers, 404 behavior, forced colors, high-zoom reflow equivalents, mobile landscape, reduced motion, and application console output. `npm run test:e2e` remains the complete Chromium product suite. `npm run test:release` deliberately runs a smaller outcome-focused matrix in Chromium, Firefox, and WebKit. This separation keeps pull-request feedback practical while maintaining an explicit pre-deployment browser gate.
+
+## Production metadata and deployment
+
+`app/layout.tsx` owns identity metadata. Next.js file conventions expose the repository-owned Open Graph image and icons, while `app/robots.ts` and `app/sitemap.ts` create static metadata routes. `utils/site-url.ts` accepts only HTTPS origins or localhost and strips non-origin URL parts.
+
+A valid `NEXT_PUBLIC_SITE_URL` enables canonical, Open Graph URL, indexing, and the single root sitemap entry. A missing or invalid value omits the canonical and Open Graph URL, blocks indexing, and returns an empty sitemap. The localhost `metadataBase` exists only so Next.js can resolve local social assets without build warnings; it is never emitted as a canonical destination.
+
+No runtime metadata fetch, image-generation service, analytics boundary, deployment SDK, or hosting-specific configuration was added. `scripts/generate-release-assets.mjs` is deterministic release tooling, and the generated files are static at runtime. See [deployment.md](deployment.md) and [production-readiness-audit.md](production-readiness-audit.md).
 
 ## Architectural guardrails
 

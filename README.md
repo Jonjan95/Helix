@@ -18,7 +18,7 @@ The project follows a private internal design vision centred on curiosity, clari
 
 ## Getting started
 
-Requirements: Node.js 20.9 or newer and npm.
+Requirements: Node.js 24 and npm.
 
 ```bash
 npm install
@@ -29,10 +29,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Validation and tests
 
-Install the Playwright browser once:
+Install the Playwright browsers once:
 
 ```bash
-npx playwright install chromium
+npx playwright install chromium firefox webkit
 ```
 
 Run checks individually:
@@ -42,6 +42,7 @@ npm run lint
 npm run typecheck
 npm run build
 npm run test:e2e
+npm run test:release
 ```
 
 Or run the full validation sequence:
@@ -62,6 +63,8 @@ The first portfolio-wide journey audit is complete. It verified the forward and 
 
 The focused visual-polish pass is complete. It clarifies typography and content measure, stacks supporting projects before they become narrow text strips, restrains cyan to meaningful current and featured states, unifies separators, gives repository links 44px targets at every approved size, quiets the path behind content, and refines the laptop and final ending. No motion value, SVG geometry, dependency, or visitor-facing claim changed. See [the visual polish audit](docs/visual-polish-audit.md) and its before-and-after evidence.
 
+Helix is now a locally validated release candidate. Production metadata, browser icons, a 1200 × 630 social preview, environment-aware canonical handling, robots, sitemap, security headers, CI, and a focused Chromium/Firefox/WebKit release matrix are complete. The public origin is intentionally not hardcoded: a deployment must set `NEXT_PUBLIC_SITE_URL` before building. Analytics remains excluded. A hosting destination, public-URL smoke test, physical device review, and hands-on screen-reader pass remain before the site can be described as production-proven. See the [production-readiness audit](docs/production-readiness-audit.md) and [deployment guide](docs/deployment.md).
+
 ## Project documentation
 
 - [Design system](docs/design-system.md) — primary visual and interaction reference
@@ -72,4 +75,6 @@ The focused visual-polish pass is complete. It clarifies typography and content 
 - [Full journey audit](docs/full-journey-audit.md)
 - [Content voice audit](docs/content-voice-audit.md)
 - [Visual polish audit](docs/visual-polish-audit.md)
+- [Production-readiness audit](docs/production-readiness-audit.md)
+- [Deployment](docs/deployment.md)
 - [Roadmap](docs/roadmap.md)

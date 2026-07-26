@@ -1,7 +1,6 @@
 export type ContactRouteId = "github" | "linkedin" | "email";
 
 export type ContactRoute = {
-  accessibleLabel: string;
   action: string;
   description: string;
   external: boolean;
@@ -14,7 +13,6 @@ export type ContactRoute = {
 
 export const contactRoutes = [
   {
-    accessibleLabel: "View Jonathan Jansson on GitHub",
     action: "Explore GitHub",
     description: "Projects, source code, and ongoing technical experiments.",
     external: true,
@@ -25,7 +23,6 @@ export const contactRoutes = [
     type: "external",
   },
   {
-    accessibleLabel: "View Jonathan Jansson on LinkedIn",
     action: "View LinkedIn",
     description: "Studies, experience, and professional background.",
     external: true,
@@ -36,7 +33,6 @@ export const contactRoutes = [
     type: "external",
   },
   {
-    accessibleLabel: "Email Jonathan Jansson",
     action: "Send email",
     description:
       "Direct contact about LIA, junior roles, or technical collaboration.",
