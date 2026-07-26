@@ -52,45 +52,57 @@ Baseline screenshots and the forward/reverse recording are in
 
 ## Revised concept
 
-The revised threshold keeps the existing laptop movement and adds a small
+The revised threshold keeps the existing laptop movement and uses a small
 internal layer model:
 
 ```text
 Laptop shell
-Screen glass
-Arrival identity
-Workspace threshold
+Screen
+├── Arrival identity (flat semantic HTML)
+└── Decorative depth wrapper
+    ├── Screen glass
+    └── Workspace threshold
 ```
 
 These are not visible panels or new interface chrome. The glass is a
-decorative, non-focusable plane. CSS perspective gives the identity a shallow
-starting separation and places the workspace slightly behind it. During the
-handoff, the identity settles backward while the workspace resolves forward.
-The laptop shell, camera, and base attenuate over the same interval.
+decorative, non-focusable plane. CSS perspective is limited to the decorative
+wrapper. The semantic identity remains on a flat screen plane while the glass
+and workspace threshold establish shallow depth. During the handoff, the
+identity exits before the final high-scale phase and the workspace resolves
+forward. The laptop shell, camera, and base attenuate over the same interval.
 
 ## Exact production changes
 
-- Added one `aria-hidden` screen-glass layer to the existing semantic laptop.
-- Added shallow `perspective`, `transform-style: preserve-3d`, and small
-  `translateZ` separation inside the screen.
+- Added one `aria-hidden` decorative depth wrapper around the existing
+  screen-glass and workspace-threshold layers.
+- Limited `perspective`, `transform-style: preserve-3d`, and `translateZ`
+  separation to that decorative wrapper.
+- Kept the semantic identity outside the scaled 3D subtree and removed its
+  scale and depth tween.
 - Extended the existing `JourneyMotion` target map and cleanup list for that
   decorative layer.
 - Began the desktop handoff at 60% instead of 72% and expanded it from 24% to
   36% of the same finite timeline. Tablet uses the same principle with a
   quieter profile.
-- Moved the identity slightly backward while reducing its scale to `0.99`;
-  moved the threshold slightly forward as it resolves.
+- Began the desktop identity departure at 48% over 24% of the timeline, before
+  the laptop reaches its final high-scale phase. Tablet begins at 56% over
+  22%.
+- Moved the threshold slightly forward as it resolves.
 - Preserved 12% of the screen frame at desktop completion instead of removing
   it completely, so the crossing retains a restrained plane cue.
+- Removed the final screen-edge and shell shadow at desktop and tablet
+  resolution so neither becomes a full-width line after enlargement.
+- Allowed the screen plane to overlap the normal-flow workspace at pin release
+  and aligned a shared transition grid behind that overlap.
 - Reduced the final presence of the surrounding desktop Arrival copy from
   `0.16` to `0.025`, and tablet from `0.16` to `0.05`.
 - Reduced base travel from 22 px to 16 px on desktop and from 14 px to 12 px on
   tablet so it quiets without appearing to detach.
 
-The overall laptop scale, pin distance, camera duration, scroll behavior, and
-`power1.inOut` easing convention are unchanged. No rotation, overshoot, blur,
-flash, portal ring, animated noise, runtime asset, or new animation owner was
-added.
+The overall laptop scale, camera distance, 1,150 px desktop pin distance,
+camera duration, scroll behavior, and `power1.inOut` easing convention are
+unchanged. No rotation, overshoot, blur, flash, portal ring, animated noise,
+runtime asset, or new animation owner was added.
 
 ## Shell, screen, identity, and workspace
 
@@ -105,14 +117,54 @@ crossing, so it supports the threshold rather than becoming a glowing frame.
 No cyan light is added outside the laptop or later in the journey.
 
 Jonathan's identity remains semantic HTML and fully readable through the
-approach. It no longer scales toward the visitor during departure; it moves a
-small distance back into the screen and settles slightly smaller. The
-workspace threshold begins resolving earlier from behind that identity and
-finishes slightly forward of the starting plane.
+approach. It remains visually flat, does not receive a scale or depth
+transform, and fades before the final high-scale phase. The workspace
+threshold begins resolving earlier from behind that identity and finishes
+slightly forward of the starting plane.
 
 The Orientation layout, Environment content, and Helix path are unchanged.
 The threshold remains a decorative anticipation layer; the real workspace
 content continues in normal semantic document flow.
+
+## Human review correction
+
+Human review accepted the spatial direction but found two rendering defects:
+the Arrival identity became visibly rasterized during enlargement, and a
+full-width seam divided the pinned scene from the normal-flow workspace.
+
+### Identity rasterization
+
+The screen and display both established 3D contexts, and the identity had its
+own `translateZ`, `preserve-3d`, and GSAP scale. The complete laptop was then
+promoted and enlarged to more than twice its initial size. Chromium therefore
+treated the still-readable identity as a composited texture inside a scaled
+3D subtree and visibly magnified that texture.
+
+The correction separates concerns. The identity stays as flat semantic HTML
+on the screen plane; only the decorative glass and threshold use the depth
+wrapper. The identity receives opacity only and departs earlier. Reverse
+travel restores the same unscaled HTML, so readable text is crisp in both
+directions.
+
+### Workspace seam
+
+The enlarged screen extended below the Arrival section at release, but the
+Arrival container clipped it at exactly the section boundary. At the same
+coordinate, the workspace introduced a different grid treatment and the
+whole-laptop drop shadow became a dark full-width band. The matching edges
+made two continuous layers read as stacked sections.
+
+The correction lets the screen plane overlap the workspace, clips only the
+horizontal page axis at the motion root, moves the shadow to the fading shell,
+removes the resolved screen edge, and aligns one shared transition grid behind
+the overlap. The workspace still enters normal flow at the same point; the
+overlapping screen surface conceals the document boundary without a second
+pin, extra page height, or an overlay wipe.
+
+Matched correction evidence is stored in
+[`correction-before`](media/the-threshold/correction-before) and
+[`correction-after`](media/the-threshold/correction-after). The revised folder
+includes a side-by-side former-seam comparison and a forward/reverse recording.
 
 ## Comparison
 
@@ -159,19 +211,19 @@ asset, request, event listener, ScrollTrigger owner, render loop, canvas, or
 WebGL. Only transform and opacity are animated. The production homepage does
 not request the lab-only Three.js chunk.
 
-Using the same decoded-resource method recorded by PR #19, the production
-homepage moved from 651,816 decoded JavaScript bytes to 652,486: a 670-byte
-increase (about 0.10%). The revised route requested the same seven JavaScript
-chunks, transferred 200,342 bytes in this local session, and requested no
-Three.js chunk. These are local comparison measurements rather than universal
-network costs.
+The correction changes markup, CSS, existing configuration values, tests, and
+the local evidence script. It adds no production dependency, request, event
+listener, animation owner, or client state. Final bundle measurements are
+recorded in the pull request because decoded resource sizes vary by build and
+local server session.
 
 ## Validation and known limitations
 
 The complete 33-check Chromium product suite passes, including the six
 approved viewport sizes, keyboard flow, reduced motion, direct fragments,
 forward and reverse ownership, console safety, and horizontal overflow. The
-focused 11-check release suite also passes in Chromium and WebKit.
+focused 11-check release suite passes in both Chromium and WebKit (22 checks
+total). The route remains statically generated.
 
 Firefox is not reported as passing. Its release run reproduces the Playwright
 runner failure already recorded by PR #19: page-backed checks fail while the
@@ -213,9 +265,8 @@ Three.js remains outside the production portfolio.
 
 ## Recommendation
 
-**Revise pending human comparison.** The implementation stays within the
-approved technical and intensity boundaries, but completion alone is not proof
-that it is visually better. Review the matched screenshots and recordings,
-especially the screen-crossing and reverse-midpoint states. Keep it only if
-the added layer relationship is perceptible without drawing attention to
-itself; otherwise reduce or revert the depth cue.
+**Keep.** The accepted spatial concept is unchanged, while the two review
+defects have direct structural corrections. The identity no longer depends on
+a magnified 3D texture during its readable phase, and the screen/workspace
+overlap removes the full-width release seam in forward and reverse travel.
+The matched correction evidence should remain part of the PR record.

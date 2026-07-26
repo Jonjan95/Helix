@@ -1,10 +1,16 @@
-import { copyFile, mkdir, unlink } from "node:fs/promises";
+import { copyFile, mkdir, readFile, unlink } from "node:fs/promises";
 import { createServer } from "node:http";
 import path from "node:path";
 import next from "next";
 import { chromium } from "@playwright/test";
 
-const mode = process.argv.includes("--after") ? "after" : "before";
+const mode = process.argv.includes("--correction-after")
+  ? "correction-after"
+  : process.argv.includes("--correction-before")
+    ? "correction-before"
+    : process.argv.includes("--after")
+      ? "after"
+      : "before";
 const outputDirectory = path.join(
   process.cwd(),
   "docs",
@@ -136,6 +142,190 @@ async function recordDesktopSequence() {
   await unlink(temporaryVideo);
 }
 
+async function captureCorrectionSequence() {
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const distance = await thresholdDistance(page);
+  const frames = [
+    ["01-identity-initial.png", 0],
+    ["02-identity-early-approach.png", distance * 0.22],
+    ["03-identity-before-departure.png", distance * 0.5],
+    ["04-mid-threshold-handoff.png", distance * 0.68],
+    ["05-former-seam-location.png", distance + 150],
+    ["06-first-resolved-workspace.png", distance + 320],
+  ];
+
+  for (const [filename, scrollPosition] of frames) {
+    await page.evaluate(
+      (top) => window.scrollTo({ behavior: "auto", top }),
+      Math.round(scrollPosition),
+    );
+    await page.waitForTimeout(700);
+    await page.screenshot({ path: path.join(outputDirectory, filename) });
+  }
+
+  await page.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(distance + 80),
+  );
+  await page.waitForTimeout(700);
+  await page.screenshot({
+    path: path.join(outputDirectory, "07-reverse-crossing.png"),
+  });
+  await settleAt(page, 0, distance);
+  await page.screenshot({
+    path: path.join(outputDirectory, "08-arrival-restored.png"),
+  });
+  await context.close();
+}
+
+async function captureCorrectionResponsive() {
+  const compactContext = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 768, width: 1024 },
+  });
+  const compactPage = await compactContext.newPage();
+  await compactPage.goto(baseUrl, { waitUntil: "networkidle" });
+  const compactDistance = await thresholdDistance(compactPage);
+  await compactPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(compactDistance + 120),
+  );
+  await compactPage.waitForTimeout(700);
+  await compactPage.screenshot({
+    path: path.join(outputDirectory, "09-compact-former-seam-location.png"),
+  });
+  await compactContext.close();
+
+  const reducedContext = await browser.newContext({
+    colorScheme: "dark",
+    reducedMotion: "reduce",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const reducedPage = await reducedContext.newPage();
+  await reducedPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await reducedPage.screenshot({
+    fullPage: true,
+    path: path.join(outputDirectory, "10-reduced-motion.png"),
+  });
+  await reducedContext.close();
+}
+
+async function recordCorrectionSequence() {
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    recordVideo: {
+      dir: outputDirectory,
+      size: { height: 800, width: 1280 },
+    },
+    viewport: { height: 800, width: 1280 },
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const distance = await thresholdDistance(page);
+  const end = distance + 280;
+
+  for (let step = 0; step <= 50; step += 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) => {
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        });
+      },
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(400);
+  for (let step = 50; step >= 0; step -= 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) => {
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        });
+      },
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(400);
+
+  const video = page.video();
+  await context.close();
+  const temporaryVideo = await video.path();
+  await copyFile(
+    temporaryVideo,
+    path.join(outputDirectory, "11-forward-reverse.webm"),
+  );
+  await unlink(temporaryVideo);
+}
+
+async function createSeamComparison() {
+  const beforePath = path.join(
+    process.cwd(),
+    "docs",
+    "media",
+    "the-threshold",
+    "correction-before",
+    "05-former-seam-location.png",
+  );
+  const afterPath = path.join(
+    outputDirectory,
+    "05-former-seam-location.png",
+  );
+  const [before, after] = await Promise.all([
+    readFile(beforePath),
+    readFile(afterPath),
+  ]);
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 540, width: 1440 },
+  });
+  const page = await context.newPage();
+  await page.setContent(`
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #121416;
+        color: #f4f0e8;
+        font: 12px Consolas, monospace;
+      }
+      main { display: grid; grid-template-columns: 1fr 1fr; }
+      figure { position: relative; margin: 0; overflow: hidden; }
+      img { display: block; width: 720px; height: 500px; object-fit: cover; }
+      figcaption {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        padding: 6px 9px;
+        background: rgb(18 20 22 / 0.88);
+        letter-spacing: 0.12em;
+      }
+    </style>
+    <main>
+      <figure>
+        <img alt="" src="data:image/png;base64,${before.toString("base64")}">
+        <figcaption>BEFORE / CLIPPED RELEASE</figcaption>
+      </figure>
+      <figure>
+        <img alt="" src="data:image/png;base64,${after.toString("base64")}">
+        <figcaption>AFTER / CONTINUOUS THRESHOLD</figcaption>
+      </figure>
+    </main>
+  `);
+  await page.screenshot({
+    path: path.join(outputDirectory, "12-seam-comparison.png"),
+  });
+  await context.close();
+}
+
 async function captureAfterReview() {
   const cases = [
     ["09-compact-threshold.png", { height: 768, width: 1024 }, 0.78],
@@ -184,10 +374,19 @@ async function captureAfterReview() {
 }
 
 try {
-  await captureDesktopSequence();
-  await recordDesktopSequence();
-  if (mode === "after") {
-    await captureAfterReview();
+  if (mode.startsWith("correction-")) {
+    await captureCorrectionSequence();
+    await captureCorrectionResponsive();
+    await recordCorrectionSequence();
+    if (mode === "correction-after") {
+      await createSeamComparison();
+    }
+  } else {
+    await captureDesktopSequence();
+    await recordDesktopSequence();
+    if (mode === "after") {
+      await captureAfterReview();
+    }
   }
 } finally {
   await browser.close();
