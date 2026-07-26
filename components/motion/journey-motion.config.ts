@@ -17,6 +17,7 @@ export type WorkspaceHandoffProfile = {
   duration: number;
   glassDepth: number;
   glassOpacity: number;
+  gridOpacity: number;
   identityDuration: number;
   identityOpacity: number;
   identityStart: number;
@@ -71,6 +72,7 @@ export const journeyMotionConfig = {
     laptopShell: '[data-motion="laptop-shell"]',
     screen: '[data-motion="laptop-screen"]',
     screenGlass: '[data-motion="screen-glass"]',
+    screenGrid: '[data-motion="screen-grid"]',
     screenIdentity: '[data-motion="screen-identity"]',
     workspace: '[data-motion="digital-workspace"]',
     workspaceThreshold: '[data-motion="workspace-threshold"]',
@@ -119,11 +121,12 @@ export const journeyMotionConfig = {
       duration: 0.36,
       glassDepth: 18,
       glassOpacity: 0.02,
+      gridOpacity: 0,
       identityDuration: 0.24,
       identityOpacity: 0,
       identityStart: 0.48,
       screenEdgeOpacity: 0,
-      screenFrameOpacity: 0.12,
+      screenFrameOpacity: 0,
       shellOpacity: 0,
       start: 0.6,
       thresholdDepth: 12,
@@ -134,11 +137,12 @@ export const journeyMotionConfig = {
       duration: 0.3,
       glassDepth: 14,
       glassOpacity: 0.04,
+      gridOpacity: 0,
       identityDuration: 0.22,
       identityOpacity: 0.02,
       identityStart: 0.56,
       screenEdgeOpacity: 0,
-      screenFrameOpacity: 0.08,
+      screenFrameOpacity: 0,
       shellOpacity: 0,
       start: 0.66,
       thresholdDepth: 8,
@@ -149,6 +153,7 @@ export const journeyMotionConfig = {
       duration: 0.34,
       glassDepth: 0,
       glassOpacity: 0.18,
+      gridOpacity: 1,
       identityDuration: 0.34,
       identityOpacity: 0.18,
       identityStart: 0.56,

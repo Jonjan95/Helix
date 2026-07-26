@@ -552,14 +552,18 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   const laptop = page.getByTestId("laptop-hero");
   const threshold = laptop.locator('[data-motion="workspace-threshold"]');
   const glass = laptop.locator('[data-motion="screen-glass"]');
+  const screenGrid = laptop.locator('[data-motion="screen-grid"]');
   const shell = laptop.locator('[data-motion="laptop-shell"]');
   const identity = laptop.locator('[data-motion="screen-identity"]');
   const motionRoot = page.locator('[data-motion-root="helix-experience"]');
+  const journey = page.locator("[data-helix-journey]");
 
   await expect(motionRoot).toHaveCount(1);
   await expect(page.locator(".pin-spacer")).toHaveCount(1);
   await expect(laptop).toBeVisible();
   await expect(glass).toHaveAttribute("aria-hidden", "true");
+  await expect(screenGrid).toHaveAttribute("aria-hidden", "true");
+  await expect(journey).toHaveAttribute("data-grid-handoff", "sequential");
   await expect(identity).toBeVisible();
 
   const pinDistance = await page.locator(".pin-spacer").evaluate((spacer) =>
@@ -619,6 +623,35 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   );
   await page.waitForTimeout(700);
   await expect(threshold).toBeVisible();
+  const resolvedGridComposition = await page.evaluate(() => {
+    const grid = document.querySelector<HTMLElement>(
+      '[data-motion="screen-grid"]',
+    );
+    const screen = document.querySelector<HTMLElement>(
+      '[data-motion="laptop-screen"]',
+    );
+    const workspace = document.querySelector<HTMLElement>(
+      "[data-helix-journey]",
+    );
+
+    if (!grid || !screen || !workspace) {
+      return null;
+    }
+
+    return {
+      screenGridOpacity: Number.parseFloat(getComputedStyle(grid).opacity),
+      screenSurface: getComputedStyle(screen).backgroundImage,
+      transitionLayers: (
+        getComputedStyle(workspace, "::before").backgroundImage.match(
+          /linear-gradient/g,
+        ) ?? []
+      ).length,
+    };
+  });
+  expect(resolvedGridComposition).not.toBeNull();
+  expect(resolvedGridComposition?.screenGridOpacity).toBeLessThan(0.01);
+  expect(resolvedGridComposition?.screenSurface).toBe("none");
+  expect(resolvedGridComposition?.transitionLayers).toBe(1);
 
   await page.evaluate(
     (distance) => window.scrollTo({ top: distance + 150, behavior: "auto" }),

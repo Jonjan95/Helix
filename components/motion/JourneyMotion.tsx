@@ -42,6 +42,7 @@ type MotionTargets = {
   laptopShell: HTMLElement;
   screen: HTMLElement;
   screenGlass: HTMLElement;
+  screenGrid: HTMLElement;
   screenIdentity: HTMLElement;
   workspace: HTMLElement;
   workspaceThreshold: HTMLElement;
@@ -96,6 +97,7 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
     laptopShell: scope.querySelector<HTMLElement>(selectors.laptopShell),
     screen: scope.querySelector<HTMLElement>(selectors.screen),
     screenGlass: scope.querySelector<HTMLElement>(selectors.screenGlass),
+    screenGrid: scope.querySelector<HTMLElement>(selectors.screenGrid),
     screenIdentity: scope.querySelector<HTMLElement>(selectors.screenIdentity),
     workspace: scope.querySelector<HTMLElement>(selectors.workspace),
     workspaceThreshold: scope.querySelector<HTMLElement>(
@@ -237,6 +239,15 @@ function createSpatialTimeline(
       {
         opacity: handoff.glassOpacity,
         z: handoff.glassDepth,
+        duration: handoff.duration,
+        ease: timeline.thresholdEase,
+      },
+      handoff.start,
+    )
+    .to(
+      targets.screenGrid,
+      {
+        opacity: handoff.gridOpacity,
         duration: handoff.duration,
         ease: timeline.thresholdEase,
       },
@@ -630,6 +641,7 @@ function clearMotionStyles(targets: MotionTargets) {
       targets.laptopShell,
       targets.screen,
       targets.screenGlass,
+      targets.screenGrid,
       targets.screenIdentity,
       targets.workspace,
       targets.workspaceThreshold,

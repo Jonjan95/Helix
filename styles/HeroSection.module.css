@@ -71,6 +71,12 @@
   }
 }
 
+@media (min-width: 48rem) and (max-width: 64rem) {
+  .hero {
+    background-color: #111719;
+  }
+}
+
 @media (max-width: 40rem) {
   .hero {
     min-height: 100svh;

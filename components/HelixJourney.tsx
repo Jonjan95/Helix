@@ -9,6 +9,7 @@ export function HelixJourney() {
     <div
       className={styles.journey}
       data-active-chapter="static"
+      data-grid-handoff="sequential"
       data-helix-journey=""
       data-journey-phase="static"
       data-testid="helix-journey"
