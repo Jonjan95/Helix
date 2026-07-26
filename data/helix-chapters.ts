@@ -88,7 +88,7 @@ export const helixChapters = [
     headingId: "about-heading",
     index: "01",
     introduction:
-      "I make progress through structured iteration, visible evidence, and practical experiments—not through a fixed list of tools.",
+      "I work in small steps, check the result, and learn by putting ideas into practice.",
     label: "ENVIRONMENT",
     narrativeChapter: "orientation",
     pacing: "entry",
@@ -98,12 +98,12 @@ export const helixChapters = [
   {
     anchorId: "skills",
     chapter: "engineering",
-    handoff: "The projects below show that process in practice.",
-    heading: "Reliability starts with understanding the system.",
+    handoff: "The projects below show those steps at work.",
+    heading: "Start by understanding the problem.",
     headingId: "skills-heading",
     index: "02",
     introduction:
-      "Whether the problem is in an API, a database, a connected device, or a field installation, I follow the same sequence: understand the boundaries, isolate the cause, make behaviour observable, and verify the result.",
+      "Whether I am looking at an API, a database, a connected device, or equipment in the field, I use the same four steps.",
     label: "ENGINEERING MINDSET",
     narrativeChapter: "engineering",
     pacing: "featured",
@@ -113,11 +113,11 @@ export const helixChapters = [
   {
     anchorId: "projects",
     chapter: "projects",
-    heading: "Building systems by solving real problems.",
+    heading: "Projects built around real problems.",
     headingId: "projects-heading",
     index: "03",
     introduction:
-      "Three working systems show how product intent, technical decisions, and quality evidence connect in practice.",
+      "These three projects show how I turn an idea into working software, test it, and stay honest about what is finished.",
     label: "SELECTED PROJECTS",
     narrativeChapter: "selected-work",
     pacing: "expanded",
@@ -127,11 +127,11 @@ export const helixChapters = [
   {
     anchorId: "experience",
     chapter: "experience",
-    heading: "Technical work across software, systems, and service.",
+    heading: "Experience across software, devices, and field work.",
     headingId: "experience-heading",
     index: "04",
     introduction:
-      "My path into software has moved through code, connected devices, and hands-on troubleshooting. Each environment has strengthened the same habit: understand the system, isolate the problem, and verify the result.",
+      "My route into software has passed through code, connected devices, and hands-on troubleshooting. Each has taught me to understand the problem, narrow the cause, and check the result.",
     label: "EXPERIENCE",
     narrativeChapter: "proof",
     pacing: "expanded",
@@ -143,13 +143,13 @@ export const helixChapters = [
     chapter: "contact",
     closing: "The path remains open.",
     direction:
-      "Open to conversations about LIA, junior software and QA opportunities, test automation, and practical technical collaboration.",
-    directionLabel: "CURRENT DIRECTION",
-    heading: "Let’s build something reliable.",
+      "I’m interested in LIA and junior opportunities in software development, testing, and QA, as well as thoughtful technical collaboration.",
+    directionLabel: "OPEN TO",
+    heading: "Let’s continue the conversation.",
     headingId: "contact-heading",
     index: "05",
     introduction:
-      "I’m currently developing toward roles in software development, testing, and quality engineering. If my work or background feels relevant, the next step can be a conversation.",
+      "If my work or background connects with what you are building, these are the best ways to continue.",
     label: "CONTINUE",
     narrativeChapter: "future",
     pacing: "exit",

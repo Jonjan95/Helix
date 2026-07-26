@@ -25,7 +25,7 @@ The review covered the laptop entry, workspace handoff, five Helix stops, direct
 | VIS-01 | Direct chapter entry | Polish | Direct fragments preserve the active node and show the chapter heading with useful preceding context, but the amount of previous-chapter content varies by chapter and viewport. | Keep the calibrated fragment restoration; revisit only if final content changes chapter height materially. | Deferred |
 | VIS-02 | Tablet density | Polish | At 768px, the alternating composition remains readable but Experience metadata and long headings use a narrow measure. No overlap or overflow occurs. | Preserve the current side relationship; re-evaluate during final visual polish rather than introducing a breakpoint-only layout rewrite. | Deferred |
 | CNT-01 | Arrival and early chapters | Content later | Arrival identity copy and the lighter Environment and Engineering chapters remain less complete than the three evidence chapters. | Complete the identity, three working principles, four-step method, and Projects handoff without changing the journey architecture. | Resolved in the early-journey content pass |
-| CNT-02 | Evidence prose | Content later | Some project and experience explanations are formal and repeated evidence labels create a dense reading rhythm. Claims remain accurate and the hierarchy remains usable. | Refine tone and concision in a dedicated copy pass with claim verification. | Deferred |
+| CNT-02 | Evidence prose | Content later | Some project and experience explanations are formal and repeated evidence labels create a dense reading rhythm. Claims remain accurate and the hierarchy remains usable. | Refine tone and concision in a dedicated copy pass with claim verification. | Resolved in the portfolio-wide voice pass |
 
 ## Forward journey findings
 
@@ -101,6 +101,8 @@ The final browser review reported 0 console warnings and 0 console errors. All s
 
 The early-journey follow-up was reviewed from base commit `5a9940a4ea76af82ea52d6b380dcbf3aad41fa3f`. Arrival, Environment, and Engineering Mindset are content-complete; their typed records live in `data/early-journey.ts`. The established `entry` and `featured` pacing roles remain unchanged because natural document height contains all new content coherently. Visual evidence is stored in [`docs/media/arrival-early-journey`](media/arrival-early-journey).
 
+The portfolio-wide voice pass was reviewed from base commit `bd96861e8ddcb2dc2fd545f261d43d18d2bd78db`. It reduced estimated visible copy from 1,386 to 1,273 words and average sentence length from 17.0 to 15.3 words while preserving the complete claim, privacy, route, status, architecture, and pacing boundaries. Decisions and chapter measurements are recorded in the [content voice audit](content-voice-audit.md).
+
 ## Visual evidence
 
 The 16-image review sequence and forward/reverse recording are stored in [`docs/media/full-journey-audit`](media/full-journey-audit):
@@ -132,8 +134,6 @@ The 16-image review sequence and forward/reverse recording are stored in [`docs/
 
 ## Intentionally deferred
 
-- portfolio-wide voice and concision work;
-- full portfolio-wide voice and concision work;
 - tablet metadata polish that does not currently impair use;
 - project detail routes, imagery, and case-study interactions;
 - downloadable CV and exhaustive employment history;
@@ -142,4 +142,10 @@ The 16-image review sequence and forward/reverse recording are stored in [`docs/
 
 ## Remaining recommendations
 
-The next milestone should be a verified portfolio-wide voice and concision pass. It should reduce formal or repetitive evidence prose without expanding claims, changing chapter ownership, or redesigning the calibrated journey.
+The next milestone should prepare production metadata and social previews, make the analytics and privacy decision explicit, and run final cross-browser, screen-reader, zoom, and real-device checks before deployment.
+
+## Visual-polish follow-up
+
+The subsequent visual-polish pass retained the audited journey ownership, pacing roles, direct fragments, and centralized motion configuration. It raised inactive-content legibility, quieted path contrast, stacked supporting projects to protect reading measure, restrained cyan to featured/current states, unified separators, and made repository actions at least 44px high at all six approved sizes.
+
+The updated suite passes 21 Chromium tests, including computed featured/supporting hierarchy, visible focus treatment, repository targets, reduced motion, forward/reverse ownership, direct fragments, and the complete overflow matrix. Findings and the 22-image after sequence are recorded in the [visual polish audit](visual-polish-audit.md).

@@ -6,6 +6,11 @@
   --color-muted: #a8adb2;
   --color-line: #343a3f;
   --color-accent: #69d3e7;
+  --color-line-soft: rgb(244 240 232 / 0.11);
+  --color-line-strong: rgb(244 240 232 / 0.17);
+  --color-muted-strong: rgb(244 240 232 / 0.76);
+  --duration-interaction: 160ms;
+  --ease-interaction: cubic-bezier(0.2, 0, 0, 1);
   --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
   --content-width: 76rem;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -41,7 +46,7 @@ a {
 
 :focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 4px;
+  outline-offset: 3px;
 }
 
 .skip-link {
@@ -54,7 +59,7 @@ a {
   color: var(--color-background);
   font-weight: 700;
   transform: translateY(-180%);
-  transition: transform 160ms ease;
+  transition: transform var(--duration-interaction) var(--ease-interaction);
 }
 
 .skip-link:focus {

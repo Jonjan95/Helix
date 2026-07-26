@@ -398,6 +398,14 @@ These ideas remain conceptual. Their value depends on whether they improve orien
 
 Any future direction must preserve the static content contract, responsive composition, reduced-motion route, performance standards, and semantic source of truth established today.
 
+## Implemented visual-polish decisions
+
+The first complete-journey polish pass adds `--color-line-soft`, `--color-line-strong`, `--color-muted-strong`, `--duration-interaction`, and `--ease-interaction` as restrained maintenance tokens. They consolidate repeated divider, metadata, and link-transition values; they do not expand the palette or create a second token system.
+
+Cyan is reserved for the featured project, current Experience track, active path state, primary contact route, focus, and meaningful connector detail. Supporting project and Experience metadata use a strong neutral value. Repository and contact actions share visible focus, a 44px minimum target where applicable, and a short directional micro-interaction that is removed under reduced motion.
+
+Supporting projects stack within their owning side column at all widths. This preserves readable editorial measure and featured/supporting hierarchy more effectively than placing two evidence-heavy articles side by side. The path uses quieter rail and rung contrast so it remains continuous without competing with headings. The laptop material and final continuation use proportion, border, and spacing refinements only. Full findings are recorded in the [visual polish audit](visual-polish-audit.md).
+
 ## Maintaining the system
 
 Before adding or changing a visual pattern, ask:

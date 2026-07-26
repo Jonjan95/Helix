@@ -34,7 +34,7 @@ The pattern is intentionally bounded rather than a generic page builder. Stops a
 
 ## Current content boundary
 
-Arrival identifies Jonathan Jansson, his Malmö context, and his current software-development studies with a testing and quality focus. Environment then explains the working conditions behind that direction through structured iteration, visible evidence, and practical experimentation. Engineering turns those habits into a compact Understand → Isolate → Observe → Verify sequence and closes with a direct handoff into Projects. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting engineering evidence. Experience connects current software and quality studies, previous embedded-systems studies, and practical field troubleshooting as three parts of one engineering perspective. Continue resolves the current journey into verified GitHub, LinkedIn, and professional email routes while the path remains visibly open.
+Arrival identifies Jonathan Jansson, his Malmö context, and his current software-development studies with a testing and quality focus. Environment then explains how he works through small, reviewable steps, checking what changed, and learning by building. Engineering turns those habits into a compact Understand → Isolate → Observe → Verify sequence and closes with a direct handoff into Projects. AI-Powered Test Engineer leads the project chapter, with CortexGrid and Helix as supporting work. Experience connects current software and testing studies, previous embedded-software studies, and practical field troubleshooting as three parts of one perspective. Continue resolves the current journey into verified GitHub, LinkedIn, and professional email routes while the path remains visibly open.
 
 The early chapters establish a lens rather than trying to prove every claim immediately. Arrival remains the lightest composition, Environment uses three concise principle rows, and Engineering gains a stronger progressive rhythm before the denser project evidence. The copy stays within verified study, project, and troubleshooting boundaries: it does not claim completed studies, professional software or QA employment, seniority, production ownership, or quantified impact.
 
@@ -52,7 +52,7 @@ The visual review evidence is stored in [`docs/media/selected-projects`](media/s
 
 ## Experience destination
 
-Experience acts as evidence for the Engineering Mindset rather than as a chronological résumé. Its three tracks move from present direction to supporting foundations: software development and quality engineering, embedded systems and connected devices, then technical service and field troubleshooting. Every track pairs a concise summary with selected evidence and a direct statement of what that environment contributes to current software and quality work.
+Experience supports the Engineering Mindset rather than becoming a chronological résumé. Its three tracks move from present direction to supporting foundations: software development and testing, embedded software and connected devices, then technical service and field troubleshooting. Every track pairs a concise summary with selected examples and a direct statement of what Jonathan carries into his current work.
 
 The first track receives greater typographic weight and the clearest current-state metadata. Tracks two and three remain quieter but use the same semantic vocabulary, making their relationship explicit without presenting three matching cards. Fine separators, monospace metadata, restrained environment labels, and short cyan evidence markers create one continuous reading rhythm. The shared Helix remains the only timeline-like path; Experience adds no second spine, date bubbles, logos, accordions, or hover-dependent detail.
 
@@ -113,14 +113,28 @@ The first portfolio-wide audit reviewed the calibrated path after Projects, Expe
 
 The selected refinements are outside the motion model: the skip link now bypasses the immersive entry, the visible mobile entry cue has a touch-safe target, and the responsive regression matrix includes the required compact-desktop and narrow-mobile sizes. Link, console, reduced-motion, and static-generation checks found no journey-specific defect. Findings and deferred content work are maintained in the [full journey audit](full-journey-audit.md), with visual evidence in [`docs/media/full-journey-audit`](media/full-journey-audit).
 
+## Content voice
+
+The portfolio-wide voice pass reviews Arrival through Continue as one narrative. It replaces repeated process terminology with direct descriptions of what Jonathan builds, checks, and has learned while retaining every project status, contact destination, study boundary, employment boundary, and implemented-versus-planned limit.
+
+The page is shorter without becoming a slogan sequence. Understand, Isolate, Observe, and Verify remain the memorable engineering spine; project details retain enough technical proof for inspection; Experience still distinguishes current studies, previous studies, and field-service work; Continue states the opportunity direction once. The [content voice audit](content-voice-audit.md) records the inventory, terminology decisions, and before-and-after measurements.
+
+No spacing, motion, pacing, component structure, or typed content model changed as part of this work.
+
+## Visual polish
+
+The first focused polish pass refines the established graphite, warm-white, and restrained-cyan language without changing the concept. Shared chapter typography has a calmer measure and line height; supporting projects stack inside their side column; current and featured records keep cyan while supporting metadata becomes neutral; related evidence groups share divider tokens; the path is quieter behind content; native actions share visible focus and touch-safe targets; and the laptop and final continuation receive proportion and spacing adjustments.
+
+The SVG geometry, chapter placements, laptop-to-workspace sequence, pacing roles, motion values, centralized ownership, visitor copy, typed content, and route destinations remain unchanged. Findings and viewport evidence are recorded in the [visual polish audit](visual-polish-audit.md).
+
 ## Intentionally deferred
 
 - helix navigation, direct manipulation, or clickable node controls;
 - project detail routes, imagery, galleries, modals, and case-study interactions;
 - downloadable CV, exhaustive employment history, and route-based biography content;
 - contact forms, scheduling integrations, copied-email controls, and analytics;
-- final copy polish and downloadable CV functionality;
+- downloadable CV functionality and final deployment copy review;
 - chapter-specific interaction patterns beyond shared journey progression;
-- final spacing, art direction, and visual polish;
+- new art direction beyond the completed first visual-polish pass;
 - Three.js, React Three Fiber, WebGL, canvas, and external 3D assets;
 - ambient rotation, continuous background motion, particles, and decorative effects.

@@ -6,7 +6,7 @@
   width: min(100%, 90rem);
   min-height: var(--chapter-span);
   margin: 0 auto;
-  padding: clamp(6rem, 11vw, 10rem) var(--page-gutter);
+  padding: clamp(5.5rem, 9vw, 8rem) var(--page-gutter);
   grid-template-columns: minmax(0, 1fr) clamp(8rem, 17vw, 15rem) minmax(0, 1fr);
   align-items: center;
 }
@@ -48,7 +48,7 @@
 }
 
 .stop[data-journey-state="upcoming"] .content {
-  opacity: 0.48;
+  opacity: 0.58;
 }
 
 .stop[data-journey-state="approaching"] .content {
@@ -60,7 +60,7 @@
 }
 
 .stop[data-journey-state="passed"] .content {
-  opacity: 0.58;
+  opacity: 0.66;
 }
 
 .stop[data-journey-state="active"] .content,
@@ -98,7 +98,7 @@
 .node[data-node-state="active"] {
   border-color: var(--color-accent);
   box-shadow:
-    0 0 0 4px rgb(105 211 231 / 0.07),
+    0 0 0 3px rgb(105 211 231 / 0.06),
     0 0 0 1px rgb(105 211 231 / 0.24) inset;
 }
 
@@ -141,7 +141,7 @@
   width: clamp(6rem, 12vw, 11rem);
   height: 1px;
   background: linear-gradient(90deg, var(--color-accent), rgb(105 211 231 / 0.22));
-  opacity: 0.62;
+  opacity: 0.54;
   transition: opacity 360ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -155,7 +155,7 @@
 
 .stop[data-journey-state="active"] .connector,
 .stop[data-journey-state="static"] .connector {
-  opacity: 0.68;
+  opacity: 0.62;
 }
 
 .stop[data-journey-state="departing"] .connector {

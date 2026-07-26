@@ -18,11 +18,11 @@ const journeyChapters = [
 ] as const;
 
 const chapterHeadings = {
-  contact: "Let’s build something reliable.",
-  engineering: "Reliability starts with understanding the system.",
+  contact: "Let’s continue the conversation.",
+  engineering: "Start by understanding the problem.",
   environment: "A workspace built around learning by doing.",
-  experience: "Technical work across software, systems, and service.",
-  projects: "Building systems by solving real problems.",
+  experience: "Experience across software, devices, and field work.",
+  projects: "Projects built around real problems.",
 } as const;
 
 const environmentPrinciples = [
@@ -59,18 +59,24 @@ const projectIds = {
   Helix: "helix",
 } as const;
 
+const projectStatuses = {
+  "AI-Powered Test Engineer": "ACTIVE DEVELOPMENT",
+  CortexGrid: "PROTOTYPE COMPLETE",
+  Helix: "ACTIVE DEVELOPMENT",
+} as const;
+
 const experienceTracks = [
   {
-    category: "Software & quality",
+    category: "Software & testing",
     current: true,
     id: "software-quality",
-    title: "Software development and quality engineering",
+    title: "Software development and testing",
   },
   {
     category: "Embedded & connected systems",
     current: false,
     id: "embedded-connected",
-    title: "Embedded systems and connected devices",
+    title: "Embedded software and connected devices",
   },
   {
     category: "Technical service",
@@ -82,8 +88,7 @@ const experienceTracks = [
 
 const contactRoutes = [
   {
-    accessibleName:
-      "Explore Jonathan Jansson's public repositories on GitHub",
+    accessibleName: "View Jonathan Jansson on GitHub",
     href: "https://github.com/Jonjan95",
     id: "github",
     label: "GitHub",
@@ -91,8 +96,7 @@ const contactRoutes = [
     type: "external",
   },
   {
-    accessibleName:
-      "View Jonathan Jansson's professional profile on LinkedIn",
+    accessibleName: "View Jonathan Jansson on LinkedIn",
     href: "https://se.linkedin.com/in/jonathan-jansson-b94783270",
     id: "linkedin",
     label: "LinkedIn",
@@ -100,8 +104,7 @@ const contactRoutes = [
     type: "external",
   },
   {
-    accessibleName:
-      "Email Jonathan Jansson about LIA, junior opportunities, or technical collaboration",
+    accessibleName: "Email Jonathan Jansson",
     href: "mailto:jonis.jansson@hotmail.com",
     id: "email",
     label: "Email",
@@ -149,7 +152,7 @@ async function positionChapterAtViewportRatio(
 test("renders the complete semantic Helix journey", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(page).toHaveTitle(/Helix/);
+  await expect(page).toHaveTitle(/Jonathan Jansson/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(
     page.getByRole("heading", { level: 1, name: "Jonathan Jansson" }),
@@ -160,14 +163,11 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   await expect(
     arrival.getByRole("heading", {
       level: 2,
-      name: "Software development student focused on testing and quality.",
+      name: "Software development student with a focus on testing and quality.",
     }),
   ).toBeVisible();
-  await expect(
-    arrival.getByText(
-      "I build projects across software, APIs, databases, automation, and connected systems—learning how they behave, where they fail, and how to verify the result.",
-    ),
-  ).toBeVisible();
+  await expect(arrival).toContainText("software projects");
+  await expect(arrival).toContainText("connected devices");
   await expect(page.getByRole("heading", { name: "Jonis", exact: true })).toHaveCount(0);
 
   const journey = page.getByTestId("helix-journey");
@@ -216,9 +216,9 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     ),
   ).toEqual(environmentPrinciples);
   for (const heading of [
-    "Structured iteration",
-    "Visible evidence",
-    "Practical experimentation",
+    "Small, reviewable steps",
+    "Check what changed",
+    "Learn by building",
   ]) {
     await expect(
       environment.getByRole("heading", { level: 3, name: heading }),
@@ -239,7 +239,7 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     ).toBeAttached();
   }
   await expect(
-    engineering.getByText("The projects below show that process in practice."),
+    engineering.getByText("The projects below show those steps at work."),
   ).toBeAttached();
 
   const projects = page.getByTestId("journey-chapter-projects");
@@ -247,6 +247,9 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   await expect(
     projects.locator('[data-project-featured="true"]'),
   ).toHaveAttribute("data-project", "ai-powered-test-engineer");
+  const featuredProject = projects.locator(
+    '[data-project="ai-powered-test-engineer"]',
+  );
 
   for (const [project, repositoryUrl] of Object.entries(projectRepositories)) {
     await expect(
@@ -255,22 +258,30 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     const projectArticle = projects.locator(
       `[data-project="${projectIds[project as keyof typeof projectIds]}"]`,
     );
-    await expect(projectArticle.locator("[data-project-status]")).toHaveCount(1);
+    await expect(projectArticle.locator("[data-project-status]")).toHaveAttribute(
+      "data-project-status",
+      projectStatuses[project as keyof typeof projectStatuses],
+    );
+    await expect(projectArticle.getByText("Current scope")).toBeAttached();
     await expect(
       projectArticle.getByRole("link", {
         name: `View ${project} on GitHub`,
       }),
     ).toHaveAttribute("href", repositoryUrl);
   }
-
-  const featuredProject = projects.locator(
-    '[data-project="ai-powered-test-engineer"]',
+  await expect(featuredProject).toContainText("still planned");
+  const cortexGrid = projects.locator('[data-project="cortexgrid"]');
+  await expect(cortexGrid).toContainText("does not call an AI API");
+  await expect(cortexGrid).toContainText("deterministic");
+  await expect(projects.locator('[data-project="helix"]')).toContainText(
+    "later work",
   );
+
   for (const evidenceHeading of [
     "Problem",
     "Approach",
-    "Technical evidence",
-    "Quality evidence",
+    "Technical work",
+    "Checks",
   ]) {
     await expect(
       featuredProject.getByRole("heading", {
@@ -292,6 +303,10 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   const experience = page.getByTestId("journey-chapter-experience");
   const experienceArticles = experience.locator("[data-experience-track]");
   await expect(experienceArticles).toHaveCount(3);
+  await expect(
+    experience.locator('[data-experience-track="software-quality"]'),
+  ).toContainText("I am studying");
+  await expect(experience.getByText(/professional QA employment/i)).toHaveCount(0);
   expect(
     await experienceArticles.evaluateAll((elements) =>
       elements.map((element) =>
@@ -316,10 +331,10 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
     ).toBeAttached();
     await expect(article.getByRole("heading", {
       level: 4,
-      name: "Evidence in practice",
+      name: "What I worked with",
     })).toBeAttached();
     await expect(article.locator("section li")).toHaveCount(3);
-    await expect(article.getByText("What it contributes now")).toBeAttached();
+    await expect(article.getByText("What I carry forward")).toBeAttached();
   }
   await expect(experience.getByRole("link")).toHaveCount(0);
   await expect(experience.getByRole("button")).toHaveCount(0);
@@ -585,6 +600,55 @@ test("repository links follow a meaningful keyboard sequence", async ({ page }) 
       (project) => `View ${project} on GitHub`,
     ),
   );
+});
+
+test("keeps visual hierarchy and focus treatment outcome-based", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const hierarchy = await page.evaluate(() => {
+    const fontSize = (selector: string) => {
+      const element = document.querySelector(selector);
+      return element ? Number.parseFloat(getComputedStyle(element).fontSize) : 0;
+    };
+
+    return {
+      currentExperience: fontSize(
+        '[data-experience-current="true"] h3',
+      ),
+      featuredProject: fontSize('[data-project-featured="true"] h3'),
+      supportingExperience: fontSize(
+        '[data-experience-current="false"] h3',
+      ),
+      supportingProject: fontSize(
+        '[data-project-featured="false"] h3',
+      ),
+    };
+  });
+
+  expect(hierarchy.featuredProject).toBeGreaterThan(
+    hierarchy.supportingProject,
+  );
+  expect(hierarchy.currentExperience).toBeGreaterThan(
+    hierarchy.supportingExperience,
+  );
+
+  await page.keyboard.press("Tab");
+  const skipLink = page.getByRole("link", {
+    name: "Skip to portfolio journey",
+  });
+  await expect(skipLink).toBeFocused();
+  const focusTreatment = await skipLink.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      outlineStyle: style.outlineStyle,
+      outlineWidth: Number.parseFloat(style.outlineWidth),
+    };
+  });
+  expect(focusTreatment.outlineStyle).not.toBe("none");
+  expect(focusTreatment.outlineWidth).toBeGreaterThanOrEqual(2);
 });
 
 test("contact routes follow a meaningful keyboard sequence", async ({ page }) => {
@@ -1006,6 +1070,14 @@ for (const viewport of [
 
     await expectNoHorizontalOverflow(page);
 
+    const repositoryLinkHeights = await page
+      .getByTestId("journey-chapter-projects")
+      .getByRole("link")
+      .evaluateAll((links) =>
+        links.map((link) => link.getBoundingClientRect().height),
+      );
+    expect(repositoryLinkHeights.every((height) => height >= 44)).toBe(true);
+
     const chapterPositions: number[] = [];
     for (const chapter of journeyChapters) {
       const chapterElement = page.getByTestId(`journey-chapter-${chapter}`);
@@ -1029,7 +1101,7 @@ for (const viewport of [
       expect(positions.every((position) => position === "relative")).toBe(true);
 
       const entryLinkHeight = await page
-        .getByRole("link", { name: "Scroll to About" })
+        .getByRole("link", { name: "Enter portfolio journey" })
         .evaluate((link) => link.getBoundingClientRect().height);
       expect(entryLinkHeight).toBeGreaterThanOrEqual(44);
     }

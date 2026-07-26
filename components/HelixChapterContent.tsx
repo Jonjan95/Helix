@@ -47,7 +47,7 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
                   <h3>{principle.title}</h3>
                   <p>{principle.summary}</p>
                   <p className={styles.practice}>
-                    <span>Practice</span>
+                    <span>How I work</span>
                     {principle.practice}
                   </p>
                 </div>

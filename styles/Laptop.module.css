@@ -1,7 +1,7 @@
 .laptop {
-  width: min(100%, 49rem);
+  width: min(100%, 48rem);
   max-width: 100%;
-  filter: drop-shadow(0 2.25rem 1.75rem rgb(0 0 0 / 0.24));
+  filter: drop-shadow(0 2rem 1.6rem rgb(0 0 0 / 0.28));
 }
 
 .display {
@@ -13,10 +13,10 @@
   position: absolute;
   z-index: 0;
   inset: 0;
-  border: 1px solid #52595f;
+  border: 1px solid #4c5358;
   border-radius: clamp(0.65rem, 1.5vw, 1rem) clamp(0.65rem, 1.5vw, 1rem)
     0.25rem 0.25rem;
-  background: #25292d;
+  background: #23272b;
 }
 
 .camera {
@@ -33,7 +33,7 @@
 .screen {
   position: relative;
   z-index: 1;
-  aspect-ratio: 16 / 9.75;
+  aspect-ratio: 16 / 9.65;
   min-height: 0;
   overflow: hidden;
   border: 1px solid #30373b;
@@ -170,8 +170,8 @@
   margin: 0;
   font-size: clamp(2.3rem, 7.6vw, 5.4rem);
   font-weight: 540;
-  letter-spacing: -0.065em;
-  line-height: 0.88;
+  letter-spacing: -0.058em;
+  line-height: 0.91;
 }
 
 .cursor {
@@ -188,9 +188,9 @@
   width: calc(100% + clamp(0.2rem, 1vw, 0.65rem));
   height: clamp(0.65rem, 1.7vw, 1rem);
   margin-left: calc(clamp(0.1rem, 0.5vw, 0.325rem) * -1);
-  border: 1px solid #555b60;
+  border: 1px solid #4f565b;
   border-radius: 0.1rem 0.1rem 1.5rem 1.5rem;
-  background: #30353a;
+  background: #2d3236;
   transform: perspective(24rem) rotateX(46deg);
   transform-origin: top;
 }

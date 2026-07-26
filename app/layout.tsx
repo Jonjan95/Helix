@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Jonathan Jansson — Software Development, Test & Quality | Helix",
+  title: "Jonathan Jansson | Software Development & Testing",
   description:
-    "Jonathan Jansson is a software development student in Malmö focused on testing, quality, and reliable systems.",
+    "Portfolio of Jonathan Jansson, a software development student in Malmö focused on testing and quality.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
