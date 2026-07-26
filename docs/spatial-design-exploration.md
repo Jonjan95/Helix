@@ -2,16 +2,16 @@
 
 This experiment asks one narrow question: can spatial depth make the laptop-to-journey threshold more intentional without weakening clarity, accessibility, performance, or the calm character of Helix?
 
-It is not a production redesign. The comparison lives only at the unlinked, `noindex` route `/lab/spatial`. The production homepage, its semantic chapters, and the single `JourneyMotion` owner are unchanged.
+It is not production functionality or a production redesign. The comparison lives at `/lab/spatial`, an unlisted experimental route that can be opened directly. It is excluded from production navigation and the sitemap, marked `noindex`, and disallowed under `/lab/` in configured robots output. This public document may remain linked from repository documentation without making the lab part of the portfolio journey. The production homepage, its semantic chapters, and the single `JourneyMotion` owner are unchanged.
 
 ## Boundaries
 
 - Portfolio meaning remains in server-rendered HTML.
 - Canvas and SVG are decorative comparison layers, never content containers.
-- Native scrolling, keyboard controls, and the production route remain intact.
+- Native scrolling, keyboard controls, and the production portfolio remain intact.
 - Reduced motion produces static compositions, not incomplete animations.
 - Three.js is loaded dynamically only after direction C is selected.
-- The lab is omitted from the sitemap and disallowed under `/lab/` in configured robots output.
+- The direct-access lab is not indexed or included in the sitemap.
 - No React Three Fiber, new scroll controller, particle field, external model, or production WebGL dependency was introduced.
 
 ## Shared comparison
@@ -66,11 +66,22 @@ CSS supplies the physical transition that SVG cannot. SVG supplies legible, resp
 
 ## Evidence and validation
 
-Committed evidence is stored in [`docs/media/spatial-design`](media/spatial-design). It includes desktop states for all directions, mobile and reduced-motion compositions, the deterministic WebGL fallback, and short forward/reverse recordings for the two moving prototypes.
+The requested evidence scope was broader than the final captured set. The committed evidence contains exactly eight screenshots and two recordings under [`docs/media/spatial-design`](media/spatial-design):
 
-The focused matrix completes in Chromium and WebKit. Firefox reached every production and lab check during the first pass, exposing only a browser-generated WebGL driver warning that is now separated from application console failures; subsequent Firefox retries could not create page fixtures because the managed browser process failed inside Playwright. That runner limitation is recorded rather than presented as a passing result. The remaining review covers desktop, landscape, tablet/mobile-width document flow; keyboard operation; system and simulated reduced motion; forced WebGL fallback; console output; overflow; static generation; and production-route isolation. Exact command results and bundle measurements are recorded in PR #19.
+- [`01-desktop-baseline.png`](media/spatial-design/01-desktop-baseline.png)
+- [`02-desktop-css-forward.png`](media/spatial-design/02-desktop-css-forward.png)
+- [`03-desktop-svg-strong.png`](media/spatial-design/03-desktop-svg-strong.png)
+- [`04-desktop-three-start.png`](media/spatial-design/04-desktop-three-start.png)
+- [`05-desktop-three-forward.png`](media/spatial-design/05-desktop-three-forward.png)
+- [`06-mobile-svg.png`](media/spatial-design/06-mobile-svg.png)
+- [`07-reduced-motion-three.png`](media/spatial-design/07-reduced-motion-three.png)
+- [`08-webgl-fallback.png`](media/spatial-design/08-webgl-fallback.png)
+- [`09-css-forward-reverse.webm`](media/spatial-design/09-css-forward-reverse.webm)
+- [`10-three-forward-reverse.webm`](media/spatial-design/10-three-forward-reverse.webm)
 
-The production homepage requested 651,816 decoded bytes of JavaScript in the route-level measurement. The lab baseline requested 602,535 bytes. Selecting Three.js raised the lab total to 1,332,910 bytes: a 730,375-byte decoded increment, including a 725,217-byte Three.js chunk (183,530 bytes transferred in the measured local production session). That chunk was not requested by `/`.
+The focused release suite passed 11/11 checks in Chromium and 11/11 in WebKit. The initial Firefox run executed the complete 11-check matrix: 10 checks passed and one failed because a browser-generated WebGL diagnostic was collected with application console warnings. After that diagnostic was classified separately, later Firefox retries failed while Playwright created page fixtures (`browserContext.newPage` reported an internal `_page` error). Firefox therefore has no final passing result. This is recorded as an environment or runner limitation, not as evidence of application success or failure. The remaining review covers desktop, landscape, tablet/mobile-width document flow; keyboard operation; system and simulated reduced motion; forced WebGL fallback; console output; overflow; static generation; and isolation from the production portfolio. Exact command results and bundle measurements are recorded in PR #19.
+
+In the measured local production session, the production homepage requested 651,816 decoded bytes of JavaScript and the lab baseline requested 602,535 bytes. Selecting Three.js raised the lab total to 1,332,910 decoded bytes: an increase of approximately 730 KB. The Three.js chunk accounted for 725,217 decoded bytes and approximately 183,530 transferred bytes in that session. These figures describe one local measurement, not a universal network cost. The Three.js chunk was not requested by `/`.
 
 ## Intentionally deferred
 
@@ -78,7 +89,7 @@ The production homepage requested 651,816 decoded bytes of JavaScript in the rou
 - scroll-linked integration of the preferred hybrid;
 - final camera choreography;
 - interactive Helix nodes;
-- Three.js, WebGL, or canvas on the production route;
+- Three.js, WebGL, or canvas in the production portfolio;
 - external models, textures, lighting systems, and asset pipelines;
 - route transitions or a second motion owner.
 
