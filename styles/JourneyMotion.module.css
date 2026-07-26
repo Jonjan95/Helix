@@ -1,3 +1,4 @@
 .journey {
   position: relative;
+  overflow-x: clip;
 }

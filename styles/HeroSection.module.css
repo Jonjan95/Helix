@@ -4,7 +4,8 @@
   min-height: 100svh;
   padding: clamp(5.5rem, 9vh, 7rem) var(--page-gutter)
     clamp(5.5rem, 10vh, 7.5rem);
-  overflow: hidden;
+  z-index: 2;
+  overflow: visible;
   row-gap: clamp(2.25rem, 5vh, 3.5rem);
   align-content: center;
 }

@@ -17,9 +17,10 @@ export type WorkspaceHandoffProfile = {
   duration: number;
   glassDepth: number;
   glassOpacity: number;
-  identityDepth: number;
+  identityDuration: number;
   identityOpacity: number;
-  identityScale: number;
+  identityStart: number;
+  screenEdgeOpacity: number;
   screenFrameOpacity: number;
   shellOpacity: number;
   start: number;
@@ -117,12 +118,13 @@ export const journeyMotionConfig = {
       baseTravel: 16,
       duration: 0.36,
       glassDepth: 18,
-      glassOpacity: 0.08,
-      identityDepth: -12,
+      glassOpacity: 0.02,
+      identityDuration: 0.24,
       identityOpacity: 0,
-      identityScale: 0.99,
+      identityStart: 0.48,
+      screenEdgeOpacity: 0,
       screenFrameOpacity: 0.12,
-      shellOpacity: 0.12,
+      shellOpacity: 0,
       start: 0.6,
       thresholdDepth: 12,
       thresholdOpacity: 1,
@@ -131,12 +133,13 @@ export const journeyMotionConfig = {
       baseTravel: 12,
       duration: 0.3,
       glassDepth: 14,
-      glassOpacity: 0.1,
-      identityDepth: -8,
+      glassOpacity: 0.04,
+      identityDuration: 0.22,
       identityOpacity: 0.02,
-      identityScale: 0.995,
+      identityStart: 0.56,
+      screenEdgeOpacity: 0,
       screenFrameOpacity: 0.08,
-      shellOpacity: 0.12,
+      shellOpacity: 0,
       start: 0.66,
       thresholdDepth: 8,
       thresholdOpacity: 0.92,
@@ -146,9 +149,10 @@ export const journeyMotionConfig = {
       duration: 0.34,
       glassDepth: 0,
       glassOpacity: 0.18,
-      identityDepth: 0,
+      identityDuration: 0.34,
       identityOpacity: 0.18,
-      identityScale: 1,
+      identityStart: 0.56,
+      screenEdgeOpacity: 0.3,
       screenFrameOpacity: 0.3,
       shellOpacity: 0.58,
       start: 0.56,

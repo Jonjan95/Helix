@@ -216,12 +216,10 @@ function createSpatialTimeline(
       targets.screenIdentity,
       {
         opacity: handoff.identityOpacity,
-        scale: handoff.identityScale,
-        z: handoff.identityDepth,
-        duration: handoff.duration,
+        duration: handoff.identityDuration,
         ease: timeline.thresholdEase,
       },
-      handoff.start,
+      handoff.identityStart,
     )
     .to(
       targets.workspaceThreshold,
@@ -247,6 +245,7 @@ function createSpatialTimeline(
     .to(
       targets.screen,
       {
+        "--screen-edge-opacity": handoff.screenEdgeOpacity,
         "--screen-frame-opacity": handoff.screenFrameOpacity,
         duration: handoff.duration,
         ease: timeline.thresholdEase,
@@ -312,11 +311,10 @@ function createMobileTimeline(targets: MotionTargets) {
       targets.screenIdentity,
       {
         opacity: handoff.mobile.identityOpacity,
-        scale: handoff.mobile.identityScale,
-        duration: handoff.mobile.duration,
+        duration: handoff.mobile.identityDuration,
         ease: "none",
       },
-      handoff.mobile.start,
+      handoff.mobile.identityStart,
     )
     .to(
       targets.workspaceThreshold,
@@ -331,6 +329,7 @@ function createMobileTimeline(targets: MotionTargets) {
     .to(
       targets.screen,
       {
+        "--screen-edge-opacity": handoff.mobile.screenEdgeOpacity,
         "--screen-frame-opacity": handoff.mobile.screenFrameOpacity,
         duration: handoff.mobile.duration,
         ease: "none",

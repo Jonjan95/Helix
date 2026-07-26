@@ -569,6 +569,8 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
     (distance) => window.scrollTo({ top: distance * 0.5, behavior: "auto" }),
     pinDistance,
   );
+  await page.waitForTimeout(700);
+  await expect(identity).toBeVisible();
   const midpointBounds = await laptop.evaluate((element) => {
     const bounds = element.getBoundingClientRect();
 
@@ -588,18 +590,10 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
     (distance) => window.scrollTo({ top: distance * 0.78, behavior: "auto" }),
     pinDistance,
   );
-  await expect(threshold).toBeVisible();
-  await expect(shell).toBeVisible();
-  await expect(identity).toBeVisible();
-  await expectNoHorizontalOverflow(page);
-
-  await page.evaluate(
-    (distance) => window.scrollTo({ top: distance, behavior: "auto" }),
-    pinDistance,
-  );
   await page.waitForTimeout(700);
   await expect(threshold).toBeVisible();
-  const resolvedLayerEmphasis = await laptop.evaluate((element) => {
+  await expect(shell).toBeVisible();
+  const crossingEmphasis = await laptop.evaluate((element) => {
     const arrivalIdentity = element.querySelector(
       '[data-motion="screen-identity"]',
     );
@@ -616,20 +610,73 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
         : 0,
     };
   });
-  expect(resolvedLayerEmphasis.identity).toBeLessThan(
-    resolvedLayerEmphasis.threshold,
-  );
+  expect(crossingEmphasis.identity).toBeLessThan(crossingEmphasis.threshold);
+  await expectNoHorizontalOverflow(page);
 
-  await page.getByTestId("digital-workspace").evaluate((element) =>
-    element.scrollIntoView({ block: "center", behavior: "auto" }),
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance, behavior: "auto" }),
+    pinDistance,
   );
+  await page.waitForTimeout(700);
+  await expect(threshold).toBeVisible();
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance + 150, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(400);
+  const releaseComposition = await page.evaluate(() => {
+    const arrival = document.querySelector('[data-chapter="arrival"]');
+    const journey = document.querySelector("[data-helix-journey]");
+    const screen = document.querySelector('[data-motion="laptop-screen"]');
+
+    if (!arrival || !journey || !screen) {
+      return null;
+    }
+
+    const arrivalBounds = arrival.getBoundingClientRect();
+    const journeyBounds = journey.getBoundingClientRect();
+    const screenBounds = screen.getBoundingClientRect();
+    const boundaryElement = document.elementFromPoint(
+      window.innerWidth / 2,
+      journeyBounds.top + 2,
+    );
+
+    return {
+      arrivalBottom: arrivalBounds.bottom,
+      boundaryChapter: boundaryElement
+        ?.closest("[data-chapter]")
+        ?.getAttribute("data-chapter"),
+      journeyTop: journeyBounds.top,
+      screenBottom: screenBounds.bottom,
+    };
+  });
+  expect(releaseComposition).not.toBeNull();
+  expect(releaseComposition?.screenBottom).toBeGreaterThan(
+    releaseComposition?.journeyTop ?? Number.POSITIVE_INFINITY,
+  );
+  expect(releaseComposition?.screenBottom).toBeGreaterThan(
+    releaseComposition?.arrivalBottom ?? Number.POSITIVE_INFINITY,
+  );
+  expect(releaseComposition?.boundaryChapter).toBe("arrival");
+
+  await expect(page.locator('[data-motion="digital-workspace"]')).toHaveCount(1);
   await expect(page.getByTestId("digital-workspace")).toBeVisible();
+  await expectNoHorizontalOverflow(page);
 
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance + 80, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(300);
   await page.evaluate(
     (distance) => window.scrollTo({ top: distance * 0.5, behavior: "auto" }),
     pinDistance,
   );
+  await page.waitForTimeout(700);
   await expect(laptop).toBeVisible();
+  await expect(identity).toBeVisible();
+  await expect(shell).toBeVisible();
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
   await expect(identity).toBeVisible();
