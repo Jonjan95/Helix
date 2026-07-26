@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BaselinePrototype } from "@/components/lab/spatial/BaselinePrototype";
 import { CssSpatialPrototype } from "@/components/lab/spatial/CssSpatialPrototype";
@@ -82,9 +81,11 @@ export function SpatialLab() {
             feel more intentional and memorable?
           </p>
         </div>
-        <Link className={styles.backLink} href="/">
+        {/* The lab intentionally avoids production-route prefetching. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+        <a className={styles.backLink} href="/">
           Return to production portfolio
-        </Link>
+        </a>
       </header>
 
       <aside className={styles.boundary} aria-label="Experiment boundary">
