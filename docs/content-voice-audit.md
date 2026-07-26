@@ -52,20 +52,22 @@ The voice is most natural when it describes a concrete action in first-person la
 
 ## Repeated concepts and phrases
 
-Baseline estimates:
+Before-and-after estimates:
 
-| Measure | Before |
-| --- | ---: |
-| Total visible words | 1,386 |
-| Arrival | 46 |
-| Environment | 104 |
-| Engineering | 100 |
-| Projects | 629 |
-| Experience | 420 |
-| Continue | 87 |
-| Average sentence length | 17.0 words |
+| Measure | Before | After | Change |
+| --- | ---: | ---: | ---: |
+| Total visible words | 1,386 | 1,273 | -113 (-8.2%) |
+| Arrival | 46 | 46 | 0 |
+| Environment | 104 | 100 | -4 |
+| Engineering | 100 | 91 | -9 |
+| Projects | 629 | 561 | -68 |
+| Experience | 420 | 395 | -25 |
+| Continue | 87 | 80 | -7 |
+| Average sentence length | 17.0 words | 15.3 words | -1.7 |
 
-The most visible repeated terms are `evidence` (13), `behaviour` (11), `technical` (11), `quality` (10), `system`/`systems` (17 combined), and `boundary`/`boundaries` (14 combined). `current`, `validation`/`validate`, `structured`, `practice`, and `workflow` also recur across chapter roles.
+Before the rewrite, the most visible repeated terms were `evidence` (13), `behaviour` (11), `technical` (11), `quality` (10), `system`/`systems` (17 combined), and `boundary`/`boundaries` (14 combined). `current`, `validation`/`validate`, `structured`, `practice`, and `workflow` also recurred across chapter roles.
+
+After the rewrite, visible uses fell to `evidence` (0), `behaviour` (3), `technical` (7), `quality` (3), `system`/`systems` (3 combined), and `boundary`/`boundaries` (1 combined). This is diagnostic evidence, not a ban on those words; the remaining uses carry specific meaning.
 
 The following patterns need particular attention:
 
@@ -142,7 +144,15 @@ Helix should sound like one technically curious person explaining his work clear
 
 ## Changes made
 
-To be completed after the rewrite. This section will record the significant decisions rather than every sentence edit.
+- Arrival now introduces Jonathan in direct language and keeps the technology context to one readable sentence.
+- Environment replaces process-policy language with three practical habits: small steps, checking results, and learning by building.
+- Engineering keeps Understand–Isolate–Observe–Verify while removing the repeated explanation of the sequence from its introduction.
+- Projects retains every name, status, technology list, repository, and implemented/planned limit while shortening overlapping summaries, problems, approaches, and checks.
+- Experience uses shorter track titles and more concrete study, device, and field-service language. `What I worked with` and `What I carry forward` replace the formal evidence-and-contribution labels.
+- Continue states Jonathan’s direction once, simplifies route descriptions, and shortens accessible names without changing destinations.
+- Metadata now identifies Jonathan and his study focus without stacking several role keywords.
+- Interface labels now use `Technical work`, `Checks`, and `Current scope` where the previous evidence terminology sounded like documentation.
+- No layout, pacing, motion, typed model, project status, contact destination, or chapter ownership changed.
 
 ## Intentionally preserved wording
 

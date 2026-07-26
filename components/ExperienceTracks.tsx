@@ -29,7 +29,7 @@ function ExperienceTrackArticle({ track }: { track: ExperienceTrack }) {
         className={styles.experienceEvidence}
         aria-labelledby={evidenceHeadingId}
       >
-        <h4 id={evidenceHeadingId}>Evidence in practice</h4>
+        <h4 id={evidenceHeadingId}>What I worked with</h4>
         <ul>
           {track.evidence.map((item) => (
             <li key={item}>{item}</li>
@@ -47,7 +47,7 @@ function ExperienceTrackArticle({ track }: { track: ExperienceTrack }) {
       </ul>
 
       <p className={styles.experiencePerspective}>
-        <span>What it contributes now</span>
+        <span>What I carry forward</span>
         {track.perspective}
       </p>
     </article>

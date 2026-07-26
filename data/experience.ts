@@ -16,7 +16,7 @@ export type ExperienceTrack = {
 
 export const experienceTracks = [
   {
-    category: "Software & quality",
+    category: "Software & testing",
     current: true,
     environments: [
       "Java",
@@ -29,18 +29,18 @@ export const experienceTracks = [
       "GitHub CI",
     ],
     evidence: [
-      "Built a full-stack school project around a Spring Boot REST API, relational persistence, and a separate Next.js client.",
-      "Use JUnit, Mockito, MockMvc, Testcontainers, and Playwright across public quality-focused projects to check units, HTTP boundaries, database behaviour, and user flows.",
-      "Develop public projects through scoped issues, pull requests, validation, and review, keeping claims and implementation boundaries explicit.",
+      "Built a full-stack school project with a Spring Boot REST API, relational database, and separate Next.js client.",
+      "Use JUnit, Mockito, MockMvc, Testcontainers, and Playwright in public projects to test logic, endpoints, database integration, and user flows.",
+      "Plan project work through issues and pull requests, then run tests, builds, and manual checks before calling a change complete.",
     ],
     id: "software-quality",
     index: "01",
     perspective:
-      "This work reinforces my current direction: turn requirements into observable behaviour, then validate that behaviour at the right system boundary.",
+      "It is shaping the work I want to do next: turning requirements into clear, testable behaviour and choosing the right level to check it.",
     summary:
-      "I am studying systems development with a focus on QA and test automation. Coursework and public projects have given me a practical way to connect Java services, REST APIs, databases, interfaces, and automated checks.",
-    timeframe: "Current studies and project work",
-    title: "Software development and quality engineering",
+      "I am studying systems development with a focus on QA and test automation. Coursework and public projects let me work across Java services, REST APIs, databases, interfaces, and automated tests.",
+    timeframe: "Current studies and projects",
+    title: "Software development and testing",
   },
   {
     category: "Embedded & connected systems",
@@ -54,18 +54,18 @@ export const experienceTracks = [
       "Sensors & actuators",
     ],
     evidence: [
-      "Studied embedded software in environments where code interacted with microcontrollers, sensors, actuators, and connected devices.",
-      "Worked across constrained-device programming, networking, and real-time concepts rather than treating software as an isolated layer.",
-      "Practised investigating behaviour where timing, configuration, communication, and physical components could all affect the result.",
+      "Studied embedded software where code interacted with microcontrollers, sensors, actuators, and connected devices.",
+      "Worked with constrained devices, networking, and real-time concepts rather than treating software as an isolated layer.",
+      "Investigated problems where timing, configuration, communication, or a physical component could change the result.",
     ],
     id: "embedded-connected",
     index: "02",
     perspective:
-      "That foundation keeps my software work attentive to communication, timing, physical constraints, and failures that cross more than one layer.",
+      "It taught me to look beyond the code when timing, configuration, communication, or hardware can change the result.",
     summary:
-      "Previous embedded-software studies placed code next to devices, communication, and physical behaviour. They made system boundaries tangible and showed why a failure cannot always be isolated to one function or one file.",
+      "Previous embedded-software studies placed code next to devices, communication, and physical behaviour. They showed me why a fault cannot always be traced to one function or one file.",
     timeframe: "Previous technical studies",
-    title: "Embedded systems and connected devices",
+    title: "Embedded software and connected devices",
   },
   {
     category: "Technical service",
@@ -78,16 +78,16 @@ export const experienceTracks = [
       "Service documentation",
     ],
     evidence: [
-      "Responded to technical fault reports and investigated equipment when the cause was not known in advance.",
-      "Verified connectivity and field-installed equipment, replaced components when appropriate, and checked function before leaving or escalating.",
-      "Worked independently at installation locations and communicated findings so the next action could be based on useful evidence.",
+      "Responded to fault reports when the exact cause was not known beforehand.",
+      "Checked connected equipment, replaced components when appropriate, and confirmed function before leaving or escalating.",
+      "Worked independently on site and passed on clear findings when another person needed to continue the work.",
     ],
     id: "field-troubleshooting",
     index: "03",
     perspective:
-      "Field work developed a durable troubleshooting habit: start with the symptom, gather evidence, isolate the boundary, verify the outcome, and escalate with clarity when needed.",
+      "That work taught me to start with what I can observe, narrow the cause, check the outcome, and make escalation useful.",
     summary:
-      "In practical technical service work, fault reports often arrived as symptoms rather than diagnoses. On-location work required methodical checks across power, connected devices, network equipment, configuration, and replaceable components.",
+      "Field-service work often started with a symptom and little context. On site, I checked power, connectivity, configuration, network equipment, and replaceable components to find the likely cause.",
     timeframe: "Practical field experience",
     title: "Technical service and field troubleshooting",
   },

@@ -26,7 +26,7 @@ export function Laptop() {
             </span>
             <h1 className={styles.name}>{arrivalIdentity.name}</h1>
             <span className={styles.cursor} aria-hidden="true" />
-            <span className={styles.status}>Test · Quality · Reliability</span>
+            <span className={styles.status}>Software · Testing · Quality</span>
           </div>
 
           <div

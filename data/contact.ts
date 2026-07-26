@@ -14,10 +14,9 @@ export type ContactRoute = {
 
 export const contactRoutes = [
   {
-    accessibleLabel:
-      "Explore Jonathan Jansson's public repositories on GitHub",
+    accessibleLabel: "View Jonathan Jansson on GitHub",
     action: "Explore GitHub",
-    description: "Public repositories, current projects, and technical experiments.",
+    description: "Projects, source code, and ongoing technical experiments.",
     external: true,
     href: "https://github.com/Jonjan95",
     id: "github",
@@ -26,10 +25,9 @@ export const contactRoutes = [
     type: "external",
   },
   {
-    accessibleLabel:
-      "View Jonathan Jansson's professional profile on LinkedIn",
+    accessibleLabel: "View Jonathan Jansson on LinkedIn",
     action: "View LinkedIn",
-    description: "Professional background, studies, and industry connections.",
+    description: "Studies, experience, and professional background.",
     external: true,
     href: "https://se.linkedin.com/in/jonathan-jansson-b94783270",
     id: "linkedin",
@@ -38,11 +36,10 @@ export const contactRoutes = [
     type: "external",
   },
   {
-    accessibleLabel:
-      "Email Jonathan Jansson about LIA, junior opportunities, or technical collaboration",
+    accessibleLabel: "Email Jonathan Jansson",
     action: "Send email",
     description:
-      "Direct contact for LIA, junior opportunities, and relevant technical conversations.",
+      "Direct contact about LIA, junior roles, or technical collaboration.",
     external: false,
     href: "mailto:jonis.jansson@hotmail.com",
     id: "email",

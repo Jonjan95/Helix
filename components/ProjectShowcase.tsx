@@ -46,7 +46,7 @@ function ProjectArticle({
 
       <div className={styles.projectEvidence}>
         <section aria-labelledby={`${project.id}-technical`}>
-          <h4 id={`${project.id}-technical`}>Technical evidence</h4>
+          <h4 id={`${project.id}-technical`}>Technical work</h4>
           <ul>
             {project.technicalHighlights.map((highlight) => (
               <li key={highlight}>{highlight}</li>
@@ -54,7 +54,7 @@ function ProjectArticle({
           </ul>
         </section>
         <section aria-labelledby={`${project.id}-quality`}>
-          <h4 id={`${project.id}-quality`}>Quality evidence</h4>
+          <h4 id={`${project.id}-quality`}>Checks</h4>
           <ul>
             {project.qualityHighlights.map((highlight) => (
               <li key={highlight}>{highlight}</li>
@@ -70,7 +70,7 @@ function ProjectArticle({
       </ul>
 
       <p className={styles.projectBoundary}>
-        <span>Current boundary</span>
+        <span>Current scope</span>
         {project.boundary}
       </p>
 
