@@ -41,6 +41,7 @@ type MotionTargets = {
   laptopCamera: HTMLElement;
   laptopShell: HTMLElement;
   screen: HTMLElement;
+  screenGlass: HTMLElement;
   screenIdentity: HTMLElement;
   workspace: HTMLElement;
   workspaceThreshold: HTMLElement;
@@ -94,6 +95,7 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
     laptopCamera: scope.querySelector<HTMLElement>(selectors.laptopCamera),
     laptopShell: scope.querySelector<HTMLElement>(selectors.laptopShell),
     screen: scope.querySelector<HTMLElement>(selectors.screen),
+    screenGlass: scope.querySelector<HTMLElement>(selectors.screenGlass),
     screenIdentity: scope.querySelector<HTMLElement>(selectors.screenIdentity),
     workspace: scope.querySelector<HTMLElement>(selectors.workspace),
     workspaceThreshold: scope.querySelector<HTMLElement>(
@@ -214,9 +216,10 @@ function createSpatialTimeline(
       targets.screenIdentity,
       {
         opacity: handoff.identityOpacity,
-        scale: 1.025,
+        scale: handoff.identityScale,
+        z: handoff.identityDepth,
         duration: handoff.duration,
-        ease: "power1.inOut",
+        ease: timeline.thresholdEase,
       },
       handoff.start,
     )
@@ -225,8 +228,19 @@ function createSpatialTimeline(
       {
         opacity: handoff.thresholdOpacity,
         scale: 1,
+        z: handoff.thresholdDepth,
         duration: handoff.duration,
-        ease: "power1.inOut",
+        ease: timeline.thresholdEase,
+      },
+      handoff.start,
+    )
+    .to(
+      targets.screenGlass,
+      {
+        opacity: handoff.glassOpacity,
+        z: handoff.glassDepth,
+        duration: handoff.duration,
+        ease: timeline.thresholdEase,
       },
       handoff.start,
     )
@@ -235,7 +249,7 @@ function createSpatialTimeline(
       {
         "--screen-frame-opacity": handoff.screenFrameOpacity,
         duration: handoff.duration,
-        ease: "power1.inOut",
+        ease: timeline.thresholdEase,
       },
       handoff.start,
     )
@@ -244,7 +258,7 @@ function createSpatialTimeline(
       {
         opacity: handoff.shellOpacity,
         duration: handoff.duration,
-        ease: "power1.inOut",
+        ease: timeline.thresholdEase,
       },
       handoff.start,
     )
@@ -254,7 +268,7 @@ function createSpatialTimeline(
         opacity: handoff.shellOpacity,
         y: handoff.baseTravel,
         duration: handoff.duration,
-        ease: "power1.inOut",
+        ease: timeline.thresholdEase,
       },
       handoff.start,
     );
@@ -298,6 +312,7 @@ function createMobileTimeline(targets: MotionTargets) {
       targets.screenIdentity,
       {
         opacity: handoff.mobile.identityOpacity,
+        scale: handoff.mobile.identityScale,
         duration: handoff.mobile.duration,
         ease: "none",
       },
@@ -615,6 +630,7 @@ function clearMotionStyles(targets: MotionTargets) {
       targets.laptopCamera,
       targets.laptopShell,
       targets.screen,
+      targets.screenGlass,
       targets.screenIdentity,
       targets.workspace,
       targets.workspaceThreshold,

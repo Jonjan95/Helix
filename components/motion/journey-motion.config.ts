@@ -15,10 +15,15 @@ export type SpatialMotionProfile = {
 export type WorkspaceHandoffProfile = {
   baseTravel: number;
   duration: number;
+  glassDepth: number;
+  glassOpacity: number;
+  identityDepth: number;
   identityOpacity: number;
+  identityScale: number;
   screenFrameOpacity: number;
   shellOpacity: number;
   start: number;
+  thresholdDepth: number;
   thresholdOpacity: number;
 };
 
@@ -64,6 +69,7 @@ export const journeyMotionConfig = {
     laptopCamera: '[data-motion="laptop-camera"]',
     laptopShell: '[data-motion="laptop-shell"]',
     screen: '[data-motion="laptop-screen"]',
+    screenGlass: '[data-motion="screen-glass"]',
     screenIdentity: '[data-motion="screen-identity"]',
     workspace: '[data-motion="digital-workspace"]',
     workspaceThreshold: '[data-motion="workspace-threshold"]',
@@ -78,7 +84,7 @@ export const journeyMotionConfig = {
       "(min-width: 48rem) and (max-width: 64rem) and (prefers-reduced-motion: no-preference)",
   },
   desktop: {
-    contentOpacity: 0.16,
+    contentOpacity: 0.025,
     contentTravel: -32,
     maxScale: 2.65,
     minScale: 1.7,
@@ -89,7 +95,7 @@ export const journeyMotionConfig = {
     scrub: 0.55,
   } satisfies SpatialMotionProfile,
   tablet: {
-    contentOpacity: 0.16,
+    contentOpacity: 0.05,
     contentTravel: -24,
     maxScale: 2.05,
     minScale: 1.4,
@@ -108,30 +114,45 @@ export const journeyMotionConfig = {
   },
   handoff: {
     desktop: {
-      baseTravel: 22,
-      duration: 0.24,
+      baseTravel: 16,
+      duration: 0.36,
+      glassDepth: 18,
+      glassOpacity: 0.08,
+      identityDepth: -12,
       identityOpacity: 0,
-      screenFrameOpacity: 0,
+      identityScale: 0.99,
+      screenFrameOpacity: 0.12,
       shellOpacity: 0.12,
-      start: 0.72,
+      start: 0.6,
+      thresholdDepth: 12,
       thresholdOpacity: 1,
     } satisfies WorkspaceHandoffProfile,
     tablet: {
-      baseTravel: 14,
-      duration: 0.2,
+      baseTravel: 12,
+      duration: 0.3,
+      glassDepth: 14,
+      glassOpacity: 0.1,
+      identityDepth: -8,
       identityOpacity: 0.02,
+      identityScale: 0.995,
       screenFrameOpacity: 0.08,
       shellOpacity: 0.12,
-      start: 0.76,
+      start: 0.66,
+      thresholdDepth: 8,
       thresholdOpacity: 0.92,
     } satisfies WorkspaceHandoffProfile,
     mobile: {
       baseTravel: 8,
       duration: 0.34,
+      glassDepth: 0,
+      glassOpacity: 0.18,
+      identityDepth: 0,
       identityOpacity: 0.18,
+      identityScale: 1,
       screenFrameOpacity: 0.3,
       shellOpacity: 0.58,
       start: 0.56,
+      thresholdDepth: 0,
       thresholdOpacity: 0.82,
     } satisfies WorkspaceHandoffProfile,
   },
@@ -272,6 +293,7 @@ export const journeyMotionConfig = {
   timeline: {
     cameraDuration: 0.76,
     cameraStart: 0.12,
+    thresholdEase: "power1.inOut",
     recedeDuration: 0.52,
     recedeStart: 0.18,
   },

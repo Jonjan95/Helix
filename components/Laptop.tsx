@@ -20,6 +20,11 @@ export function Laptop() {
           aria-hidden="true"
         />
         <div className={styles.screen} data-motion="laptop-screen">
+          <div
+            className={styles.screenGlass}
+            data-motion="screen-glass"
+            aria-hidden="true"
+          />
           <div className={styles.screenIdentity} data-motion="screen-identity">
             <span className={styles.systemLabel}>
               {arrivalIdentity.location} / Portfolio
