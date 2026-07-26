@@ -140,15 +140,25 @@ async function captureAfterReview() {
   const cases = [
     ["09-compact-threshold.png", { height: 768, width: 1024 }, 0.78],
     ["10-tablet-threshold.png", { height: 1024, width: 768 }, 0.78],
-    ["11-mobile-static-flow.png", { height: 844, width: 390 }, 0.5],
-    ["12-zoom-200-reflow.png", { height: 500, width: 720 }, 0.5],
-    ["13-zoom-400-reflow.png", { height: 250, width: 360 }, 0.5],
+    ["11-mobile-static-flow.png", { height: 844, width: 390 }, 0],
+    [
+      "12-zoom-200-reflow.png",
+      { height: 500, width: 720 },
+      0.5,
+      "reduce",
+    ],
+    [
+      "13-zoom-400-reflow.png",
+      { height: 250, width: 360 },
+      0.5,
+      "reduce",
+    ],
   ];
 
-  for (const [filename, viewport, progress] of cases) {
+  for (const [filename, viewport, progress, reducedMotion] of cases) {
     const context = await browser.newContext({
       colorScheme: "dark",
-      reducedMotion: viewport.width <= 720 ? "reduce" : "no-preference",
+      reducedMotion: reducedMotion ?? "no-preference",
       viewport,
     });
     const page = await context.newPage();
