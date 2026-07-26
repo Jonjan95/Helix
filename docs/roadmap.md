@@ -34,7 +34,7 @@ Jonathan Jansson is now the single public identity. The finite Arrival scene pai
 - Evaluate whether the metaphor improves comprehension and recall.
 - Keep semantic sections as the content source of truth.
 
-The current graybox connects all five journey stops with one accessible, responsive path and a reversible motion layer. Final art direction, content, node interaction, and any decision about 3D rendering remain open.
+The current journey connects all five stops with one accessible, responsive path and a reversible motion layer. Its first focused visual-polish pass is complete; new art direction, node interaction, and any decision about 3D rendering remain open.
 
 ## 6. Content destinations — complete
 
@@ -48,7 +48,9 @@ Experience is the second content-complete chapter. Three typed tracks connect cu
 
 Continue is the third content-complete chapter. A purpose-built contact model renders verified GitHub, LinkedIn, and professional email routes as native links in one calm semantic list. GitHub receives restrained evidence emphasis; every route remains keyboard-reachable, touch-safe, and immediately visible with reduced motion. The chapter retains the exit pacing role and visible path continuation without adding a footer panel, contact form, service integration, or Continue-specific motion. Final copy polish, scheduling tools, analytics, and downloadable CV functionality remain deferred.
 
-Environment and Engineering Mindset complete the early journey without competing with those evidence chapters. Three typed Environment principles describe structured iteration, visible evidence, and practical experimentation. Four typed Engineering steps describe a transferable Understand, Isolate, Observe, Verify sequence, followed by one restrained handoff into Projects. Both chapters remain semantic, server rendered, responsive, static under reduced motion, and governed only by the existing centralized pacing roles.
+Environment and Engineering Mindset complete the early journey without competing with those evidence chapters. Three typed Environment principles describe small, reviewable steps, checking what changed, and learning by building. Four typed Engineering steps preserve the transferable Understand, Isolate, Observe, Verify sequence, followed by one restrained handoff into Projects. Both chapters remain semantic, server rendered, responsive, static under reduced motion, and governed only by the existing centralized pacing roles.
+
+The portfolio-wide voice and concision pass is complete. All six chapters now use one direct, personal voice; repeated process terminology and duplicated qualification have been reduced without changing project statuses, study or employment boundaries, contact routes, layout, pacing, or motion. The [content voice audit](content-voice-audit.md) records the inventory, terminology choices, and before-and-after measurements.
 
 ## 7. Accessibility and reduced motion — first portfolio-wide audit complete
 
@@ -66,8 +68,12 @@ The first complete audit verified semantic order, direct chapter routes, link be
 
 The current suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. Performance measurement and broader browser coverage remain separate milestones.
 
-## 9. Final content and deployment
+## 9. Final content and deployment — voice pass complete
 
-- Run a portfolio-wide voice and concision pass while keeping every claim verified.
+- Maintain the approved voice and claim boundaries as project details evolve.
 - Complete metadata, social previews, analytics decisions, and privacy review.
 - Run final cross-browser checks and deploy the production portfolio.
+
+The focused visual-polish milestone is complete. Typography, editorial measure, supporting-project composition, cyan discipline, separators, path contrast, action states, laptop finish, and the final ending were refined without changing motion or adding dependencies. The [visual polish audit](visual-polish-audit.md) records the decisions and evidence.
+
+The next focused milestone should prepare production metadata and social previews, make the analytics and privacy decision explicit, then complete cross-browser, screen-reader, browser-chrome zoom, and real-device checks before deployment.
