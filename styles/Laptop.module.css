@@ -1,7 +1,6 @@
 .laptop {
   width: min(100%, 48rem);
   max-width: 100%;
-  filter: drop-shadow(0 2rem 1.6rem rgb(0 0 0 / 0.28));
 }
 
 .display {
@@ -17,6 +16,7 @@
   border-radius: clamp(0.65rem, 1.5vw, 1rem) clamp(0.65rem, 1.5vw, 1rem)
     0.25rem 0.25rem;
   background: #23272b;
+  box-shadow: 0 2rem 1.6rem rgb(0 0 0 / 0.28);
 }
 
 .camera {
@@ -36,11 +36,37 @@
   aspect-ratio: 16 / 9.65;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid #30373b;
+  border: 1px solid
+    rgb(48 55 59 / var(--screen-edge-opacity, 1));
   background-color: #111719;
-  background-image: linear-gradient(rgb(105 211 231 / 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(105 211 231 / 0.055) 1px, transparent 1px);
-  background-size: clamp(1.75rem, 4vw, 2.5rem) clamp(1.75rem, 4vw, 2.5rem);
+  isolation: isolate;
+}
+
+.screenGrid {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image: linear-gradient(
+      rgb(105 211 231 / 0.055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgb(105 211 231 / 0.055) 1px,
+      transparent 1px
+    );
+  background-size: clamp(1.75rem, 4vw, 2.5rem)
+    clamp(1.75rem, 4vw, 2.5rem);
+  pointer-events: none;
+}
+
+.screenDepth {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  perspective: 44rem;
+  pointer-events: none;
+  transform-style: preserve-3d;
 }
 
 .screen::after {
@@ -51,6 +77,24 @@
   content: "";
   opacity: var(--screen-frame-opacity, 1);
   pointer-events: none;
+}
+
+.screenGlass {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  border: 1px solid rgb(244 240 232 / 0.08);
+  background: linear-gradient(
+    118deg,
+    rgb(244 240 232 / 0.035),
+    transparent 32%,
+    transparent 72%,
+    rgb(105 211 231 / 0.025)
+  );
+  opacity: 0.24;
+  pointer-events: none;
+  transform: translateZ(0.75rem);
+  transform-style: preserve-3d;
 }
 
 .screenIdentity {
@@ -70,7 +114,8 @@
   padding: clamp(1.15rem, 3vw, 2.5rem);
   overflow: hidden;
   opacity: 0;
-  transform: scale(0.96);
+  transform: translateZ(-1.5rem) scale(0.96);
+  transform-style: preserve-3d;
   align-content: center;
 }
 
@@ -204,8 +249,8 @@
 }
 
 @media (max-width: 40rem) {
-  .laptop {
-    filter: drop-shadow(0 1.5rem 1.25rem rgb(0 0 0 / 0.22));
+  .shell {
+    box-shadow: 0 1.5rem 1.25rem rgb(0 0 0 / 0.22);
   }
 
   .screen {

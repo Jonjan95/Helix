@@ -20,6 +20,11 @@ export function Laptop() {
           aria-hidden="true"
         />
         <div className={styles.screen} data-motion="laptop-screen">
+          <div
+            className={styles.screenGrid}
+            data-motion="screen-grid"
+            aria-hidden="true"
+          />
           <div className={styles.screenIdentity} data-motion="screen-identity">
             <span className={styles.systemLabel}>
               {arrivalIdentity.location} / Portfolio
@@ -29,16 +34,23 @@ export function Laptop() {
             <span className={styles.status}>Software · Testing · Quality</span>
           </div>
 
-          <div
-            className={styles.workspaceThreshold}
-            data-motion="workspace-threshold"
-            aria-hidden="true"
-          >
-            <span className={styles.thresholdLabel}>
-              ORIENTATION / WORKSPACE
-            </span>
-            <span className={styles.thresholdPath} />
-            <span className={styles.thresholdStatus}>ENTRY LAYER READY</span>
+          <div className={styles.screenDepth} aria-hidden="true">
+            <div
+              className={styles.screenGlass}
+              data-motion="screen-glass"
+              aria-hidden="true"
+            />
+            <div
+              className={styles.workspaceThreshold}
+              data-motion="workspace-threshold"
+              aria-hidden="true"
+            >
+              <span className={styles.thresholdLabel}>
+                ORIENTATION / WORKSPACE
+              </span>
+              <span className={styles.thresholdPath} />
+              <span className={styles.thresholdStatus}>ENTRY LAYER READY</span>
+            </div>
           </div>
         </div>
       </div>

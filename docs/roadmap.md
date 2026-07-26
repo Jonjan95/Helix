@@ -68,6 +68,8 @@ The release audit extends the first complete audit with accessibility-tree inspe
 
 The current Chromium suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. A focused 18-check release matrix now passes in Chromium, Firefox, and WebKit and adds mobile landscape, metadata resources, headers, 404 behavior, forced colors, zoom-equivalent reflow, and reduced motion. Lighthouse 13.0.3 measured 98/100 mobile and 100/100 desktop Performance, with 100 Accessibility, Best Practices, and SEO on the configured build.
 
+The first post-exploration production design iteration is a reviewable laptop-threshold refinement. It uses shallow CSS perspective inside the existing motion owner, preserves mobile and reduced-motion behavior, and includes matched control and revised evidence. The later layered-SVG Helix-depth recommendation remains a separate milestone and must not be inferred from this threshold review.
+
 ## 9. Final content and deployment — locally deployment-ready
 
 - Maintain the approved voice and claim boundaries as project details evolve.

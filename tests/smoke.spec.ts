@@ -537,6 +537,186 @@ test("progresses through every active node and reverses to the workspace", async
   expect(browserMessages).toEqual([]);
 });
 
+test("keeps the laptop threshold continuous and reversible", async ({ page }) => {
+  const browserMessages: string[] = [];
+  page.on("console", (message) => {
+    if (["error", "warning"].includes(message.type())) {
+      browserMessages.push(`${message.type()}: ${message.text()}`);
+    }
+  });
+  page.on("pageerror", (error) => browserMessages.push(`pageerror: ${error.message}`));
+
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const laptop = page.getByTestId("laptop-hero");
+  const threshold = laptop.locator('[data-motion="workspace-threshold"]');
+  const glass = laptop.locator('[data-motion="screen-glass"]');
+  const screenGrid = laptop.locator('[data-motion="screen-grid"]');
+  const shell = laptop.locator('[data-motion="laptop-shell"]');
+  const identity = laptop.locator('[data-motion="screen-identity"]');
+  const motionRoot = page.locator('[data-motion-root="helix-experience"]');
+  const journey = page.locator("[data-helix-journey]");
+
+  await expect(motionRoot).toHaveCount(1);
+  await expect(page.locator(".pin-spacer")).toHaveCount(1);
+  await expect(laptop).toBeVisible();
+  await expect(glass).toHaveAttribute("aria-hidden", "true");
+  await expect(screenGrid).toHaveAttribute("aria-hidden", "true");
+  await expect(journey).toHaveAttribute("data-grid-handoff", "sequential");
+  await expect(identity).toBeVisible();
+
+  const pinDistance = await page.locator(".pin-spacer").evaluate((spacer) =>
+    Number.parseFloat(getComputedStyle(spacer).paddingBottom),
+  );
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance * 0.5, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(700);
+  await expect(identity).toBeVisible();
+  const midpointBounds = await laptop.evaluate((element) => {
+    const bounds = element.getBoundingClientRect();
+
+    return {
+      bottom: bounds.bottom,
+      left: bounds.left,
+      right: bounds.right,
+      top: bounds.top,
+    };
+  });
+  expect(midpointBounds.left).toBeGreaterThanOrEqual(-1);
+  expect(midpointBounds.right).toBeLessThanOrEqual(1441);
+  expect(midpointBounds.top).toBeGreaterThanOrEqual(-1);
+  expect(midpointBounds.bottom).toBeLessThanOrEqual(1001);
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance * 0.78, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(700);
+  await expect(threshold).toBeVisible();
+  await expect(shell).toBeVisible();
+  const crossingEmphasis = await laptop.evaluate((element) => {
+    const arrivalIdentity = element.querySelector(
+      '[data-motion="screen-identity"]',
+    );
+    const workspaceThreshold = element.querySelector(
+      '[data-motion="workspace-threshold"]',
+    );
+
+    return {
+      identity: arrivalIdentity
+        ? Number.parseFloat(getComputedStyle(arrivalIdentity).opacity)
+        : 1,
+      threshold: workspaceThreshold
+        ? Number.parseFloat(getComputedStyle(workspaceThreshold).opacity)
+        : 0,
+    };
+  });
+  expect(crossingEmphasis.identity).toBeLessThan(crossingEmphasis.threshold);
+  await expectNoHorizontalOverflow(page);
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(700);
+  await expect(threshold).toBeVisible();
+  const resolvedGridComposition = await page.evaluate(() => {
+    const grid = document.querySelector<HTMLElement>(
+      '[data-motion="screen-grid"]',
+    );
+    const screen = document.querySelector<HTMLElement>(
+      '[data-motion="laptop-screen"]',
+    );
+    const workspace = document.querySelector<HTMLElement>(
+      "[data-helix-journey]",
+    );
+
+    if (!grid || !screen || !workspace) {
+      return null;
+    }
+
+    return {
+      screenGridOpacity: Number.parseFloat(getComputedStyle(grid).opacity),
+      screenSurface: getComputedStyle(screen).backgroundImage,
+      transitionLayers: (
+        getComputedStyle(workspace, "::before").backgroundImage.match(
+          /linear-gradient/g,
+        ) ?? []
+      ).length,
+    };
+  });
+  expect(resolvedGridComposition).not.toBeNull();
+  expect(resolvedGridComposition?.screenGridOpacity).toBeLessThan(0.01);
+  expect(resolvedGridComposition?.screenSurface).toBe("none");
+  expect(resolvedGridComposition?.transitionLayers).toBe(1);
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance + 150, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(400);
+  const releaseComposition = await page.evaluate(() => {
+    const arrival = document.querySelector('[data-chapter="arrival"]');
+    const journey = document.querySelector("[data-helix-journey]");
+    const screen = document.querySelector('[data-motion="laptop-screen"]');
+
+    if (!arrival || !journey || !screen) {
+      return null;
+    }
+
+    const arrivalBounds = arrival.getBoundingClientRect();
+    const journeyBounds = journey.getBoundingClientRect();
+    const screenBounds = screen.getBoundingClientRect();
+    const boundaryElement = document.elementFromPoint(
+      window.innerWidth / 2,
+      journeyBounds.top + 2,
+    );
+
+    return {
+      arrivalBottom: arrivalBounds.bottom,
+      boundaryChapter: boundaryElement
+        ?.closest("[data-chapter]")
+        ?.getAttribute("data-chapter"),
+      journeyTop: journeyBounds.top,
+      screenBottom: screenBounds.bottom,
+    };
+  });
+  expect(releaseComposition).not.toBeNull();
+  expect(releaseComposition?.screenBottom).toBeGreaterThan(
+    releaseComposition?.journeyTop ?? Number.POSITIVE_INFINITY,
+  );
+  expect(releaseComposition?.screenBottom).toBeGreaterThan(
+    releaseComposition?.arrivalBottom ?? Number.POSITIVE_INFINITY,
+  );
+  expect(releaseComposition?.boundaryChapter).toBe("arrival");
+
+  await expect(page.locator('[data-motion="digital-workspace"]')).toHaveCount(1);
+  await expect(page.getByTestId("digital-workspace")).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance + 80, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(300);
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance * 0.5, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(700);
+  await expect(laptop).toBeVisible();
+  await expect(identity).toBeVisible();
+  await expect(shell).toBeVisible();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  await expect(identity).toBeVisible();
+  await expect(shell).toBeVisible();
+  expect(browserMessages).toEqual([]);
+});
+
 test("keeps the complete project evidence within the Projects interval", async ({
   page,
 }) => {
@@ -834,6 +1014,14 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   await expect(page.locator("[data-arrival-identity]")).toBeVisible();
+  await expect(page.locator('[data-motion="screen-glass"]')).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  await expect(page.locator('[data-motion="screen-glass"]')).not.toHaveAttribute(
+    "tabindex",
+    /.+/,
+  );
   await expect(page.locator("[data-environment-principle]")).toHaveCount(3);
   await expect(page.locator("[data-engineering-step]")).toHaveCount(4);
   for (const selector of [

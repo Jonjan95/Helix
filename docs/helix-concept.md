@@ -95,6 +95,8 @@ The complete graybox establishes the correct order and shared path, but its firs
 
 The calibration preserves the single motion owner and semantic structure while introducing a five-state chapter model, per-chapter pacing profiles, clearer active-node hierarchy, earlier path continuity, reliable initial-anchor restoration, and responsive spacing adjustments. These changes refine the existing system; they do not introduce final content or a new helix design.
 
+The laptop threshold is the first focused production follow-up to the spatial-design exploration. A shallow CSS perspective layer now relates screen glass, Arrival identity, and the workspace anticipation layer without changing the overall laptop scale, pin distance, chapter ownership, or later path reveal. Desktop and tablet coordinate that depth inside the existing `JourneyMotion` timeline; mobile remains unpinned and reduced motion remains static. The matched [Threshold comparison](the-threshold.md) is evidence for a human keep, revise, or revert decision, not a declaration that spatial depth is automatically better.
+
 ## Calibrated journey behavior
 
 The calibration resolves those issues without changing the approved journey architecture. Before the workspace handoff, no chapter is presented as active. The laptop screen frame recedes as the workspace layer becomes dominant, and a short centreline carries the screen geometry into the shared path. Environment can then approach before it becomes the first active destination.

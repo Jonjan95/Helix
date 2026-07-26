@@ -1,5 +1,6 @@
 .journey {
   position: relative;
+  z-index: 1;
   padding-top: clamp(1.75rem, 3vw, 3rem);
   padding-bottom: clamp(6rem, 10vw, 9rem);
   overflow: hidden;
@@ -20,6 +21,17 @@
   background: linear-gradient(to bottom, rgb(18 20 22 / 0.96), transparent);
   content: "";
   pointer-events: none;
+}
+
+@media (min-width: 48rem) {
+  .journey::before {
+    background: linear-gradient(
+      to bottom,
+      #111719 0%,
+      rgb(17 23 25 / 0.98) 24%,
+      transparent 100%
+    );
+  }
 }
 
 .entryMarker {
