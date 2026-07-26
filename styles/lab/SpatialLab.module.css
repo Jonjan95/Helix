@@ -1,0 +1,686 @@
+.lab {
+  min-height: 100vh;
+  overflow: clip;
+  background:
+    linear-gradient(rgb(105 211 231 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 211 231 / 0.035) 1px, transparent 1px),
+    var(--color-background);
+  background-size: 4rem 4rem;
+}
+
+.header,
+.controls,
+.stage,
+.notes,
+.boundary {
+  width: min(calc(100% - (var(--page-gutter) * 2)), var(--content-width));
+  margin-inline: auto;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3rem;
+  padding-block: clamp(3rem, 8vw, 6rem) 2.5rem;
+  align-items: end;
+}
+
+.eyebrow,
+.prototypeLabel {
+  margin: 0 0 1rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  max-width: 11ch;
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 430;
+  letter-spacing: -0.055em;
+  line-height: 0.94;
+}
+
+.introduction {
+  max-width: 42rem;
+  margin: 1.5rem 0 0;
+  color: var(--color-muted);
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+}
+
+.backLink {
+  min-height: 44px;
+  padding-block: 0.65rem;
+  color: var(--color-muted-strong);
+  text-underline-offset: 0.3rem;
+}
+
+.boundary {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-block: 1px solid var(--color-line-soft);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.boundary strong {
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(12rem, 0.8fr);
+  gap: 1.5rem 2.5rem;
+  padding-block: 2rem;
+}
+
+.controls fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.controls legend {
+  margin-bottom: 0.75rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.segmented,
+.inlineOptions,
+.transport {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.segmented label {
+  flex: 1 1 8rem;
+}
+
+.segmented input,
+.inlineOptions input {
+  position: absolute;
+  opacity: 0;
+}
+
+.segmented span,
+.inlineOptions span,
+.transport button {
+  display: flex;
+  min-height: 44px;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-muted-strong);
+  align-items: center;
+  justify-content: center;
+}
+
+.segmented span {
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.segmented small {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+}
+
+.segmented input:checked + span,
+.inlineOptions input:checked + span {
+  border-color: rgb(105 211 231 / 0.62);
+  background: rgb(105 211 231 / 0.08);
+  color: var(--color-text);
+}
+
+.segmented input:focus-visible + span,
+.inlineOptions input:focus-visible + span {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.segmented input:disabled + span,
+.inlineOptions input:disabled + span {
+  opacity: 0.42;
+}
+
+.inlineOptions label {
+  flex: 1;
+}
+
+.inlineOptions span {
+  padding-inline: 1rem;
+  text-transform: capitalize;
+}
+
+.checkControl {
+  display: flex;
+  min-height: 44px;
+  gap: 0.75rem;
+  color: var(--color-muted-strong);
+  align-items: center;
+}
+
+.checkControl input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-accent);
+}
+
+.transport {
+  justify-content: flex-end;
+}
+
+.transport button {
+  padding-inline: 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.transport button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+.transport button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.stage {
+  min-height: min(62rem, 78vh);
+  border: 1px solid var(--color-line);
+  background: rgb(18 20 22 / 0.88);
+}
+
+.prototype {
+  display: grid;
+  min-height: inherit;
+  grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.7fr);
+}
+
+.scene {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 38rem;
+  overflow: hidden;
+  border-right: 1px solid var(--color-line-soft);
+  place-items: center;
+}
+
+.prototypeNotes {
+  display: flex;
+  padding: clamp(2rem, 5vw, 4rem);
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.prototypeNotes h2,
+.notes h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  font-weight: 430;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.prototypeNotes > p:not(.prototypeLabel),
+.notes p {
+  color: var(--color-muted);
+}
+
+.reducedNote,
+.implementation {
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line-soft);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.6;
+}
+
+.labLaptop {
+  position: relative;
+  width: min(76%, 42rem);
+  max-width: 100%;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 1.8rem 1.5rem rgb(0 0 0 / 0.26));
+}
+
+.labDisplay {
+  position: relative;
+  padding: 0.65rem;
+  transform-style: preserve-3d;
+}
+
+.labShell {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #4c5358;
+  border-radius: 0.9rem 0.9rem 0.2rem 0.2rem;
+  background: #23272b;
+  transform: translateZ(-12px);
+}
+
+.labScreen {
+  position: relative;
+  aspect-ratio: 16 / 9.65;
+  overflow: hidden;
+  border: 1px solid #30373b;
+  background: #111719;
+  transform-style: preserve-3d;
+}
+
+.labScreenGrid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgb(105 211 231 / 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 211 231 / 0.055) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+}
+
+.labIdentity,
+.labThreshold {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  transform-style: preserve-3d;
+  align-content: center;
+}
+
+.labIdentity span,
+.labThreshold span,
+.labThreshold small {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: clamp(0.56rem, 1vw, 0.68rem);
+  letter-spacing: 0.12em;
+}
+
+.labIdentity strong {
+  max-width: 9ch;
+  margin-top: 1rem;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+}
+
+.labIdentity i {
+  width: 4rem;
+  height: 2px;
+  margin-top: 1.5rem;
+  background: var(--color-accent);
+}
+
+.labThreshold {
+  opacity: 0;
+  place-items: center;
+}
+
+.labThreshold div {
+  width: 22%;
+  height: 58%;
+  margin-block: 1rem;
+  border-inline: 1px solid rgb(105 211 231 / 0.4);
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 1.3rem,
+    rgb(244 240 232 / 0.1) 1.3rem calc(1.3rem + 1px)
+  );
+  transform: perspective(18rem) rotateX(64deg);
+  transform-origin: bottom;
+}
+
+.labBase {
+  width: calc(100% + 0.5rem);
+  height: 0.85rem;
+  margin-left: -0.25rem;
+  border: 1px solid #4f565b;
+  border-radius: 0.1rem 0.1rem 1.2rem 1.2rem;
+  background: #2d3236;
+  transform: perspective(24rem) rotateX(46deg) translateZ(-8px);
+  transform-origin: top;
+}
+
+.baselineWorkspace {
+  position: absolute;
+  z-index: -1;
+  inset: 10% 15%;
+  opacity: 0.3;
+}
+
+.baselineWorkspace span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 42%;
+  background: var(--color-line);
+}
+
+.baselineWorkspace span:nth-child(2) {
+  transform: rotate(28deg);
+}
+
+.baselineWorkspace span:nth-child(3) {
+  transform: rotate(-28deg);
+}
+
+.cssScene {
+  perspective: 70rem;
+}
+
+.cssCamera {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  place-items: center;
+}
+
+.cssWorkspace {
+  position: absolute;
+  z-index: -1;
+  inset: 12%;
+  opacity: 0.08;
+  transform: scale(0.82);
+  transform-style: preserve-3d;
+}
+
+.workspacePlane {
+  position: absolute;
+  inset: 18% 14%;
+  border: 1px solid rgb(105 211 231 / 0.22);
+  background:
+    linear-gradient(rgb(105 211 231 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(105 211 231 / 0.06) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  transform: perspective(38rem) rotateX(58deg) translateZ(-40px);
+}
+
+.workspaceRail {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: 50%;
+  width: 16%;
+  border-inline: 1px solid rgb(105 211 231 / 0.44);
+  transform: translateX(-50%) perspective(32rem) rotateX(12deg);
+}
+
+.workspaceNode {
+  position: absolute;
+  top: 52%;
+  left: 50%;
+  width: 1rem;
+  aspect-ratio: 1;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-background);
+  transform: translate(-50%, -50%) translateZ(45px);
+}
+
+.svgScene {
+  perspective: 72rem;
+}
+
+.spatialSvg {
+  width: min(80%, 42rem);
+  overflow: visible;
+  transform-origin: 50% 20%;
+}
+
+[data-spatial-depth="subtle"] .spatialSvg {
+  transform: perspective(64rem) rotateX(4deg) rotateY(-2deg);
+}
+
+[data-spatial-depth="strong"] .spatialSvg {
+  transform: perspective(48rem) rotateX(11deg) rotateY(-5deg) scale(1.04);
+}
+
+.svgScreenPlane path,
+.svgScreenPlane line {
+  stroke: rgb(244 240 232 / 0.28);
+  stroke-width: 1;
+}
+
+.svgBack path {
+  stroke: url("#lab-depth-back");
+  stroke-width: 4;
+}
+
+.svgFront path {
+  stroke: url("#lab-depth-front");
+  stroke-width: 7;
+}
+
+.svgRungs line {
+  stroke: rgb(244 240 232 / 0.17);
+  stroke-width: 2;
+}
+
+.svgNodes circle:first-child {
+  fill: var(--color-background);
+  stroke: rgb(105 211 231 / 0.6);
+  stroke-width: 2;
+}
+
+.svgNodes circle:last-child {
+  fill: var(--color-accent);
+}
+
+[data-spatial-depth="strong"] .svgBack {
+  opacity: 0.52;
+}
+
+[data-spatial-depth="strong"] .svgFront {
+  filter: drop-shadow(0 0.35rem 0.4rem rgb(0 0 0 / 0.34));
+}
+
+.svgDepthKey {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: grid;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  gap: 0.35rem;
+  letter-spacing: 0.1em;
+}
+
+.prototypeLoading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  min-height: 32rem;
+  color: var(--color-muted);
+  place-items: center;
+}
+
+.threeScene {
+  background:
+    radial-gradient(circle at 50% 45%, rgb(105 211 231 / 0.055), transparent 42%),
+    #111416;
+}
+
+.webglMount {
+  position: absolute;
+  inset: 0;
+}
+
+.webglMount canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.webglFallback {
+  display: grid;
+  width: min(72%, 30rem);
+  color: var(--color-muted);
+  text-align: center;
+  place-items: center;
+}
+
+.webglFallback span {
+  width: min(100%, 22rem);
+  aspect-ratio: 16 / 9;
+  margin-bottom: 2rem;
+  border: 1px solid var(--color-line);
+  background:
+    linear-gradient(110deg, transparent 45%, rgb(105 211 231 / 0.4) 45.2% 45.7%, transparent 46%),
+    var(--color-surface);
+  transform: perspective(40rem) rotateX(3deg);
+}
+
+.webglFallback strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.webglFallback p {
+  max-width: 34rem;
+}
+
+.staticState {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.notes {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 3rem;
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.notes p {
+  max-width: 42rem;
+  margin-top: 0;
+}
+
+@media (max-width: 64rem) {
+  .header,
+  .prototype,
+  .notes {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    align-items: start;
+  }
+
+  .backLink {
+    justify-self: start;
+  }
+
+  .prototypeNotes {
+    border-top: 1px solid var(--color-line-soft);
+  }
+
+  .scene {
+    min-height: 34rem;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .lab {
+    background-size: 2.5rem 2.5rem;
+  }
+
+  .header {
+    gap: 1.5rem;
+    padding-top: 2.5rem;
+  }
+
+  .boundary,
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .boundary {
+    flex-direction: column;
+  }
+
+  .controls {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .transport {
+    justify-content: flex-start;
+  }
+
+  .transport button {
+    flex: 1 1 7rem;
+  }
+
+  .stage,
+  .prototype {
+    min-height: auto;
+  }
+
+  .scene {
+    min-height: 26rem;
+  }
+
+  .prototypeNotes {
+    padding: 2rem 1.25rem;
+  }
+
+  .labLaptop {
+    width: 88%;
+  }
+
+  .spatialSvg {
+    width: 92%;
+  }
+
+  [data-spatial-depth="strong"] .spatialSvg {
+    transform: perspective(48rem) rotateX(5deg) rotateY(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab *,
+  .lab *::before,
+  .lab *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.lab[data-spatial-reduced="true"] [data-lab-laptop],
+.lab[data-spatial-reduced="true"] [data-css-workspace],
+.lab[data-spatial-reduced="true"] .spatialSvg {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.lab[data-spatial-reduced="true"] .labThreshold {
+  opacity: 1;
+}

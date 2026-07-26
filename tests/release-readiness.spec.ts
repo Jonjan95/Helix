@@ -58,6 +58,7 @@ test("publishes complete metadata and release assets", async ({
     expect(canonicalUrl.origin).toBe(new URL(normalizedSiteUrl).origin);
     expect(canonicalUrl.pathname).toBe("/");
     expect(await robots.text()).toContain("Allow: /");
+    expect(await robots.text()).toContain("Disallow: /lab/");
     expect(await robots.text()).toContain(
       new URL("/sitemap.xml", configuredSiteUrl).toString(),
     );

@@ -3,7 +3,7 @@ import baseConfig from "./playwright.config";
 
 export default defineConfig({
   ...baseConfig,
-  testMatch: "release-readiness.spec.ts",
+  testMatch: ["release-readiness.spec.ts", "spatial-lab.spec.ts"],
   projects: [
     {
       name: "chromium",

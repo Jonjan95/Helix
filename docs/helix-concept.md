@@ -20,6 +20,8 @@ Negative space, clipping, fine connection lines, and a limited cyan signal creat
 
 The SVG remains decorative, non-focusable, and hidden from assistive technology. Essential labels and prose never live exclusively inside it.
 
+The public [spatial design exploration](spatial-design-exploration.md) documents an unlisted, direct-access lab that is excluded from production navigation, indexing, and the sitemap. It confirms that layered SVG is the strongest low-risk way to deepen this path. A small amount of CSS perspective can support the laptop threshold, while direct Three.js is not recommended for the portfolio experience yet: its camera distinction does not currently justify its runtime, responsive, fallback, and maintenance cost.
+
 ## Chapter attachment pattern
 
 `HelixChapter` defines the smallest reusable attachment pattern:
