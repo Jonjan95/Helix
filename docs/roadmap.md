@@ -34,7 +34,13 @@ Jonathan Jansson is now the single public identity. The finite Arrival scene pai
 - Evaluate whether the metaphor improves comprehension and recall.
 - Keep semantic sections as the content source of truth.
 
-The current journey connects all five stops with one accessible, responsive path and a reversible motion layer. Its first focused visual-polish pass is complete; new art direction, node interaction, and any decision about 3D rendering remain open.
+The current journey connects all five stops with one accessible, responsive
+path and a reversible motion layer. Its first focused visual-polish pass is
+complete. The subsequent Living Helix iteration adds static layered depth by
+alternating the two existing rails at five crossings. A matched ambient
+candidate was evaluated and rejected, leaving zero continuously animated Helix
+elements in production. Interactive nodes, organic project branches, and any
+future decision about 3D rendering remain open.
 
 ## 6. Content destinations — complete
 
@@ -68,7 +74,11 @@ The release audit extends the first complete audit with accessibility-tree inspe
 
 The current Chromium suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844, and 360 × 800, including static generation, console safety, overflow, touch targets, direct fragments, and reversible chapter ownership. A focused 18-check release matrix now passes in Chromium, Firefox, and WebKit and adds mobile landscape, metadata resources, headers, 404 behavior, forced colors, zoom-equivalent reflow, and reduced motion. Lighthouse 13.0.3 measured 98/100 mobile and 100/100 desktop Performance, with 100 Accessibility, Best Practices, and SEO on the configured build.
 
-The first post-exploration production design iteration is a reviewable laptop-threshold refinement. It uses shallow CSS perspective inside the existing motion owner, preserves mobile and reduced-motion behavior, and includes matched control and revised evidence. The later layered-SVG Helix-depth recommendation remains a separate milestone and must not be inferred from this threshold review.
+The first post-exploration production design iteration is the accepted
+laptop-threshold refinement. The second is the Living Helix review: static
+layered SVG depth with matched baseline, static, ambient, and chosen evidence.
+Both preserve mobile and reduced-motion behavior, the existing motion owner,
+and production Three.js isolation.
 
 ## 9. Final content and deployment — locally deployment-ready
 

@@ -1,4 +1,4 @@
-import { mkdir, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import path from "node:path";
 import next from "next";
@@ -10,6 +10,7 @@ const phaseArgument = process.argv.find((argument) =>
 );
 const phase = phaseArgument?.split("=")[1] ?? "baseline";
 const metricsOnly = process.argv.includes("--metrics-only");
+const motionStatesOnly = process.argv.includes("--motion-states-only");
 
 if (!phases.has(phase)) {
   throw new Error(`Unknown living-helix evidence phase: ${phase}`);
@@ -222,6 +223,93 @@ async function recordJourney() {
   );
 }
 
+async function captureAmbientStates() {
+  if (phase !== "ambient") return;
+
+  for (const [filename, currentTime] of [
+    ["16-motion-state-a.png", 0],
+    ["17-motion-state-b.png", 13000],
+  ]) {
+    await capture(filename, {
+      helixMode: "ambient",
+      pathName: "/#projects",
+      setup: async (page) => {
+        await page.getByTestId("helix-path").evaluate((element, time) => {
+          element.getAnimations({ subtree: true }).forEach((animation) => {
+            animation.pause();
+            animation.currentTime = time;
+          });
+        }, currentTime);
+      },
+    });
+  }
+}
+
+async function createChosenComparison() {
+  if (phase !== "chosen") return;
+
+  const [baseline, chosen] = await Promise.all([
+    readFile(
+      path.join(
+        process.cwd(),
+        "docs",
+        "media",
+        "living-helix",
+        "baseline",
+        "03-projects.png",
+      ),
+    ),
+    readFile(path.join(outputDirectory, "03-projects.png")),
+  ]);
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 540, width: 1440 },
+  });
+  const page = await context.newPage();
+  await page.setContent(`
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #121416;
+        color: #f4f0e8;
+        font: 12px Consolas, monospace;
+      }
+      main { display: grid; grid-template-columns: 1fr 1fr; }
+      figure { position: relative; margin: 0; overflow: hidden; }
+      img {
+        display: block;
+        width: 720px;
+        height: 500px;
+        object-fit: cover;
+        object-position: center 72%;
+      }
+      figcaption {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        padding: 6px 9px;
+        background: rgb(18 20 22 / 0.9);
+        letter-spacing: 0.12em;
+      }
+    </style>
+    <main>
+      <figure>
+        <img alt="" src="data:image/png;base64,${baseline.toString("base64")}">
+        <figcaption>MERGED PR #21 / FLAT CROSSING</figcaption>
+      </figure>
+      <figure>
+        <img alt="" src="data:image/png;base64,${chosen.toString("base64")}">
+        <figcaption>PR #22 / STATIC LAYERED DEPTH</figcaption>
+      </figure>
+    </main>
+  `);
+  await page.screenshot({
+    path: path.join(outputDirectory, "16-baseline-chosen-comparison.png"),
+  });
+  await context.close();
+}
+
 async function captureMetrics() {
   const context = await browser.newContext({
     colorScheme: "dark",
@@ -236,12 +324,20 @@ async function captureMetrics() {
   });
   page.on("pageerror", (error) => messages.push(`pageerror: ${error.message}`));
   await page.goto(baseUrl, { waitUntil: "networkidle" });
+  if (phase === "static" || phase === "ambient") {
+    await page.getByTestId("helix-path").evaluate((element, mode) => {
+      element.dataset.helixMode = mode;
+    }, phase);
+    await page.waitForTimeout(100);
+  }
 
   const dom = await page.getByTestId("helix-path").evaluate((element) => ({
-    animatedElements: element.querySelectorAll(
+    ambientCapableElements: element.querySelectorAll(
       '[data-helix-ambient="animated"]',
     ).length,
     circles: element.querySelectorAll("circle").length,
+    continuouslyAnimatedElements: element.getAnimations({ subtree: true })
+      .length,
     groups: element.querySelectorAll("g").length,
     lines: element.querySelectorAll("line").length,
     masks: element.querySelectorAll("mask").length,
@@ -286,9 +382,13 @@ async function captureMetrics() {
 }
 
 try {
-  if (!metricsOnly) {
+  if (!metricsOnly && !motionStatesOnly) {
     await capturePhase();
     await recordJourney();
+  }
+  if (!metricsOnly) {
+    await captureAmbientStates();
+    await createChosenComparison();
   }
   await captureMetrics();
 } finally {

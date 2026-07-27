@@ -8,8 +8,8 @@ as an animation demonstration?
 
 The desired result is spatial recognition rather than visual performance. A
 visitor may notice that one rail passes in front of another, but should not
-immediately notice a looping effect. Chapter state, content, and path
-continuity remain more important than depth or ambient movement.
+immediately notice an effect. Chapter state, content, and path continuity
+remain more important than depth or ambient movement.
 
 ## Review boundary
 
@@ -63,10 +63,10 @@ Two specific limitations are visible:
    background roles. The result reads more like a technical diagram than a
    shallow spatial structure.
 
-The horizontal rungs support continuity but currently share one uniform
-depth treatment. They should remain quieter than nodes and content. The
-baseline does not justify brighter rails, larger nodes, glow, path deformation,
-or a project-branch redesign.
+The horizontal rungs support continuity but currently share one uniform depth
+treatment. They should remain quieter than nodes and content. The baseline
+does not justify brighter rails, larger nodes, glow, path deformation, or a
+project-branch redesign.
 
 ### Baseline measurements
 
@@ -81,74 +81,189 @@ Baseline screenshots, a forward/reverse recording, and metrics are stored in
 
 ## Candidate 1 — static layered depth
 
-Candidate 1 will test a maintainable front/back hierarchy with no continuous
-movement. It may use layered segments or crossing masks, small stroke-width
-and opacity differences, and restrained rung depth. It must reuse the existing
-geometry, preserve chapter state, and degrade harmlessly in forced colors.
+Candidate 1 reuses the two original Bézier definitions through SVG `<use>`
+elements. Alternating vertical clip bands redraw one rail at a time as the
+near layer. Five small crossing windows add a background-colored under-stroke
+and then redraw only the foreground rail. This creates a narrow interruption
+in the rear rail without circles, bubbles, filters, or duplicated geometry
+definitions.
 
-The candidate succeeds only if crossings become easier to read without making
-the Helix louder or visually fragmented.
+The base rails use a `1.1` non-scaling stroke. Near bands use `1.48`, and the
+foreground line inside a crossing uses `1.55`. These small differences make
+the alternation readable while remaining below the node, connector, and
+content hierarchy. The 18 rungs and central axis remain structurally
+unchanged and quieter than both rails.
+
+Review evidence shows clearer foreground/background ownership at crossings
+without making the path fragmented or materially louder. The path retains its
+technical restraint while reading less like two flat lines.
+
+Candidate 1 evidence and metrics are stored in
+[`docs/media/living-helix/static`](media/living-helix/static).
 
 ## Candidate 2 — layered depth with ambient life
 
-Candidate 2 will retain the same static depth model and add the smallest
-credible ambient change. The evaluation will compare a very slow, low-amplitude
-depth emphasis with Candidate 1. It may not deform the geometry visibly,
-introduce scroll ownership, create a render loop, or run on mobile or under
-reduced motion.
+Candidate 2 retains the identical SVG structure and applies opposing opacity
+ranges of `0.84–0.96` to the two near-rail groups over 26 seconds. It moves no
+geometry, adds no scroll relationship, and creates no JavaScript loop. The
+effect is disabled at 1024px and below, in forced colors, and under reduced
+motion. Two elements animate when the evidence mode is active.
 
-A static result remains valid and may be preferred. Ambient movement will not
-be retained merely because it can be implemented.
+Deterministic frames captured 13 seconds apart confirm that the change is
+extremely quiet. The comparison also shows that the movement adds little
+spatial information beyond the static crossing hierarchy. Retaining a
+continuous loop would therefore spend motion budget without improving
+orientation, and would sit uncomfortably beside the design system's rejection
+of idle pulsing.
+
+Candidate 2 is not the production default. Its reproducible evidence remains
+in [`docs/media/living-helix/ambient`](media/living-helix/ambient), including
+two fixed animation states and a short recording.
 
 ## Crossing strategy
 
-Pending candidate review. The preferred direction is a small number of
-maintainable crossing windows derived from the existing geometry, with the
-rear rail interrupted only enough for the foreground rail to read clearly.
-The treatment must not create visible bubbles, dots, or transit-map joints.
+The chosen treatment uses five crossing definitions corresponding to the
+existing shared-axis intersections. Each definition records the foreground
+rail and y-coordinate once. A 68-unit clip window limits a five-pixel
+background under-stroke to that local area, then a `1.55` foreground stroke
+restores the near rail.
+
+This is maintainable because crossing ownership is data rather than manually
+drawn replacement curves. The original path geometry remains defined once per
+rail. The gap follows the foreground curve, remains narrow at every responsive
+scale, and does not create visible cut-out circles.
 
 ## Stroke strategy
 
-Pending candidate review. Depth differences must remain below chapter-state
-emphasis. The near rail may be marginally wider and clearer; the rear rail must
-remain continuous enough to preserve the journey.
+The base layer preserves the complete silhouette at low contrast. Alternating
+near bands add a small width and opacity increase. Rail A remains a restrained
+warm neutral and Rail B retains the established quiet cyan, so the palette and
+path identity do not change. Chapter state remains more prominent through the
+existing node and connector rules.
+
+No blur, glow, dash movement, gradient rail, filter, or path deformation is
+used.
 
 ## Node strategy
 
 The baseline nodes already communicate active, approaching, departing, passed,
-and upcoming states clearly. Candidate work should preserve their size,
-position, state model, and non-interactive behavior. Any change must improve
-their connection to the layered path without producing halos, pulses, or
-independent floating motion.
+and upcoming states clearly, so their markup and CSS are unchanged. Their
+size, position, state model, connector treatment, semantic association, and
+non-interactive behavior remain intact. Nodes do not pulse, float, or inherit
+ambient motion.
 
 ## Ambient-motion decision
 
-Undecided until static and ambient candidates have matching evidence. The
-review will prefer silence when movement does not materially strengthen the
-spatial reading.
+The chosen production result is static layered depth. The ambient candidate
+proved technically inexpensive and visually restrained, but did not improve
+the path enough to justify continuous motion. Production therefore has zero
+continuously animated Helix elements.
 
-## Responsive and reduced-motion boundary
+The optional evidence mode remains isolated to a `data-helix-mode` override;
+there is no visitor-facing control, runtime state, listener, ScrollTrigger, or
+second owner.
 
-Desktop may receive the complete crossing hierarchy. Compact desktop is a
-high-priority noise check. Tablet may simplify crossing detail. Mobile keeps a
-stable, static vertical path and receives no ambient animation. Reduced motion
-keeps a polished static depth result with all semantic content and chapter
-state available in document order.
+## Responsive behavior
 
-## Performance boundary
+Desktop and compact desktop receive the full static layered hierarchy.
+Crossings remain clean at 1440 × 1000 and 1280 × 800, and the marginally wider
+near rail does not crowd headings or project evidence.
 
-The implementation may add SVG structure and CSS but no runtime asset,
-dependency, requestAnimationFrame loop, canvas, WebGL, or per-node trigger.
-Production JavaScript, SVG DOM growth, animated-element count, console output,
-and Three.js isolation will be measured against the baseline above.
+At 1024 × 768 the same static geometry remains readable, but ambient capability
+is disabled. At the existing mobile composition boundary, including the
+reviewed 768 × 1024 result, the full SVG remains hidden and the stable vertical
+CSS path continues beside semantic content. The 390 × 844 and 360 × 800
+presentations therefore add no crossing detail or continuous animation.
 
-## Evidence plan
+## Reduced motion and forced colors
 
-Matching evidence will cover Environment, Engineering, Projects, Experience,
+Reduced motion keeps the full layered desktop SVG as a static structure,
+creates no ambient animation, and preserves the existing static chapter
+states. Mobile reduced motion retains the same vertical path.
+
+Forced colors maps the SVG structure to `CanvasText`, uses `Canvas` for the
+small crossing under-stroke, disables ambient capability, and degrades safely
+if the depth contrast is flattened. Essential journey meaning remains in
+semantic content and chapter state outside the SVG.
+
+## Accessibility
+
+The SVG remains `aria-hidden`, non-focusable, and text-free. Chapter content,
+headings, links, order, nodes, and connectors remain outside the depth
+implementation. Spatial hierarchy is decorative; losing it does not remove
+journey meaning or active-state information. Keyboard flow, direct fragments,
+and the single logical `h1` are unchanged.
+
+## Architecture
+
+`HelixPath` owns the finite SVG layer model:
+
+1. source rail definitions;
+2. complete low-contrast base rails;
+3. existing rungs and axis;
+4. alternating clipped near-rail bands;
+5. five local crossing overlays.
+
+`JourneyMotion` continues to target the existing base, rung, and near groups
+for the one path-introduction timeline. It remains the only production
+scroll-motion owner. The static depth system introduces no trigger and does
+not alter chapter pacing, forward state, reverse state, or fragment
+restoration.
+
+## Performance findings
+
+The chosen implementation adds SVG definitions, clip paths, and `<use>`
+instances plus component-local CSS. It adds no runtime asset, dependency,
+request, listener, client state, requestAnimationFrame loop, canvas, WebGL,
+or per-node trigger.
+
+Measured against the same built route:
+
+| Metric | Baseline | Chosen |
+| --- | ---: | ---: |
+| Decoded production JavaScript | 652,728 bytes | 652,728 bytes |
+| JavaScript chunks | 7 | 7 |
+| SVG descendants | 24 | 65 |
+| Continuously animated elements | 0 | 0 |
+| Three.js signatures on `/` | 0 | 0 |
+| Console warnings or errors | 0 | 0 |
+
+The 41 additional SVG descendants are static definitions, clip rectangles,
+groups, and `<use>` instances. There are still only two source path
+definitions and 19 lines. No mask or filter is applied to the full-height SVG.
+
+## Before, candidate, and chosen evidence
+
+Matching evidence covers Environment, Engineering, Projects, Experience,
 Continue, a representative crossing, compact desktop, laptop, tablet, mobile,
-narrow mobile, reduced motion, forced colors, and forward/reverse travel.
-Candidate evidence is design-review material and is not imported by the
-runtime page.
+narrow mobile, reduced motion, forced colors, and forward/reverse travel:
+
+- [`baseline`](media/living-helix/baseline) — merged PR #21;
+- [`static`](media/living-helix/static) — Candidate 1;
+- [`ambient`](media/living-helix/ambient) — Candidate 2;
+- [`chosen`](media/living-helix/chosen) — final static production result,
+  including a direct baseline comparison.
+
+Evidence is documentation-only and is not imported by the runtime page.
+
+## Validation
+
+- `npm run lint` — passed.
+- `npm run typecheck` — passed.
+- `npm run build` — passed; `/` remains statically generated.
+- `npm run test:e2e` — passed, 34/34 Chromium tests.
+- `npm run validate` — passed, including 34/34 Chromium tests.
+- Chromium and WebKit release matrix — passed, 22/22 tests.
+- Six approved viewport sizes — passed with no horizontal overflow.
+- Forward and reverse chapter ownership — passed.
+- Direct chapter fragments — passed.
+- Reduced motion, forced colors, keyboard flow, and console safety — passed.
+
+Firefox is not reported as passing. Its request-only check passed, while all
+ten page-backed release checks failed inside Playwright
+`browserContext.newPage` before application code executed. This reproduces the
+existing runner limitation recorded by the Threshold review and is not treated
+as either an application success or failure.
 
 ## Reviewer checklist
 
@@ -156,14 +271,17 @@ runtime page.
 - Can you understand which rail passes in front?
 - Does the path remain secondary to content?
 - Is any movement noticeable immediately?
-- Does the result feel alive or merely animated?
+- Does it feel alive or merely animated?
 - Does the path become tiring during long chapters?
 - Are nodes still easy to associate with content?
-- Is the static candidate preferable?
+- Is the static version preferable?
 - Should the effect be reduced further?
 - Does the baseline feel cleaner?
 
 ## Recommendation
 
-**Undecided.** Baseline evidence is complete. A keep, revise, or revert
-recommendation requires matched static and ambient candidate review.
+**Keep the static layered-depth result.** It makes foreground/background
+ownership legible while preserving the path's quiet role, existing geometry,
+chapter-state hierarchy, mobile simplicity, reduced-motion completeness, and
+production budget. Do not retain the ambient loop unless human review finds a
+specific narrative benefit that is absent from the current evidence.
