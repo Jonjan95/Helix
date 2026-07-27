@@ -221,6 +221,48 @@ reviewed misalignment, synchronized-token candidate, fade candidate, desktop
 and compact handoffs, pin release, reverse crossing, mobile, reduced motion,
 and the chosen forward/reverse recording.
 
+## Clean Arrival handoff
+
+Merged PR #20 remains the accepted spatial baseline. A focused follow-up review
+found one remaining ownership problem: the large external Arrival title and
+summary retained a small non-zero opacity until 70% of the pinned timeline.
+Because those elements occupy a large area, the residual texture remained
+detectable after the threshold title and workspace grid had begun to appear.
+The result read as three simultaneous narrative states rather than a continuous
+handoff.
+
+The correction changes only the centralized departure values for the external
+Arrival copy. Its fade now starts at 22% of the timeline, completes over 30%,
+and resolves to zero opacity at 52%. The threshold still begins at 60% on
+desktop and 66% on tablet, leaving a deliberate ownership gap before
+`ENTRY LAYER READY` becomes primary. The slightly later fade start keeps the
+initial copy clear during the first part of the approach; the shorter duration
+removes the long ghosted crossfade.
+
+The intended ownership sequence is:
+
+1. Arrival identity and external copy establish the opening state.
+2. The laptop approach begins while the copy remains readable.
+3. The external title and summary leave completely.
+4. The screen and `ENTRY LAYER READY` take ownership.
+5. The workspace metadata, Helix path, and Environment chapter resolve.
+
+Laptop-screen identity timing is unchanged. It may support the crossing after
+the external copy has departed, then leaves before the workspace is resolved.
+The accepted camera distance, pin distance, screen-plane behavior, identity
+rendering correction, workspace reveal, sequential grid handoff, and normal
+workspace-grid return are also unchanged. Reverse travel uses the same
+scrubbed values and restores the external copy without a separate code path.
+Mobile remains native and unpinned. Reduced motion receives no inline motion
+styles and keeps every semantic Arrival element visible in normal document
+order.
+
+Matched evidence is stored in
+[`clean-handoff`](media/the-threshold/clean-handoff). It contains the merged
+PR #20 ghosted frame, revised initial/approach/departure/threshold/workspace
+states, reverse and restored states, compact desktop, tablet, mobile, reduced
+motion, a direct comparison, and a forward/reverse recording.
+
 ## Comparison
 
 ### Forward
@@ -325,8 +367,9 @@ Three.js remains outside the production portfolio.
 ## Recommendation
 
 **Keep.** The accepted spatial concept and text-rendering correction are
-unchanged. The grid handoff no longer attempts to align transformed and
-normal-flow coordinate systems; it uses a controlled absence between them.
-The screen/workspace overlap remains continuous in forward and reverse travel
-without a visible grid restart. The matched candidate evidence should remain
-part of the PR record.
+unchanged. The grid handoff continues to use a controlled absence between
+transformed and normal-flow coordinate systems. The focused copy correction
+now gives Arrival, Threshold, and Workspace distinct visual ownership without
+changing the accepted spatial motion. The screen/workspace overlap remains
+continuous in forward and reverse travel without a visible grid restart or
+ghosted external Arrival copy.
