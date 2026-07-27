@@ -4,8 +4,10 @@ import path from "node:path";
 import next from "next";
 import { chromium } from "@playwright/test";
 
-const mode = process.argv.includes("--grid-review")
-  ? "grid-alignment"
+const mode = process.argv.includes("--clean-handoff")
+  ? "clean-handoff"
+  : process.argv.includes("--grid-review")
+    ? "grid-alignment"
   : process.argv.includes("--correction-after")
     ? "correction-after"
   : process.argv.includes("--correction-before")
@@ -440,6 +442,204 @@ async function recordGridAlignmentReview() {
   await unlink(temporaryVideo);
 }
 
+async function captureCleanHandoffReview() {
+  await copyFile(
+    path.join(
+      process.cwd(),
+      "docs",
+      "media",
+      "the-threshold",
+      "grid-alignment",
+      "04-chosen-desktop-handoff.png",
+    ),
+    path.join(outputDirectory, "00-merged-pr20-ghosted-threshold.png"),
+  );
+
+  const desktopContext = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const desktopPage = await desktopContext.newPage();
+  await desktopPage.goto(baseUrl, { waitUntil: "networkidle" });
+  const distance = await thresholdDistance(desktopPage);
+  const forwardFrames = [
+    ["01-initial-arrival.png", 0],
+    ["02-early-laptop-approach.png", distance * 0.22],
+    ["03-arrival-departure-midpoint.png", distance * 0.37],
+    ["04-threshold-primary.png", distance * 0.78],
+    ["05-workspace-resolved.png", distance + 320],
+  ];
+
+  for (const [filename, top] of forwardFrames) {
+    await desktopPage.evaluate(
+      (nextTop) => window.scrollTo({ behavior: "auto", top: nextTop }),
+      Math.round(top),
+    );
+    await desktopPage.waitForTimeout(700);
+    await desktopPage.screenshot({
+      path: path.join(outputDirectory, filename),
+    });
+  }
+
+  await desktopPage.evaluate(
+    (top) => window.scrollTo({ behavior: "auto", top }),
+    Math.round(distance * 0.78),
+  );
+  await desktopPage.waitForTimeout(700);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "06-reverse-crossing.png"),
+  });
+  await settleAt(desktopPage, 0, distance);
+  await desktopPage.screenshot({
+    path: path.join(outputDirectory, "07-arrival-restored.png"),
+  });
+  await desktopContext.close();
+
+  const responsiveCases = [
+    [
+      "08-compact-desktop-threshold.png",
+      { height: 800, width: 1280 },
+      "no-preference",
+    ],
+    [
+      "09-tablet-threshold.png",
+      { height: 1024, width: 768 },
+      "no-preference",
+    ],
+    [
+      "10-mobile-result.png",
+      { height: 844, width: 390 },
+      "no-preference",
+    ],
+  ];
+
+  for (const [filename, viewport, reducedMotion] of responsiveCases) {
+    const context = await browser.newContext({
+      colorScheme: "dark",
+      reducedMotion,
+      viewport,
+    });
+    const page = await context.newPage();
+    await page.goto(baseUrl, { waitUntil: "networkidle" });
+    const responsiveDistance = await thresholdDistance(page);
+    await settleAt(page, 0.78, responsiveDistance);
+    await page.screenshot({ path: path.join(outputDirectory, filename) });
+    await context.close();
+  }
+
+  const reducedContext = await browser.newContext({
+    colorScheme: "dark",
+    reducedMotion: "reduce",
+    viewport: { height: 1000, width: 1440 },
+  });
+  const reducedPage = await reducedContext.newPage();
+  await reducedPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await reducedPage.screenshot({
+    fullPage: true,
+    path: path.join(outputDirectory, "11-reduced-motion.png"),
+  });
+  await reducedContext.close();
+}
+
+async function recordCleanHandoffReview() {
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    recordVideo: {
+      dir: outputDirectory,
+      size: { height: 800, width: 1280 },
+    },
+    viewport: { height: 800, width: 1280 },
+  });
+  const page = await context.newPage();
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const distance = await thresholdDistance(page);
+  const end = distance + 280;
+
+  for (let step = 0; step <= 50; step += 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) =>
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        }),
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(350);
+  for (let step = 50; step >= 0; step -= 1) {
+    await page.evaluate(
+      ({ endPosition, progress }) =>
+        window.scrollTo({
+          behavior: "auto",
+          top: Math.round(endPosition * progress),
+        }),
+      { endPosition: end, progress: step / 50 },
+    );
+    await page.waitForTimeout(42);
+  }
+  await page.waitForTimeout(350);
+
+  const video = page.video();
+  await context.close();
+  const temporaryVideo = await video.path();
+  await copyFile(
+    temporaryVideo,
+    path.join(outputDirectory, "12-forward-reverse.webm"),
+  );
+  await unlink(temporaryVideo);
+}
+
+async function createCleanHandoffComparison() {
+  const [before, after] = await Promise.all([
+    readFile(
+      path.join(outputDirectory, "00-merged-pr20-ghosted-threshold.png"),
+    ),
+    readFile(path.join(outputDirectory, "04-threshold-primary.png")),
+  ]);
+  const context = await browser.newContext({
+    colorScheme: "dark",
+    viewport: { height: 540, width: 1440 },
+  });
+  const page = await context.newPage();
+  await page.setContent(`
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #121416;
+        color: #f4f0e8;
+        font: 12px Consolas, monospace;
+      }
+      main { display: grid; grid-template-columns: 1fr 1fr; }
+      figure { position: relative; margin: 0; overflow: hidden; }
+      img { display: block; width: 720px; height: 500px; object-fit: cover; }
+      figcaption {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        padding: 6px 9px;
+        background: rgb(18 20 22 / 0.88);
+        letter-spacing: 0.12em;
+      }
+    </style>
+    <main>
+      <figure>
+        <img alt="" src="data:image/png;base64,${before.toString("base64")}">
+        <figcaption>MERGED PR #20 / GHOSTED COPY</figcaption>
+      </figure>
+      <figure>
+        <img alt="" src="data:image/png;base64,${after.toString("base64")}">
+        <figcaption>PR #21 / CLEAN OWNERSHIP</figcaption>
+      </figure>
+    </main>
+  `);
+  await page.screenshot({
+    path: path.join(outputDirectory, "13-threshold-comparison.png"),
+  });
+  await context.close();
+}
+
 async function createSeamComparison() {
   const beforePath = path.join(
     process.cwd(),
@@ -548,7 +748,11 @@ async function captureAfterReview() {
 }
 
 try {
-  if (mode === "grid-alignment") {
+  if (mode === "clean-handoff") {
+    await captureCleanHandoffReview();
+    await recordCleanHandoffReview();
+    await createCleanHandoffComparison();
+  } else if (mode === "grid-alignment") {
     await captureGridAlignmentReview();
     await recordGridAlignmentReview();
   } else if (mode.startsWith("correction-")) {
