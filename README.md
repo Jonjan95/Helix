@@ -61,7 +61,16 @@ Identity, study direction, working habits, project claims, and public links were
 
 The public [spatial design exploration](docs/spatial-design-exploration.md) compares the production baseline with CSS/GSAP perspective, layered SVG depth, and a direct Three.js proof of concept. Its `/lab/spatial` comparison is an unlisted, direct-access experimental route: it is excluded from production navigation and the sitemap, marked `noindex`, and disallowed under `/lab/` in configured robots output. The repository documentation may link to the written exploration without turning the lab into portfolio functionality. Its evidence recommends a restrained CSS/SVG hybrid and keeps WebGL out of the production journey.
 
-The first recommendation is now under focused production review in [The Threshold](docs/the-threshold.md). The laptop screen uses shallow CSS perspective to relate its decorative glass plane, semantic Arrival identity, and workspace threshold while keeping the existing camera distance, native scrolling, single `JourneyMotion` owner, mobile flow, and static reduced-motion route. Matched before-and-after evidence is committed for a human keep, revise, or revert decision; later SVG Helix depth remains deferred.
+The first recommendation is recorded in [The Threshold](docs/the-threshold.md). The laptop screen uses shallow CSS perspective to relate its decorative glass plane, semantic Arrival identity, and workspace threshold while keeping the existing camera distance, native scrolling, single `JourneyMotion` owner, mobile flow, and static reduced-motion route. Matched before-and-after evidence supports the accepted result; the SVG Helix recommendation is reviewed separately below.
+
+The second spatial recommendation is now implemented as the
+[Living Helix](docs/living-helix.md). The production SVG reuses its original
+rail geometry through layered clip bands and five restrained crossing windows,
+so foreground and background roles alternate without WebGL, filters, new
+scroll ownership, or chapter changes. A very slow ambient-depth candidate was
+captured and rejected because it added continuous motion without enough
+orientation benefit. The chosen production path is static, mobile retains its
+simple vertical line, and reduced motion keeps the complete layered structure.
 
 The first portfolio-wide journey audit is complete. It verified the forward and reverse sequence, all current routes, six representative viewport sizes, reduced motion, semantic hierarchy, console safety, and static generation. The focused refinements correct the skip-link destination and the mobile entry cue’s touch target; the established chapter pacing and centralized motion architecture did not require changes. See [the full journey audit](docs/full-journey-audit.md) for prioritized findings and deferred content work.
 
@@ -77,6 +86,7 @@ Helix is now a locally validated release candidate. Production metadata, browser
 - [Architecture](docs/architecture.md)
 - [Spatial design exploration](docs/spatial-design-exploration.md)
 - [The Threshold](docs/the-threshold.md)
+- [Living Helix](docs/living-helix.md)
 - [Helix concept](docs/helix-concept.md)
 - [Full journey audit](docs/full-journey-audit.md)
 - [Content voice audit](docs/content-voice-audit.md)

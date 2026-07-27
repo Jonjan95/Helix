@@ -396,6 +396,41 @@ test("renders the complete semantic Helix journey", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("renders restrained decorative Helix depth without changing journey ownership", async ({
+  page,
+}) => {
+  await page.goto("/#projects", { waitUntil: "domcontentloaded" });
+
+  const path = page.getByTestId("helix-path");
+  await expect(path).toHaveAttribute("aria-hidden", "true");
+  await expect(path).toHaveAttribute("data-helix-depth", "layered");
+  await expect(path).toHaveAttribute("data-helix-mode", "static");
+  await expect(path).toHaveAttribute(
+    "data-mobile-treatment",
+    "static-axis",
+  );
+  await expect(path.locator("svg")).toHaveAttribute("focusable", "false");
+  await expect(path.locator("svg text")).toHaveCount(0);
+  await expect(path.locator('[data-helix-depth-layer="base"]')).toHaveCount(1);
+  await expect(path.locator('[data-helix-depth-layer="near"]')).toHaveCount(1);
+  await expect(
+    path.locator('[data-helix-depth-layer="crossings"]'),
+  ).toHaveCount(1);
+  await expect(
+    path.locator('[data-helix-depth-layer="connectors"]'),
+  ).toHaveCount(1);
+  await expect(path.locator("[data-depth-crossing]")).toHaveCount(5);
+  await expect(page.locator("[data-journey-node]")).toHaveCount(5);
+  await expect(
+    page.locator('[data-motion-root="helix-experience"]'),
+  ).toHaveCount(1);
+
+  const continuousAnimations = await path.evaluate(
+    (element) => element.getAnimations({ subtree: true }).length,
+  );
+  expect(continuousAnimations).toBe(0);
+});
+
 test("keeps early content within its chapter ownership", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -1019,6 +1054,13 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
     "static",
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  const reducedPath = page.getByTestId("helix-path");
+  await expect(reducedPath).toHaveAttribute("data-helix-depth", "layered");
+  expect(
+    await reducedPath.evaluate(
+      (element) => element.getAnimations({ subtree: true }).length,
+    ),
+  ).toBe(0);
   await expect(page.locator("[data-arrival-identity]")).toBeVisible();
   await expect(page.locator('[data-motion="arrival-copy"]')).toBeVisible();
   await expect(page.locator('[data-motion="arrival-copy"]')).toHaveCSS(
@@ -1122,6 +1164,17 @@ test("mobile preserves the complete early journey order", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page.locator("[data-arrival-identity]")).toBeVisible();
+  const mobilePath = page.getByTestId("helix-path");
+  await expect(mobilePath).toHaveAttribute(
+    "data-mobile-treatment",
+    "static-axis",
+  );
+  await expect(mobilePath.locator("svg")).toHaveCSS("display", "none");
+  expect(
+    await mobilePath.evaluate(
+      (element) => element.getAnimations({ subtree: true }).length,
+    ),
+  ).toBe(0);
 
   const earlyItems = page.locator(
     "[data-environment-principle], [data-engineering-step]",

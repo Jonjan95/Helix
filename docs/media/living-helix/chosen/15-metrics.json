@@ -1,0 +1,16 @@
+{
+  "consoleWarningsOrErrors": [],
+  "decodedJavascriptBytes": 652728,
+  "javascriptChunks": 7,
+  "phase": "chosen",
+  "productionRoute": "/",
+  "threeMatches": 0,
+  "ambientCapableElements": 2,
+  "circles": 0,
+  "continuouslyAnimatedElements": 0,
+  "groups": 11,
+  "lines": 19,
+  "masks": 0,
+  "paths": 2,
+  "svgDescendants": 65
+}

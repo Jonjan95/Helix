@@ -16,11 +16,18 @@ The helix remains a narrative organiser rather than the premise of the portfolio
 
 The approved finite SVG strategy now spans the full journey: two restrained rails, repeated crossbars, and five stop positions rendered with normal browser technology. Every chapter shares one graphite grid so the path enters from the workspace, crosses each stop, and continues beyond Contact without resetting into a new panel.
 
-Negative space, clipping, fine connection lines, and a limited cyan signal create depth and precision. The form should feel engineered and spatial rather than biological or decorative. It has no glow, continuous rotation, ambient loop, particle field, simulated physics, or dashboard treatment.
+Negative space, clipping, fine connection lines, and a limited cyan signal create depth and precision. The two rails now alternate near and far roles through clipped reuse of the original geometry, while five small crossing windows clarify which rail passes in front. The form should feel engineered and spatial rather than biological or decorative. It has no glow, continuous rotation, ambient loop, particle field, simulated physics, or dashboard treatment.
 
 The SVG remains decorative, non-focusable, and hidden from assistive technology. Essential labels and prose never live exclusively inside it.
 
 The public [spatial design exploration](spatial-design-exploration.md) documents an unlisted, direct-access lab that is excluded from production navigation, indexing, and the sitemap. It confirms that layered SVG is the strongest low-risk way to deepen this path. A small amount of CSS perspective can support the laptop threshold, while direct Three.js is not recommended for the portfolio experience yet: its camera distinction does not currently justify its runtime, responsive, fallback, and maintenance cost.
+
+The focused [Living Helix review](living-helix.md) implements that layered-SVG
+recommendation without changing the chapter state model. Its static candidate
+was selected over a very slow two-element ambient comparison because the
+crossing hierarchy supplied the useful depth and the loop added no meaningful
+orientation. Nodes, connectors, rail coordinates, path reveal, forward and
+reverse ownership, and semantic content remain unchanged.
 
 ## Chapter attachment pattern
 

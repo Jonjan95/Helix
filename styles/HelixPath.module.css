@@ -33,35 +33,106 @@
 }
 
 .axis {
-  stroke: rgb(105 211 231 / 0.09);
+  stroke: rgb(105 211 231 / 0.08);
   stroke-dasharray: 2 13;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.backRail path,
-.frontRail path,
+.baseRail,
+.nearRail,
+.crossingGap,
+.crossingFront,
 .rungs line {
   vector-effect: non-scaling-stroke;
 }
 
-.backRail path {
-  stroke: rgb(168 173 178 / 0.27);
-  stroke-width: 1.25;
+.baseRail {
+  fill: none;
+  stroke-width: 1.1;
 }
 
-.frontRail path {
+.baseRail.railA {
+  stroke: rgb(168 173 178 / 0.22);
+}
+
+.baseRail.railB {
+  stroke: rgb(105 211 231 / 0.27);
+}
+
+.nearPhase {
+  opacity: 0.9;
+}
+
+.nearRail {
+  fill: none;
+  stroke-width: 1.48;
+}
+
+.nearRail.railA,
+.crossingFront.railA {
+  stroke: rgb(190 194 196 / 0.42);
+}
+
+.nearRail.railB,
+.crossingFront.railB {
   stroke: rgb(105 211 231 / 0.5);
-  stroke-width: 1.35;
+}
+
+.crossingGap {
+  fill: none;
+  stroke: #111719;
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.crossingFront {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 1.55;
 }
 
 .rungs line {
-  stroke: rgb(244 240 232 / 0.12);
+  stroke: rgb(244 240 232 / 0.1);
   stroke-width: 1;
 }
 
 .rungs line:nth-child(3n + 2) {
   stroke-opacity: 0.58;
+}
+
+.path[data-helix-mode="ambient"] .nearPhaseA {
+  animation: helix-depth-a 26s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+
+.path[data-helix-mode="ambient"] .nearPhaseB {
+  animation: helix-depth-b 26s cubic-bezier(0.65, 0, 0.35, 1) -13s infinite
+    alternate;
+}
+
+.path[data-helix-mode="static"] .nearPhase {
+  animation: none;
+  opacity: 0.9;
+}
+
+@keyframes helix-depth-a {
+  from {
+    opacity: 0.84;
+  }
+
+  to {
+    opacity: 0.96;
+  }
+}
+
+@keyframes helix-depth-b {
+  from {
+    opacity: 0.96;
+  }
+
+  to {
+    opacity: 0.84;
+  }
 }
 
 @media (max-width: 64rem) {
@@ -71,6 +142,11 @@
 
   .path::before {
     display: none;
+  }
+
+  .nearPhase {
+    animation: none !important;
+    opacity: 0.9;
   }
 }
 
@@ -96,10 +172,30 @@
   }
 }
 
+@media (forced-colors: active) {
+  .axis,
+  .baseRail,
+  .nearRail,
+  .crossingFront,
+  .rungs line {
+    stroke: CanvasText;
+  }
+
+  .crossingGap {
+    stroke: Canvas;
+  }
+
+  .nearPhase {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .path,
-  .backRail,
-  .frontRail,
+  .baseRails,
+  .nearRails,
+  .nearPhase,
   .rungs {
     opacity: 1 !important;
     transform: none !important;
@@ -107,6 +203,10 @@
 
   .path {
     transform: translateX(-50%) !important;
+  }
+
+  .nearPhase {
+    animation: none !important;
   }
 }
 

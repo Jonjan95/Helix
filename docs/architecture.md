@@ -61,6 +61,22 @@ Global CSS owns design tokens, baseline element behavior, focus treatment, and t
 
 `HelixJourney` composes Orientation, Engineering, Selected Work, Proof, and Future as five semantic chapter landmarks inside one continuous workspace field. It renders one `HelixPath` behind every stop instead of giving each chapter a separate panel or decorative fragment. The path is a visual relationship layer only: it is non-focusable, hidden from assistive technology, and contains no essential labels.
 
+`HelixPath` now defines each original Bézier rail once and reuses that geometry
+across complete base rails, alternating clipped near-rail bands, and five local
+crossing overlays. Each crossing uses a narrow background under-stroke inside
+one bounded clip window before redrawing the foreground rail. This creates
+static front/back depth without changing coordinates, chapter nodes, or
+connectors. The component exposes stable depth-layer hooks for outcome testing;
+they do not carry semantic meaning.
+
+The production path deliberately defaults to static depth. A two-element,
+26-second opacity-only ambient mode exists solely so the evidence script can
+reproduce the reviewed comparison; it is not active for visitors. Mobile keeps
+the existing vertical CSS line, and reduced motion and forced colors receive
+static treatments. No new client owner, listener, ScrollTrigger, render loop,
+runtime asset, or dependency was introduced. See the
+[Living Helix review](living-helix.md).
+
 The unlisted, direct-access experimental route `/lab/spatial` is deliberately outside this composition. `SpatialLab` owns native comparison controls and dynamically loads its direct Three.js component only when selected. CSS/GSAP and SVG prototypes remain scoped to lab components; the Three.js runtime owns its renderer lifecycle and fallback inside that boundary. No lab component is imported by `/`, the route is excluded from production navigation, and it is `noindex`, omitted from the sitemap, and covered by the `/lab/` robots boundary. The public repository documentation may still link to the written [spatial design exploration](spatial-design-exploration.md); that documentation link does not expose the lab through the portfolio journey.
 
 `HelixChapter` owns the repeated relationship between one node, one restrained connector, and one semantic content region. `HelixChapterContent` keeps the chapter-specific markup explicit so Environment principles, Engineering steps, project evidence, experience tracks, and contact routes can use the elements their meaning requires. `ProjectShowcase` renders one featured article and two supporting articles without changing the Projects node, connector, left-side placement, or motion ownership. `ExperienceTracks` renders one emphasized current-direction article followed by two supporting evidence articles without adding a second timeline or an interaction model. `ContactRoutes` renders one current-direction statement, three native route rows, and a short closing note without adding a footer panel or interaction controller. `helix-chapters.ts` centralizes typed narrative content, document chapter names, placement, and pacing without turning the page into a generic content builder.
