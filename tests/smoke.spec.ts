@@ -550,6 +550,7 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const laptop = page.getByTestId("laptop-hero");
+  const arrivalCopy = page.locator('[data-motion="arrival-copy"]');
   const threshold = laptop.locator('[data-motion="workspace-threshold"]');
   const glass = laptop.locator('[data-motion="screen-glass"]');
   const screenGrid = laptop.locator('[data-motion="screen-grid"]');
@@ -561,6 +562,8 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   await expect(motionRoot).toHaveCount(1);
   await expect(page.locator(".pin-spacer")).toHaveCount(1);
   await expect(laptop).toBeVisible();
+  await expect(arrivalCopy).toBeVisible();
+  await expect(arrivalCopy).toHaveCSS("opacity", "1");
   await expect(glass).toHaveAttribute("aria-hidden", "true");
   await expect(screenGrid).toHaveAttribute("aria-hidden", "true");
   await expect(journey).toHaveAttribute("data-grid-handoff", "sequential");
@@ -597,6 +600,7 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   await page.waitForTimeout(700);
   await expect(threshold).toBeVisible();
   await expect(shell).toBeVisible();
+  await expect(arrivalCopy).toHaveCSS("opacity", "0");
   const crossingEmphasis = await laptop.evaluate((element) => {
     const arrivalIdentity = element.querySelector(
       '[data-motion="screen-identity"]',
@@ -712,6 +716,8 @@ test("keeps the laptop threshold continuous and reversible", async ({ page }) =>
   await expect(shell).toBeVisible();
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
   await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  await expect(arrivalCopy).toHaveCSS("opacity", "1");
+  await expect(arrivalCopy).toBeVisible();
   await expect(identity).toBeVisible();
   await expect(shell).toBeVisible();
   expect(browserMessages).toEqual([]);
@@ -1014,6 +1020,15 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   await expect(page.locator("[data-arrival-identity]")).toBeVisible();
+  await expect(page.locator('[data-motion="arrival-copy"]')).toBeVisible();
+  await expect(page.locator('[data-motion="arrival-copy"]')).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await expect(page.locator('[data-motion="arrival-copy"]')).toHaveCSS(
+    "transform",
+    "none",
+  );
   await expect(page.locator('[data-motion="screen-glass"]')).toHaveAttribute(
     "aria-hidden",
     "true",

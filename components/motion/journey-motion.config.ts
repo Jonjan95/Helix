@@ -87,7 +87,7 @@ export const journeyMotionConfig = {
       "(min-width: 48rem) and (max-width: 64rem) and (prefers-reduced-motion: no-preference)",
   },
   desktop: {
-    contentOpacity: 0.025,
+    contentOpacity: 0,
     contentTravel: -32,
     maxScale: 2.65,
     minScale: 1.7,
@@ -98,7 +98,7 @@ export const journeyMotionConfig = {
     scrub: 0.55,
   } satisfies SpatialMotionProfile,
   tablet: {
-    contentOpacity: 0.05,
+    contentOpacity: 0,
     contentTravel: -24,
     maxScale: 2.05,
     minScale: 1.4,
@@ -303,7 +303,7 @@ export const journeyMotionConfig = {
     cameraDuration: 0.76,
     cameraStart: 0.12,
     thresholdEase: "power1.inOut",
-    recedeDuration: 0.52,
-    recedeStart: 0.18,
+    recedeDuration: 0.3,
+    recedeStart: 0.22,
   },
 } as const;
