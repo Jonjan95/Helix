@@ -39,8 +39,9 @@ path and a reversible motion layer. Its first focused visual-polish pass is
 complete. The subsequent Living Helix iteration adds static layered depth by
 alternating the two existing rails at five crossings. A matched ambient
 candidate was evaluated and rejected, leaving zero continuously animated Helix
-elements in production. Interactive nodes, organic project branches, and any
-future decision about 3D rendering remain open.
+elements in production. The subsequent Organic Branches iteration adds three
+short static project-to-spine curves without a new state owner. Interactive
+nodes and any future decision about 3D rendering remain open.
 
 ## 6. Content destinations — complete
 
@@ -77,8 +78,10 @@ The current Chromium suite covers 1440 × 1000, 1280 × 800, 1024 × 768, 768 ×
 The first post-exploration production design iteration is the accepted
 laptop-threshold refinement. The second is the Living Helix review: static
 layered SVG depth with matched baseline, static, ambient, and chosen evidence.
-Both preserve mobile and reduced-motion behavior, the existing motion owner,
-and production Three.js isolation.
+The third is Organic Branches: static project-to-spine curves with matched
+baseline, static, reveal, and chosen evidence. All three preserve mobile and
+reduced-motion behavior, the existing motion owner, and production Three.js
+isolation.
 
 ## 9. Final content and deployment — locally deployment-ready
 

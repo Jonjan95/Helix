@@ -81,6 +81,16 @@ The unlisted, direct-access experimental route `/lab/spatial` is deliberately ou
 
 `HelixChapter` owns the repeated relationship between one node, one restrained connector, and one semantic content region. `HelixChapterContent` keeps the chapter-specific markup explicit so Environment principles, Engineering steps, project evidence, experience tracks, and contact routes can use the elements their meaning requires. `ProjectShowcase` renders one featured article and two supporting articles without changing the Projects node, connector, left-side placement, or motion ownership. `ExperienceTracks` renders one emphasized current-direction article followed by two supporting evidence articles without adding a second timeline or an interaction model. `ContactRoutes` renders one current-direction statement, three native route rows, and a short closing note without adding a footer panel or interaction controller. `helix-chapters.ts` centralizes typed narrative content, document chapter names, placement, and pacing without turning the page into a generic content builder.
 
+Selected Projects adds one decorative branch span to each existing project
+article. Each span contains a single shallow SVG path and remains
+`aria-hidden`, non-focusable, and outside the article's semantic structure.
+The spans occupy the open strip between the project column and shared path;
+they do not alter the Helix SVG, create additional journey nodes, or encode
+project order. A CSS-only evidence mode can reproduce the rejected restrained
+reveal by reading the existing chapter state attribute, but production uses
+the static mode and adds no timeline, ScrollTrigger, listener, or client state.
+See the [Organic Branches review](organic-branches.md).
+
 `JourneyMotion` owns both the approved Arrival camera transition and the full journey enhancement through one scoped GSAP context and one responsive `gsap.matchMedia()` configuration. A path timeline introduces the shared structure. Five local chapter timelines update direct DOM state attributes and coordinate each node, connector, and content entrance as the visitor reaches it. Stable `data-motion` and `data-journey-*` hooks keep orchestration independent from CSS Module names; selectors, breakpoints, durations, and travel values remain centralized in `journey-motion.config.ts`.
 
 The laptop threshold extends that same owner rather than introducing a second controller. One decorative, assistive-technology-hidden glass element joins the existing shell, semantic identity, and workspace-threshold targets. CSS perspective supplies shallow layer separation; the centralized timeline coordinates only transform and opacity and clears the new target with every other enhancement style. The real Orientation content remains server-rendered below the threshold, and the existing journey-path timeline still owns the first Helix reveal. Mobile stays unpinned, while reduced motion creates no threshold timeline or spacer. See [The Threshold](the-threshold.md) for the matched comparison and review boundary.
@@ -92,6 +102,13 @@ Desktop preserves the complete alternating node-to-content composition. Tablet r
 Arrival remains a finite laptop composition with one full-name `h1`, one title, one summary, and wrapping metadata. Environment stays visually lighter than the evidence chapters through three separated principle rows. Engineering uses a denser four-step progression and a short handoff before Projects. Their added content fits through natural document height, so the existing `entry` and `featured` pacing roles remain unchanged and no early-journey trigger or motion owner was added.
 
 Within Selected Projects, desktop gives the featured narrative a two-column evidence rhythm when the side column can support it. Supporting projects stack beneath it at every width so their evidence never becomes a pair of narrow text strips. Laptop and tablet collapse the featured internal grid before text becomes cramped. Mobile uses one continuous document column, wraps technology labels, and retains the existing vertical path. These are CSS-only composition changes; no project-specific scroll controller or client state exists.
+
+The project branches preserve that composition. Desktop extends shallow curves
+from each article separator into the central whitespace, laptop and tablet
+shorten them, and mobile repositions compact stubs between the vertical path
+and semantic content. Reduced motion keeps all three connections static, while
+forced colors maps them to system colors. The branch markup is decorative and
+adds no content-width reduction or horizontal overflow.
 
 Experience remains on the right side of the shared path and uses a continuous vertical evidence rhythm rather than cards or a résumé timeline. The first track receives stronger typographic and cyan emphasis because it represents the current software-and-quality direction; the embedded and field-service tracks explain the systems thinking and troubleshooting discipline that support it. The existing expanded pacing role gives the longer semantic chapter enough reading space without per-element thresholds. Laptop and tablet reduce metadata density, mobile stacks the same articles beside the vertical path, and reduced motion exposes every track immediately. No Experience-specific ScrollTrigger, state owner, or hidden content exists.
 

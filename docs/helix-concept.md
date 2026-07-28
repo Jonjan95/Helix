@@ -59,6 +59,15 @@ The expanded content increases the chapter's natural document height, so the exi
 
 The visual review evidence is stored in [`docs/media/selected-projects`](media/selected-projects). It records the forward desktop handoffs, featured and supporting evidence, tablet and mobile compositions, repository-link target review, and the complete reduced-motion chapter.
 
+The subsequent [Organic Branches review](organic-branches.md) refines only the
+project-to-spine relationship. One short decorative curve extends from each
+project separator into the existing central whitespace. The featured project
+uses the clearest cyan relationship; supporting projects use quieter neutral
+curves. These are not additional Helix nodes, a project timeline, or navigation
+controls. The selected result is static because a chapter-state reveal added
+motion without improving orientation. Rail geometry, Living Helix crossing
+depth, Projects pacing, semantic order, and repository links remain unchanged.
+
 ## Experience destination
 
 Experience supports the Engineering Mindset rather than becoming a chronological résumé. Its three tracks move from present direction to supporting foundations: software development and testing, embedded software and connected devices, then technical service and field troubleshooting. Every track pairs a concise summary with selected examples and a direct statement of what Jonathan carries into his current work.

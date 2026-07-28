@@ -67,6 +67,8 @@ async function preparePage(
 async function capture(
   filename,
   {
+    elementSelector,
+    forcedColors,
     pathName,
     reducedMotion = "no-preference",
     setup,
@@ -79,16 +81,26 @@ async function capture(
     viewport,
   });
   const page = await preparePage(context, { pathName, setup });
-  await page.screenshot({
+  if (forcedColors) {
+    await page.emulateMedia({ forcedColors });
+    await page.waitForTimeout(200);
+  }
+  const screenshotOptions = {
     path: path.join(outputDirectory, filename),
-  });
+  };
+  if (elementSelector) {
+    await page.locator(elementSelector).screenshot(screenshotOptions);
+  } else {
+    await page.screenshot(screenshotOptions);
+  }
   await context.close();
 }
 
-const center = (selector) => async (page) => {
-  await page.locator(selector).evaluate((element) => {
-    element.scrollIntoView({ behavior: "auto", block: "center" });
-  });
+const alignTop = (selector, offset = 96) => async (page) => {
+  await page.locator(selector).evaluate((element, topOffset) => {
+    const top = element.getBoundingClientRect().top + window.scrollY - topOffset;
+    window.scrollTo({ behavior: "auto", top });
+  }, offset);
 };
 
 async function capturePhase() {
@@ -101,55 +113,57 @@ async function capturePhase() {
     },
   });
   await capture("02-featured-project.png", {
-    setup: center('[data-project="ai-powered-test-engineer"]'),
+    setup: alignTop('[data-project="ai-powered-test-engineer"]'),
   });
   await capture("03-supporting-projects.png", {
-    setup: center(".supportingProjects, [data-project='cortexgrid']"),
+    setup: alignTop('[data-project="cortexgrid"]'),
   });
-  await capture("04-full-projects.png", {
-    setup: center('[data-testid="project-showcase"]'),
+  await capture("04-helix-project.png", {
+    setup: alignTop('[data-project="helix"]'),
   });
-  await capture("05-compact-desktop.png", {
-    setup: center('[data-project="ai-powered-test-engineer"]'),
+  await capture("05-full-projects.png", {
+    elementSelector: '[data-testid="project-showcase"]',
+    setup: alignTop('[data-testid="project-showcase"]', 24),
+  });
+  await capture("06-compact-desktop.png", {
+    setup: alignTop('[data-project="ai-powered-test-engineer"]', 72),
     viewport: { height: 800, width: 1280 },
   });
-  await capture("06-tablet.png", {
-    setup: center('[data-project="ai-powered-test-engineer"]'),
+  await capture("07-tablet.png", {
+    setup: alignTop('[data-project="ai-powered-test-engineer"]', 72),
     viewport: { height: 1024, width: 768 },
   });
-  await capture("07-mobile.png", {
-    setup: center('[data-project="ai-powered-test-engineer"]'),
+  await capture("08-mobile.png", {
+    setup: alignTop('[data-project="ai-powered-test-engineer"]', 72),
     viewport: { height: 844, width: 390 },
   });
-  await capture("08-reduced-motion.png", {
+  await capture("09-reduced-motion.png", {
     reducedMotion: "reduce",
-    setup: center('[data-testid="project-showcase"]'),
+    setup: alignTop('[data-project="ai-powered-test-engineer"]'),
+  });
+  await capture("10-forced-colors.png", {
+    forcedColors: "active",
+    setup: alignTop('[data-project="ai-powered-test-engineer"]'),
   });
 
   if (phase === "reveal") {
-    await capture("10-reveal-approaching.png", {
-      pathName: "/#skills",
+    await capture("11-reveal-approaching.png", {
       setup: async (page) => {
-        await page.evaluate(() =>
-          window.scrollBy({ behavior: "auto", top: window.innerHeight * 0.58 }),
-        );
+        await alignTop('[data-project="ai-powered-test-engineer"]')(page);
+        await page.getByTestId("journey-chapter-projects").evaluate((element) => {
+          element.dataset.journeyState = "approaching";
+        });
       },
     });
-    await capture("11-reveal-active.png", {
-      setup: center('[data-project="ai-powered-test-engineer"]'),
+    await capture("12-reveal-active.png", {
+      setup: alignTop('[data-project="ai-powered-test-engineer"]'),
     });
-    await capture("12-reveal-reverse.png", {
+    await capture("13-reveal-reverse.png", {
       setup: async (page) => {
-        await page
-          .getByTestId("journey-chapter-experience")
-          .evaluate((element) =>
-            element.scrollIntoView({ behavior: "auto", block: "center" }),
-          );
-        await page
-          .getByTestId("journey-chapter-projects")
-          .evaluate((element) =>
-            element.scrollIntoView({ behavior: "auto", block: "center" }),
-          );
+        await alignTop('[data-project="ai-powered-test-engineer"]')(page);
+        await page.getByTestId("journey-chapter-projects").evaluate((element) => {
+          element.dataset.journeyState = "departing";
+        });
       },
     });
   }
@@ -241,15 +255,22 @@ async function captureMetrics() {
 
   const metrics = await page.evaluate(() => {
     const showcase = document.querySelector("[data-testid='project-showcase']");
-    const branchLayer = showcase?.querySelector("[data-project-branches]");
+    const branches = showcase?.querySelectorAll("[data-project-branch]") ?? [];
     const articles = [...document.querySelectorAll("[data-project]")];
     return {
-      branchDescendants: branchLayer?.querySelectorAll("*").length ?? 0,
-      branchFocusableElements:
-        branchLayer?.querySelectorAll(
-          "a, button, input, select, textarea, [tabindex]:not([tabindex='-1'])",
-        ).length ?? 0,
-      branchLayers: document.querySelectorAll("[data-project-branches]").length,
+      branchDescendants: [...branches].reduce(
+        (total, branch) => total + branch.querySelectorAll("*").length,
+        0,
+      ),
+      branchFocusableElements: [...branches].reduce(
+        (total, branch) =>
+          total +
+          branch.querySelectorAll(
+            "a, button, input, select, textarea, [tabindex]:not([tabindex='-1'])",
+          ).length,
+        0,
+      ),
+      branchLayers: branches.length,
       projectOrder: articles.map((article) =>
         article.getAttribute("data-project"),
       ),
