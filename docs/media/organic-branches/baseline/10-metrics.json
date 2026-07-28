@@ -1,0 +1,17 @@
+{
+  "consoleWarningsOrErrors": [],
+  "decodedJavascriptBytes": 652728,
+  "javascriptChunks": 7,
+  "phase": "baseline",
+  "productionRoute": "/",
+  "threeMatches": 0,
+  "branchDescendants": 0,
+  "branchFocusableElements": 0,
+  "branchLayers": 0,
+  "projectOrder": [
+    "ai-powered-test-engineer",
+    "cortexgrid",
+    "helix"
+  ],
+  "projectArticles": 3
+}

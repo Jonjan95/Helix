@@ -13,6 +13,7 @@
     "evidence:spatial": "node scripts/capture-spatial-evidence.mjs",
     "evidence:threshold": "node scripts/capture-threshold-evidence.mjs",
     "evidence:living-helix": "node scripts/capture-living-helix-evidence.mjs",
+    "evidence:organic-branches": "node scripts/capture-organic-branches-evidence.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "assets:generate": "node scripts/generate-release-assets.mjs",
