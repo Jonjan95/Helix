@@ -20,6 +20,17 @@ function ProjectArticle({
       data-project={project.id}
       data-project-featured={project.featured ? "true" : "false"}
     >
+      <span
+        className={styles.projectBranch}
+        data-project-branch={project.id}
+        data-project-branch-featured={project.featured ? "true" : "false"}
+        aria-hidden="true"
+      >
+        <svg viewBox="0 0 100 20" preserveAspectRatio="none" focusable="false">
+          <path d="M 1 17 C 36 17, 54 4, 99 4" vectorEffect="non-scaling-stroke" />
+        </svg>
+      </span>
+
       <header className={styles.projectHeader}>
         <p className={styles.projectIdentity}>
           <span aria-hidden="true">{projectNumber}</span>
@@ -95,7 +106,11 @@ export function ProjectShowcase({ projects }: ProjectShowcaseProps) {
   }
 
   return (
-    <div className={styles.projectShowcase} data-testid="project-showcase">
+    <div
+      className={styles.projectShowcase}
+      data-project-branch-mode="static"
+      data-testid="project-showcase"
+    >
       <ProjectArticle project={featuredProject} index={projects.indexOf(featuredProject)} />
       <div className={styles.supportingProjects}>
         {supportingProjects.map((project) => (

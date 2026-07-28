@@ -797,6 +797,115 @@ test("keeps the complete project evidence within the Projects interval", async (
   ).toBeVisible();
 });
 
+test("keeps project branches decorative and within the existing journey owner", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/#projects", { waitUntil: "domcontentloaded" });
+
+  const showcase = page.getByTestId("project-showcase");
+  const branches = showcase.locator("[data-project-branch]");
+
+  await expect(page.locator('[data-motion-root="helix-experience"]')).toHaveCount(
+    1,
+  );
+  await expect(showcase).toHaveAttribute("data-project-branch-mode", "static");
+  await expect(branches).toHaveCount(3);
+  expect(
+    await branches.evaluateAll((elements) =>
+      elements.map((element) => element.getAttribute("data-project-branch")),
+    ),
+  ).toEqual(["ai-powered-test-engineer", "cortexgrid", "helix"]);
+  await expect(
+    showcase.locator('[data-project-branch-featured="true"]'),
+  ).toHaveAttribute("data-project-branch", "ai-powered-test-engineer");
+
+  for (const branch of await branches.all()) {
+    await expect(branch).toHaveAttribute("aria-hidden", "true");
+    await expect(branch.locator("svg")).toHaveAttribute("focusable", "false");
+    await expect(
+      branch.locator(
+        "a, button, input, select, textarea, [tabindex]:not([tabindex='-1'])",
+      ),
+    ).toHaveCount(0);
+  }
+
+  const layout = await showcase.locator("[data-project]").evaluateAll(
+    (articles) =>
+      articles.map((article) => {
+        const branch = article.querySelector<HTMLElement>(
+          "[data-project-branch]",
+        );
+        const articleBounds = article.getBoundingClientRect();
+        const branchBounds = branch?.getBoundingClientRect();
+        return {
+          branchHasArea: branchBounds
+            ? branchBounds.width > 0 && branchBounds.height > 0
+            : false,
+          branchStartsAtContentEdge: branchBounds
+            ? branchBounds.left >= articleBounds.right - 2
+            : false,
+          id: article.getAttribute("data-project"),
+        };
+      }),
+  );
+  expect(layout.map(({ id }) => id)).toEqual([
+    "ai-powered-test-engineer",
+    "cortexgrid",
+    "helix",
+  ]);
+  expect(layout.every(({ branchHasArea }) => branchHasArea)).toBe(true);
+  expect(
+    layout.every(({ branchStartsAtContentEdge }) => branchStartsAtContentEdge),
+  ).toBe(true);
+  await expectNoHorizontalOverflow(page);
+});
+
+test("simplifies project branches on mobile and reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#projects", { waitUntil: "domcontentloaded" });
+
+  const showcase = page.getByTestId("project-showcase");
+  const articles = showcase.locator("[data-project]");
+  const layout = await articles.evaluateAll((elements) =>
+    elements.map((article) => {
+      const branch = article.querySelector<HTMLElement>(
+        "[data-project-branch]",
+      );
+      const articleBounds = article.getBoundingClientRect();
+      const branchBounds = branch?.getBoundingClientRect();
+      return {
+        branchIsShort: branchBounds
+          ? branchBounds.width > 0 && branchBounds.width < 48
+          : false,
+        branchPrecedesContent: branchBounds
+          ? branchBounds.right <= articleBounds.left
+          : false,
+        id: article.getAttribute("data-project"),
+        runningAnimations: branch?.getAnimations({ subtree: true }).length ?? -1,
+      };
+    }),
+  );
+
+  expect(layout.map(({ id }) => id)).toEqual([
+    "ai-powered-test-engineer",
+    "cortexgrid",
+    "helix",
+  ]);
+  expect(layout.every(({ branchIsShort }) => branchIsShort)).toBe(true);
+  expect(layout.every(({ branchPrecedesContent }) => branchPrecedesContent)).toBe(
+    true,
+  );
+  expect(layout.every(({ runningAnimations }) => runningAnimations === 0)).toBe(
+    true,
+  );
+  await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+});
+
 test("repository links follow a meaningful keyboard sequence", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 

@@ -78,6 +78,15 @@ The focused visual-polish pass is complete. It clarifies typography and content 
 
 Helix is now a locally validated release candidate. Production metadata, browser icons, a 1200 × 630 social preview, environment-aware canonical handling, robots, sitemap, security headers, CI, and a focused Chromium/Firefox/WebKit release matrix are complete. The public origin is intentionally not hardcoded: a deployment must set `NEXT_PUBLIC_SITE_URL` before building. Analytics remains excluded. A hosting destination, public-URL smoke test, physical device review, and hands-on screen-reader pass remain before the site can be described as production-proven. See the [production-readiness audit](docs/production-readiness-audit.md) and [deployment guide](docs/deployment.md).
 
+The third focused production design iteration is documented in
+[Organic Branches](docs/organic-branches.md). Three short decorative curves
+extend the Selected Projects separators toward the shared spine so each
+project reads as evidence belonging to the journey. AI-Powered Test Engineer
+receives the clearest branch, supporting projects remain quieter, mobile uses
+short path-side stubs, and the selected production result is static. No project
+content, chapter pacing, Helix rail geometry, motion owner, or JavaScript bundle
+changed.
+
 ## Project documentation
 
 - [Design system](docs/design-system.md) — primary visual and interaction reference
@@ -87,6 +96,7 @@ Helix is now a locally validated release candidate. Production metadata, browser
 - [Spatial design exploration](docs/spatial-design-exploration.md)
 - [The Threshold](docs/the-threshold.md)
 - [Living Helix](docs/living-helix.md)
+- [Organic Branches](docs/organic-branches.md)
 - [Helix concept](docs/helix-concept.md)
 - [Full journey audit](docs/full-journey-audit.md)
 - [Content voice audit](docs/content-voice-audit.md)
