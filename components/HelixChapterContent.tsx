@@ -25,7 +25,7 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
   if (chapter.chapter === "environment") {
     return (
       <div
-        className={styles.content}
+        className={`${styles.content} ${styles.environmentContent}`}
         data-motion="digital-workspace"
         data-testid="digital-workspace"
       >
@@ -61,7 +61,10 @@ export function HelixChapterContent({ chapter }: HelixChapterContentProps) {
 
   if (chapter.chapter === "engineering") {
     return (
-      <div className={styles.content} data-testid="engineering-content">
+      <div
+        className={`${styles.content} ${styles.engineeringContent}`}
+        data-testid="engineering-content"
+      >
         <ChapterHeader chapter={chapter} />
         <ol
           className={styles.engineeringSteps}
