@@ -9,6 +9,9 @@
   --color-line-soft: rgb(244 240 232 / 0.11);
   --color-line-strong: rgb(244 240 232 / 0.17);
   --color-muted-strong: rgb(244 240 232 / 0.76);
+  --color-atmosphere-surface: rgb(32 36 40 / 0.2);
+  --color-atmosphere-shadow: rgb(5 9 10 / 0.16);
+  --color-atmosphere-threshold: rgb(105 211 231 / 0.028);
   --duration-interaction: 160ms;
   --ease-interaction: cubic-bezier(0.2, 0, 0, 1);
   --page-gutter: clamp(1.25rem, 4vw, 4.5rem);
