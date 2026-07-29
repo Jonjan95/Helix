@@ -23,14 +23,44 @@
   pointer-events: none;
 }
 
+.journey::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 62% 23% at 48% 37%,
+      var(--color-atmosphere-surface),
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 58% 22% at 54% 68%,
+      rgb(32 36 40 / 0.13),
+      transparent 78%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 72%,
+      var(--color-atmosphere-shadow) 100%
+    );
+  content: "";
+  pointer-events: none;
+}
+
 @media (min-width: 48rem) {
   .journey::before {
-    background: linear-gradient(
-      to bottom,
-      #111719 0%,
-      rgb(17 23 25 / 0.98) 24%,
-      transparent 100%
-    );
+    background:
+      radial-gradient(
+        ellipse 42% 88% at 50% 0%,
+        var(--color-atmosphere-threshold),
+        transparent 72%
+      ),
+      linear-gradient(
+        to bottom,
+        #111719 0%,
+        rgb(17 23 25 / 0.98) 24%,
+        transparent 100%
+      );
   }
 }
 
@@ -94,6 +124,16 @@
     background-size: 2.5rem 2.5rem;
   }
 
+  .journey::after {
+    background: linear-gradient(
+      to bottom,
+      rgb(32 36 40 / 0.08),
+      transparent 28%,
+      transparent 76%,
+      rgb(5 9 10 / 0.1)
+    );
+  }
+
   .entryMarker span:last-child {
     display: none;
   }
@@ -119,5 +159,12 @@
   .continuation {
     opacity: 1 !important;
     transform: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .journey::before,
+  .journey::after {
+    display: none;
   }
 }

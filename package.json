@@ -14,6 +14,7 @@
     "evidence:threshold": "node scripts/capture-threshold-evidence.mjs",
     "evidence:living-helix": "node scripts/capture-living-helix-evidence.mjs",
     "evidence:organic-branches": "node scripts/capture-organic-branches-evidence.mjs",
+    "evidence:depth-atmosphere": "node scripts/capture-depth-atmosphere-evidence.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "assets:generate": "node scripts/generate-release-assets.mjs",
