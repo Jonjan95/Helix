@@ -1,0 +1,13 @@
+{
+  "consoleWarningsOrErrors": [],
+  "decodedCssBytes": 43237,
+  "decodedJavascriptBytes": 652728,
+  "javascriptChunks": 7,
+  "phase": "chosen",
+  "productionRoute": "/",
+  "stylesheetChunks": 2,
+  "threeMatches": 0,
+  "atmosphereElements": 0,
+  "focusableAtmosphereElements": 0,
+  "journeyMotionOwners": 1
+}
