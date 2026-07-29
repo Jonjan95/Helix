@@ -1,0 +1,14 @@
+{
+  "chapterOrder": [
+    "environment",
+    "engineering",
+    "projects",
+    "experience",
+    "contact"
+  ],
+  "horizontalOverflow": 0,
+  "journeyMotionOwners": 1,
+  "scrollTriggers": 1,
+  "consoleWarningsOrErrors": [],
+  "phase": "before"
+}
