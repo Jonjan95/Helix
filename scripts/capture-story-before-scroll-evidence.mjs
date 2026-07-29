@@ -163,7 +163,7 @@ const metrics = await metricsPage.evaluate(() => ({
   journeyMotionOwners: document.querySelectorAll(
     '[data-motion-root="helix-experience"]',
   ).length,
-  scrollTriggers: document.querySelectorAll(".pin-spacer").length,
+  desktopPinSpacers: document.querySelectorAll(".pin-spacer").length,
 }));
 await metricsContext.close();
 

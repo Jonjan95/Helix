@@ -10,5 +10,5 @@
   "journeyMotionOwners": 1,
   "desktopPinSpacers": 1,
   "consoleWarningsOrErrors": [],
-  "phase": "before"
+  "phase": "after"
 }
