@@ -1,44 +1,93 @@
 .laptop {
-  width: min(100%, 48rem);
+  position: relative;
+  width: min(100%, 49rem);
   max-width: 100%;
 }
 
 .display {
   position: relative;
-  padding: clamp(0.48rem, 1vw, 0.75rem);
+  z-index: 2;
+  padding: clamp(0.48rem, 0.85vw, 0.68rem)
+    clamp(0.48rem, 0.85vw, 0.68rem)
+    clamp(0.68rem, 1.15vw, 0.9rem);
 }
 
 .shell {
   position: absolute;
   z-index: 0;
   inset: 0;
-  border: 1px solid #4c5358;
-  border-radius: clamp(0.65rem, 1.5vw, 1rem) clamp(0.65rem, 1.5vw, 1rem)
-    0.25rem 0.25rem;
-  background: #23272b;
-  box-shadow: 0 2rem 1.6rem rgb(0 0 0 / 0.28);
+  border: 1px solid #50585d;
+  border-radius: clamp(0.58rem, 1.25vw, 0.86rem)
+    clamp(0.58rem, 1.25vw, 0.86rem) 0.2rem 0.2rem;
+  background: linear-gradient(180deg, #30363a 0%, #24292d 18%, #1d2124 100%);
+  box-shadow:
+    inset 0 1px rgb(244 240 232 / 0.08),
+    inset 1px 0 rgb(244 240 232 / 0.025),
+    inset -1px 0 rgb(0 0 0 / 0.3),
+    0 0.55rem 0.9rem rgb(0 0 0 / 0.16);
+}
+
+.lidEdge {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.2rem;
+  left: 0.65rem;
+  height: 1px;
+  background: rgb(244 240 232 / 0.08);
+}
+
+.hingeRail {
+  position: absolute;
+  z-index: 2;
+  bottom: -0.44rem;
+  left: 50%;
+  width: 38%;
+  height: 0.48rem;
+  border: 1px solid #41484d;
+  border-radius: 0 0 0.38rem 0.38rem;
+  background: linear-gradient(180deg, #171b1e, #2b3034 55%, #121518);
+  transform: translateX(-50%);
+}
+
+.hingeCap {
+  position: absolute;
+  top: 0.08rem;
+  width: 17%;
+  height: 0.2rem;
+  border-radius: 0.15rem;
+  background: rgb(244 240 232 / 0.08);
+}
+
+.hingeCap:first-child {
+  left: 8%;
+}
+
+.hingeCap:last-child {
+  right: 8%;
 }
 
 .camera {
   position: absolute;
   z-index: 3;
-  top: 0.35rem;
+  top: 0.28rem;
   left: 50%;
-  width: 0.28rem;
+  width: 0.25rem;
   aspect-ratio: 1;
+  border: 1px solid rgb(244 240 232 / 0.055);
   border-radius: 50%;
-  background: #0b0d0f;
+  background: #090b0d;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.28);
 }
 
 .screen {
   position: relative;
   z-index: 1;
-  aspect-ratio: 16 / 9.65;
+  aspect-ratio: 16 / 9.8;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid
-    rgb(48 55 59 / var(--screen-edge-opacity, 1));
+  border: 1px solid rgb(42 49 53 / var(--screen-edge-opacity, 1));
   background-color: #111719;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.42);
   isolation: isolate;
 }
 
@@ -47,12 +96,12 @@
   z-index: 0;
   inset: 0;
   background-image: linear-gradient(
-      rgb(105 211 231 / 0.055) 1px,
+      rgb(105 211 231 / 0.052) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      rgb(105 211 231 / 0.055) 1px,
+      rgb(105 211 231 / 0.052) 1px,
       transparent 1px
     );
   background-size: clamp(1.75rem, 4vw, 2.5rem)
@@ -73,7 +122,7 @@
   position: absolute;
   z-index: 4;
   inset: clamp(0.7rem, 2vw, 1rem);
-  border: 1px solid rgb(105 211 231 / 0.22);
+  border: 1px solid rgb(105 211 231 / 0.2);
   content: "";
   opacity: var(--screen-frame-opacity, 1);
   pointer-events: none;
@@ -83,15 +132,15 @@
   position: absolute;
   z-index: 4;
   inset: 0;
-  border: 1px solid rgb(244 240 232 / 0.08);
+  border: 1px solid rgb(244 240 232 / 0.07);
   background: linear-gradient(
-    118deg,
-    rgb(244 240 232 / 0.035),
-    transparent 32%,
-    transparent 72%,
-    rgb(105 211 231 / 0.025)
+    116deg,
+    rgb(244 240 232 / 0.045),
+    transparent 24%,
+    transparent 68%,
+    rgb(105 211 231 / 0.022)
   );
-  opacity: 0.24;
+  opacity: 0.22;
   pointer-events: none;
   transform: translateZ(0.75rem);
   transform-style: preserve-3d;
@@ -230,27 +279,134 @@
 
 .base {
   position: relative;
-  width: calc(100% + clamp(0.2rem, 1vw, 0.65rem));
-  height: clamp(0.65rem, 1.7vw, 1rem);
-  margin-left: calc(clamp(0.1rem, 0.5vw, 0.325rem) * -1);
-  border: 1px solid #4f565b;
-  border-radius: 0.1rem 0.1rem 1.5rem 1.5rem;
-  background: #2d3236;
-  transform: perspective(24rem) rotateX(46deg);
-  transform-origin: top;
+  z-index: 1;
+  width: calc(100% + clamp(0.45rem, 1.3vw, 0.85rem));
+  height: clamp(3.5rem, 7.5vw, 5.25rem);
+  margin-top: -0.12rem;
+  margin-left: calc(clamp(0.225rem, 0.65vw, 0.425rem) * -1);
+}
+
+.deckSurface {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0.25rem;
+  left: 0.25rem;
+  height: calc(100% - 0.58rem);
+  border: 1px solid #51595e;
+  border-radius: 0.14rem 0.14rem 0.28rem 0.28rem;
+  background: linear-gradient(180deg, #373d42 0%, #2a2f33 58%, #22272a 100%);
+  box-shadow:
+    inset 0 1px rgb(244 240 232 / 0.08),
+    inset 0 -1px rgb(0 0 0 / 0.28);
+  transform: perspective(30rem) rotateX(58deg);
+  transform-origin: top center;
+}
+
+.keyboard {
+  position: absolute;
+  top: 14%;
+  left: 12%;
+  width: 76%;
+  height: 42%;
+  border: 1px solid rgb(10 13 15 / 0.5);
+  border-radius: 0.16rem;
+  background-color: #202529;
+  background-image: linear-gradient(
+      90deg,
+      transparent calc(100% - 1px),
+      rgb(88 98 104 / 0.48) calc(100% - 1px)
+    ),
+    linear-gradient(
+      transparent calc(100% - 1px),
+      rgb(88 98 104 / 0.4) calc(100% - 1px)
+    );
+  background-size: clamp(1.15rem, 3vw, 2.25rem)
+    clamp(0.55rem, 1.35vw, 0.9rem);
+  box-shadow: inset 0 1px rgb(244 240 232 / 0.035);
+  opacity: 0.78;
+}
+
+.trackpad {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  width: 24%;
+  height: 30%;
+  border: 1px solid rgb(104 114 120 / 0.48);
+  border-radius: 0.22rem;
+  background: rgb(27 31 34 / 0.2);
+  box-shadow: inset 0 1px rgb(244 240 232 / 0.025);
+  transform: translateX(-50%);
+}
+
+.deckAccent {
+  position: absolute;
+  top: 12%;
+  right: 4.5%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgb(105 211 231 / 0.48);
+}
+
+.frontEdge {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0.68rem;
+  border: 1px solid #444b50;
+  border-radius: 0.08rem 0.08rem 0.7rem 0.7rem;
+  background: linear-gradient(180deg, #30363a, #23282c 58%, #171b1e);
+  box-shadow:
+    inset 0 1px rgb(244 240 232 / 0.06),
+    0 1.65rem 1.55rem -0.55rem rgb(0 0 0 / 0.48);
 }
 
 .notch {
   width: 14%;
-  height: 40%;
-  margin: 0 auto;
-  border-radius: 0 0 0.5rem 0.5rem;
-  background: #171a1d;
+  height: 38%;
+  margin: -1px auto 0;
+  border: 1px solid rgb(10 12 14 / 0.58);
+  border-top: 0;
+  border-radius: 0 0 0.45rem 0.45rem;
+  background: #171b1e;
+}
+
+@media (min-width: 48rem) and (max-width: 64rem) {
+  .keyboard {
+    opacity: 0.56;
+  }
+
+  .deckAccent,
+  .hingeCap {
+    display: none;
+  }
 }
 
 @media (max-width: 40rem) {
+  .display {
+    padding: 0.4rem 0.4rem 0.56rem;
+  }
+
   .shell {
-    box-shadow: 0 1.5rem 1.25rem rgb(0 0 0 / 0.22);
+    box-shadow:
+      inset 0 1px rgb(244 240 232 / 0.07),
+      0 0.5rem 0.75rem rgb(0 0 0 / 0.14);
+  }
+
+  .hingeRail {
+    bottom: -0.34rem;
+    height: 0.36rem;
+  }
+
+  .hingeCap,
+  .keyboard,
+  .trackpad,
+  .deckAccent {
+    display: none;
   }
 
   .screen {
@@ -260,5 +416,23 @@
   .status {
     right: auto;
     left: 1.15rem;
+  }
+
+  .base {
+    height: 2.15rem;
+    margin-top: -0.08rem;
+  }
+
+  .deckSurface {
+    height: calc(100% - 0.5rem);
+    background: linear-gradient(180deg, #343a3e, #24292d);
+    transform: perspective(22rem) rotateX(60deg);
+  }
+
+  .frontEdge {
+    height: 0.56rem;
+    box-shadow:
+      inset 0 1px rgb(244 240 232 / 0.05),
+      0 1.2rem 1.2rem -0.55rem rgb(0 0 0 / 0.38);
   }
 }

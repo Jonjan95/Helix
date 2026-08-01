@@ -572,6 +572,61 @@ test("progresses through every active node and reverses to the workspace", async
   expect(browserMessages).toEqual([]);
 });
 
+test("keeps workstation detail decorative and screen identity semantic", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const laptop = page.getByTestId("laptop-hero");
+  const identity = laptop.locator('[data-motion="screen-identity"]');
+  const details = laptop.locator("[data-machine-detail]");
+
+  await expect(laptop).toHaveAttribute(
+    "data-machine-direction",
+    "refined-workstation",
+  );
+  await expect(details).toHaveCount(5);
+  await expect(
+    identity.getByRole("heading", { level: 1, name: "Jonathan Jansson" }),
+  ).toBeVisible();
+  await expect(laptop.locator("a, button, input, select, textarea")).toHaveCount(
+    0,
+  );
+
+  const semanticBoundary = await laptop.evaluate((element) => {
+    const screenIdentity = element.querySelector<HTMLElement>(
+      '[data-motion="screen-identity"]',
+    );
+    const decorativeDetails = [
+      ...element.querySelectorAll<HTMLElement>("[data-machine-detail]"),
+    ];
+
+    return {
+      allDetailsHiddenFromAssistiveTechnology: decorativeDetails.every(
+        (detail) => detail.closest('[aria-hidden="true"]') !== null,
+      ),
+      identityTransform: screenIdentity
+        ? getComputedStyle(screenIdentity).transform
+        : "missing",
+      identityTransformStyle: screenIdentity
+        ? getComputedStyle(screenIdentity).transformStyle
+        : "missing",
+    };
+  });
+
+  expect(semanticBoundary).toEqual({
+    allDetailsHiddenFromAssistiveTechnology: true,
+    identityTransform: "none",
+    identityTransformStyle: "flat",
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(laptop.locator('[data-machine-detail="keyboard"]')).toBeHidden();
+  await expect(laptop.locator('[data-machine-detail="trackpad"]')).toBeHidden();
+  await expectNoHorizontalOverflow(page);
+});
+
 test("keeps the laptop threshold continuous and reversible", async ({ page }) => {
   const browserMessages: string[] = [];
   page.on("console", (message) => {

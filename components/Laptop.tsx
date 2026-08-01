@@ -5,6 +5,7 @@ export function Laptop() {
   return (
     <div
       className={styles.laptop}
+      data-machine-direction="refined-workstation"
       data-motion="laptop"
       data-testid="laptop-hero"
     >
@@ -13,7 +14,19 @@ export function Laptop() {
           className={styles.shell}
           data-motion="laptop-shell"
           aria-hidden="true"
-        />
+        >
+          <span className={styles.lidEdge} />
+          <span className={styles.hingeRail}>
+            <span
+              className={styles.hingeCap}
+              data-machine-detail="hinge-caps"
+            />
+            <span
+              className={styles.hingeCap}
+              data-machine-detail="hinge-caps"
+            />
+          </span>
+        </div>
         <div
           className={styles.camera}
           data-motion="laptop-camera"
@@ -54,8 +67,28 @@ export function Laptop() {
           </div>
         </div>
       </div>
-      <div className={styles.base} data-motion="laptop-base" aria-hidden="true">
-        <div className={styles.notch} />
+      <div
+        className={styles.base}
+        data-motion="laptop-base"
+        aria-hidden="true"
+      >
+        <div className={styles.deckSurface}>
+          <span
+            className={styles.keyboard}
+            data-machine-detail="keyboard"
+          />
+          <span
+            className={styles.trackpad}
+            data-machine-detail="trackpad"
+          />
+          <span
+            className={styles.deckAccent}
+            data-machine-detail="deck-accent"
+          />
+        </div>
+        <div className={styles.frontEdge}>
+          <div className={styles.notch} />
+        </div>
       </div>
     </div>
   );
