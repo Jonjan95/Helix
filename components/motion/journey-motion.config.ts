@@ -29,6 +29,18 @@ export type WorkspaceHandoffProfile = {
   thresholdOpacity: number;
 };
 
+export type MachineOpeningProfile = {
+  closedRotation: number;
+  duration: number;
+  identityDuration: number;
+  identityStart: number;
+  screenDuration: number;
+  screenStart: number;
+  shadowOpacityClosed: number;
+  shadowOpacityOpen: number;
+  shadowScaleClosed: number;
+};
+
 export type ChapterMotionRange = {
   approachStart: string;
   contentTravel: number;
@@ -69,7 +81,10 @@ export const journeyMotionConfig = {
     laptop: '[data-motion="laptop"]',
     laptopBase: '[data-motion="laptop-base"]',
     laptopCamera: '[data-motion="laptop-camera"]',
+    laptopLid: '[data-motion="laptop-lid"]',
     laptopShell: '[data-motion="laptop-shell"]',
+    machineScene: '[data-motion="machine-scene"]',
+    machineShadow: '[data-motion="machine-shadow"]',
     screen: '[data-motion="laptop-screen"]',
     screenGlass: '[data-motion="screen-glass"]',
     screenGrid: '[data-motion="screen-grid"]',
@@ -114,6 +129,30 @@ export const journeyMotionConfig = {
     laptopScale: 1.08,
     laptopTravel: -18,
     scrub: 0.25,
+  },
+  opening: {
+    desktop: {
+      closedRotation: 78,
+      duration: 0.24,
+      identityDuration: 0.13,
+      identityStart: 0.25,
+      screenDuration: 0.13,
+      screenStart: 0.17,
+      shadowOpacityClosed: 0.28,
+      shadowOpacityOpen: 1,
+      shadowScaleClosed: 0.78,
+    } satisfies MachineOpeningProfile,
+    tablet: {
+      closedRotation: 68,
+      duration: 0.22,
+      identityDuration: 0.12,
+      identityStart: 0.24,
+      screenDuration: 0.12,
+      screenStart: 0.16,
+      shadowOpacityClosed: 0.34,
+      shadowOpacityOpen: 0.9,
+      shadowScaleClosed: 0.84,
+    } satisfies MachineOpeningProfile,
   },
   handoff: {
     desktop: {
@@ -300,10 +339,10 @@ export const journeyMotionConfig = {
     } satisfies JourneyMotionProfile,
   },
   timeline: {
-    cameraDuration: 0.76,
-    cameraStart: 0.12,
+    cameraDuration: 0.6,
+    cameraStart: 0.28,
     thresholdEase: "power1.inOut",
     recedeDuration: 0.3,
-    recedeStart: 0.22,
+    recedeStart: 0.3,
   },
 } as const;

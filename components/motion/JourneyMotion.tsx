@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   journeyMotionConfig,
   type JourneyMotionProfile,
+  type MachineOpeningProfile,
   type SpatialMotionProfile,
   type WorkspaceHandoffProfile,
 } from "@/components/motion/journey-motion.config";
@@ -39,7 +40,10 @@ type MotionTargets = {
   laptop: HTMLElement;
   laptopBase: HTMLElement;
   laptopCamera: HTMLElement;
+  laptopLid: HTMLElement;
   laptopShell: HTMLElement;
+  machineScene: HTMLElement;
+  machineShadow: HTMLElement;
   screen: HTMLElement;
   screenGlass: HTMLElement;
   screenGrid: HTMLElement;
@@ -94,7 +98,10 @@ function getMotionTargets(scope: HTMLElement): MotionTargets | null {
     laptop: scope.querySelector<HTMLElement>(selectors.laptop),
     laptopBase: scope.querySelector<HTMLElement>(selectors.laptopBase),
     laptopCamera: scope.querySelector<HTMLElement>(selectors.laptopCamera),
+    laptopLid: scope.querySelector<HTMLElement>(selectors.laptopLid),
     laptopShell: scope.querySelector<HTMLElement>(selectors.laptopShell),
+    machineScene: scope.querySelector<HTMLElement>(selectors.machineScene),
+    machineShadow: scope.querySelector<HTMLElement>(selectors.machineShadow),
     screen: scope.querySelector<HTMLElement>(selectors.screen),
     screenGlass: scope.querySelector<HTMLElement>(selectors.screenGlass),
     screenGrid: scope.querySelector<HTMLElement>(selectors.screenGrid),
@@ -166,13 +173,13 @@ function createSpatialTimeline(
   targets: MotionTargets,
   profile: SpatialMotionProfile,
   handoff: WorkspaceHandoffProfile,
+  opening: MachineOpeningProfile,
 ) {
   const { timeline } = journeyMotionConfig;
   const getTransform = () =>
     getCameraTransform(targets.laptop, targets.screen, profile);
 
-  return gsap
-    .timeline({
+  const spatialTimeline = gsap.timeline({
       defaults: { overwrite: "auto" },
       scrollTrigger: {
         anticipatePin: 1,
@@ -190,7 +197,82 @@ function createSpatialTimeline(
         start: "top top",
         trigger: targets.arrival,
       },
-    })
+    });
+
+  gsap.set(targets.laptopLid, {
+    rotationX: opening.closedRotation,
+    transformOrigin: "50% 100%",
+  });
+  gsap.set([targets.machineScene, targets.screen], {
+    y: () => targets.laptop.offsetHeight * -0.22,
+  });
+  gsap.set(targets.machineShadow, {
+    opacity: opening.shadowOpacityClosed,
+    scaleX: opening.shadowScaleClosed,
+  });
+  gsap.set(targets.screen, { opacity: 0, "--screen-power": 0 });
+  gsap.set([targets.screenGrid, targets.screenGlass, targets.screenIdentity], {
+    opacity: 0,
+  });
+
+  return spatialTimeline
+    .to(
+      [targets.machineScene, targets.screen],
+      {
+        y: 0,
+        duration: opening.duration,
+        ease: "power2.inOut",
+      },
+      0,
+    )
+    .to(
+      targets.laptopLid,
+      {
+        rotationX: 0,
+        duration: opening.duration,
+        ease: "power2.inOut",
+      },
+      0,
+    )
+    .to(
+      targets.machineShadow,
+      {
+        opacity: opening.shadowOpacityOpen,
+        scaleX: 1,
+        duration: opening.duration,
+        ease: "power1.inOut",
+      },
+      0,
+    )
+    .to(
+      targets.screen,
+      {
+        opacity: 1,
+        "--screen-power": 1,
+        duration: opening.screenDuration,
+        ease: "power1.out",
+      },
+      opening.screenStart,
+    )
+    .to(
+      [targets.screenGrid, targets.screenGlass],
+      {
+        opacity: (_index, target) =>
+          target === targets.screenGrid ? 1 : 0.22,
+        duration: opening.screenDuration,
+        ease: "power1.out",
+      },
+      opening.screenStart,
+    )
+    .to(
+      targets.screenIdentity,
+      {
+        opacity: 1,
+        duration: opening.identityDuration,
+        ease: "power1.out",
+      },
+      opening.identityStart,
+    )
     .to(
       targets.laptop,
       {
@@ -264,7 +346,7 @@ function createSpatialTimeline(
       handoff.start,
     )
     .to(
-      [targets.laptopShell, targets.laptopCamera],
+      [targets.laptopLid, targets.laptopShell, targets.laptopCamera],
       {
         opacity: handoff.shellOpacity,
         duration: handoff.duration,
@@ -638,7 +720,10 @@ function clearMotionStyles(targets: MotionTargets) {
       targets.laptop,
       targets.laptopBase,
       targets.laptopCamera,
+      targets.laptopLid,
       targets.laptopShell,
+      targets.machineScene,
+      targets.machineShadow,
       targets.screen,
       targets.screenGlass,
       targets.screenGrid,
@@ -697,6 +782,7 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
             targets,
             journeyMotionConfig.desktop,
             journeyMotionConfig.handoff.desktop,
+            journeyMotionConfig.opening.desktop,
           );
           createJourneyPathTimeline(targets, journeyMotionConfig.journey.desktop);
           chapterTriggers = createChapterTimelines(
@@ -708,6 +794,7 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
             targets,
             journeyMotionConfig.tablet,
             journeyMotionConfig.handoff.tablet,
+            journeyMotionConfig.opening.tablet,
           );
           createJourneyPathTimeline(targets, journeyMotionConfig.journey.tablet);
           chapterTriggers = createChapterTimelines(

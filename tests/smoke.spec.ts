@@ -572,7 +572,7 @@ test("progresses through every active node and reverses to the workspace", async
   expect(browserMessages).toEqual([]);
 });
 
-test("keeps workstation detail decorative and screen identity semantic", async ({
+test("opens one mechanical laptop before activating semantic screen content", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -584,17 +584,33 @@ test("keeps workstation detail decorative and screen identity semantic", async (
 
   await expect(laptop).toHaveAttribute(
     "data-machine-direction",
-    "refined-workstation",
+    "opening-machine",
   );
-  await expect(details).toHaveCount(5);
+  await expect(details).toHaveCount(3);
+  await expect(laptop.locator('[data-motion="machine-scene"]')).toHaveCount(1);
+  await expect(laptop.locator('[data-motion="laptop-lid"]')).toHaveCount(1);
+  await expect(laptop.locator('[data-motion="laptop-base"]')).toHaveCount(1);
+  await expect(laptop.locator('[data-motion="laptop-screen"]')).toHaveCount(1);
   await expect(
     identity.getByRole("heading", { level: 1, name: "Jonathan Jansson" }),
-  ).toBeVisible();
+  ).toBeAttached();
   await expect(laptop.locator("a, button, input, select, textarea")).toHaveCount(
     0,
   );
 
   const semanticBoundary = await laptop.evaluate((element) => {
+    const machineScene = element.querySelector<HTMLElement>(
+      '[data-motion="machine-scene"]',
+    );
+    const lid = element.querySelector<HTMLElement>(
+      '[data-motion="laptop-lid"]',
+    );
+    const base = element.querySelector<HTMLElement>(
+      '[data-motion="laptop-base"]',
+    );
+    const screen = element.querySelector<HTMLElement>(
+      '[data-motion="laptop-screen"]',
+    );
     const screenIdentity = element.querySelector<HTMLElement>(
       '[data-motion="screen-identity"]',
     );
@@ -606,24 +622,72 @@ test("keeps workstation detail decorative and screen identity semantic", async (
       allDetailsHiddenFromAssistiveTechnology: decorativeDetails.every(
         (detail) => detail.closest('[aria-hidden="true"]') !== null,
       ),
+      baseAndLidShareScene:
+        machineScene?.contains(lid ?? null) === true &&
+        machineScene?.contains(base ?? null) === true,
       identityTransform: screenIdentity
         ? getComputedStyle(screenIdentity).transform
         : "missing",
       identityTransformStyle: screenIdentity
         ? getComputedStyle(screenIdentity).transformStyle
         : "missing",
+      screenIsOutsideMechanicalScene:
+        machineScene?.contains(screen ?? null) === false,
+      screenOpacity: screen
+        ? Number.parseFloat(getComputedStyle(screen).opacity)
+        : 1,
     };
   });
 
-  expect(semanticBoundary).toEqual({
-    allDetailsHiddenFromAssistiveTechnology: true,
-    identityTransform: "none",
-    identityTransformStyle: "flat",
-  });
+  expect(semanticBoundary.allDetailsHiddenFromAssistiveTechnology).toBe(true);
+  expect(semanticBoundary.baseAndLidShareScene).toBe(true);
+  expect(semanticBoundary.identityTransform).toBe("none");
+  expect(semanticBoundary.identityTransformStyle).toBe("flat");
+  expect(semanticBoundary.screenIsOutsideMechanicalScene).toBe(true);
+  expect(semanticBoundary.screenOpacity).toBeLessThan(0.05);
+
+  const pinDistance = await page.locator(".pin-spacer").evaluate((spacer) =>
+    Number.parseFloat(getComputedStyle(spacer).paddingBottom),
+  );
+  const lid = laptop.locator('[data-motion="laptop-lid"]');
+  const initialLidTransform = await lid.evaluate(
+    (element) => getComputedStyle(element).transform,
+  );
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance * 0.12, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(500);
+  const openingLidTransform = await lid.evaluate(
+    (element) => getComputedStyle(element).transform,
+  );
+  expect(openingLidTransform).not.toBe(initialLidTransform);
+
+  await page.evaluate(
+    (distance) => window.scrollTo({ top: distance * 0.32, behavior: "auto" }),
+    pinDistance,
+  );
+  await page.waitForTimeout(500);
+  await expect(identity).toBeVisible();
+  expect(
+    await identity.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).opacity),
+    ),
+  ).toBeGreaterThan(0.5);
+  await expect(identity).toHaveCSS("transform", "none");
+
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  await page.waitForTimeout(500);
+  expect(await lid.evaluate((element) => getComputedStyle(element).transform)).toBe(
+    initialLidTransform,
+  );
 
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(laptop.locator('[data-machine-detail="keyboard"]')).toBeHidden();
   await expect(laptop.locator('[data-machine-detail="trackpad"]')).toBeHidden();
+  await expect(page.locator(".pin-spacer")).toHaveCount(0);
+  await expect(identity).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
@@ -1243,6 +1307,19 @@ test("reduced motion renders the complete journey statically", async ({ page }) 
     "tabindex",
     /.+/,
   );
+  await expect(page.locator('[data-motion="laptop-screen"]')).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await expect(page.locator('[data-motion="screen-identity"]')).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  expect(
+    await page.getByTestId("laptop-hero").evaluate(
+      (element) => element.getAnimations({ subtree: true }).length,
+    ),
+  ).toBe(0);
   await expect(page.locator("[data-environment-principle]")).toHaveCount(3);
   await expect(page.locator("[data-engineering-step]")).toHaveCount(4);
   for (const selector of [
