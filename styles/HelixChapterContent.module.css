@@ -2,6 +2,14 @@
   max-width: 35rem;
 }
 
+.environmentContent {
+  max-width: 36rem;
+}
+
+.engineeringContent {
+  max-width: 37rem;
+}
+
 .projectsContent {
   width: 100%;
   max-width: 37rem;
@@ -50,6 +58,16 @@
   line-height: 1.52;
 }
 
+.environmentContent h2 {
+  max-width: 15ch;
+  font-size: clamp(2.5rem, 4.1vw, 4.25rem);
+  line-height: 1.04;
+}
+
+.environmentContent .introduction {
+  max-width: 29rem;
+}
+
 .environmentPrinciples,
 .engineeringSteps {
   margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
@@ -58,9 +76,25 @@
   list-style: none;
 }
 
+.environmentPrinciples {
+  width: calc(100% - clamp(1.25rem, 3vw, 2.5rem));
+  max-width: 31rem;
+  margin-top: clamp(3.5rem, 6vw, 4.5rem);
+  margin-left: clamp(1.25rem, 3vw, 2.5rem);
+  border-top: 0;
+}
+
 .environmentPrinciples > li,
 .engineeringSteps > li {
   border-bottom: 1px solid var(--color-line-soft);
+}
+
+.environmentPrinciples > li {
+  border-bottom: 0;
+}
+
+.environmentPrinciples > li + li {
+  border-top: 1px solid var(--color-line-soft);
 }
 
 .environmentPrinciples article,
@@ -69,6 +103,30 @@
   gap: 1rem;
   padding: 1.4rem 0;
   grid-template-columns: 2rem minmax(0, 1fr);
+}
+
+.environmentPrinciples article {
+  gap: 1.25rem;
+  padding: 2rem 0;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+}
+
+.environmentPrinciples > li:first-child article {
+  padding-top: 0;
+}
+
+.environmentPrinciples > li:last-child article {
+  padding-bottom: 0;
+}
+
+.engineeringSteps {
+  margin-top: clamp(3.25rem, 5vw, 4.25rem);
+}
+
+.engineeringSteps article {
+  gap: 1.25rem;
+  padding: 1.65rem 0;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
 }
 
 .itemIndex {
@@ -96,6 +154,9 @@
 }
 
 .practice {
+  margin-top: 0.85rem !important;
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--color-line-soft);
   font-size: 0.78rem !important;
 }
 
@@ -111,12 +172,19 @@
 
 .handoff {
   max-width: 30rem;
-  margin: 2rem 0 0;
-  padding-left: 1rem;
+  margin: 2.75rem 0 0;
+  padding-left: 1.25rem;
   border-left: 1px solid rgb(105 211 231 / 0.55);
   color: var(--color-text);
   font-size: 0.92rem;
   line-height: 1.6;
+}
+
+@media (max-width: 64rem) {
+  .environmentPrinciples {
+    width: calc(100% - clamp(0.75rem, 2vw, 1.5rem));
+    margin-left: clamp(0.75rem, 2vw, 1.5rem);
+  }
 }
 
 .projectShowcase {
@@ -761,6 +829,12 @@
 @media (max-width: 47.999rem) {
   .content {
     max-width: 34rem;
+  }
+
+  .environmentPrinciples {
+    width: 100%;
+    margin-top: 3.25rem;
+    margin-left: 0;
   }
 
   .content h2 {
