@@ -77,6 +77,18 @@
   }
 }
 
+@media (min-width: 48rem) and (max-width: 64rem) and (max-height: 52rem) {
+  .hero {
+    padding-top: 4.75rem;
+    padding-bottom: 4.5rem;
+    row-gap: 1.5rem;
+  }
+
+  .visual {
+    width: min(100%, 42rem);
+  }
+}
+
 @media (max-width: 40rem) {
   .hero {
     min-height: 100svh;
