@@ -255,6 +255,13 @@ Responsive design preserves hierarchy and composition rather than proportionally
 - It must remain understandable as static semantic HTML.
 - The laptop must remain recognisable and contained across viewports. Do not sacrifice content readability to preserve identical proportions.
 
+The implemented workstation uses restrained physical layers—display shell,
+hinge, deck, front edge, and contact shadow—to make the portal believable.
+Semantic screen identity remains flat HTML outside the decorative depth
+wrapper. Fine keyboard and trackpad cues may appear on desktop, but must
+simplify before they compete with the screen or narrow the mobile composition.
+The rationale and evidence are recorded in [The Machine](the-machine.md).
+
 ### Project cards
 
 - Project cards should introduce a meaningful story: problem, role, implementation, testing or validation, and outcome.
