@@ -4,22 +4,12 @@ import path from "node:path";
 import next from "next";
 import { chromium } from "@playwright/test";
 
-const phases = new Set(["before", "after"]);
-const phaseArgument = process.argv.find((argument) =>
-  argument.startsWith("--phase="),
-);
-const phase = phaseArgument?.split("=")[1] ?? "before";
-
-if (!phases.has(phase)) {
-  throw new Error(`Unknown machine evidence phase: ${phase}`);
-}
-
 const outputDirectory = path.join(
   process.cwd(),
   "docs",
   "media",
   "the-machine",
-  phase,
+  "after",
 );
 const port = 3127;
 const baseUrl = `http://127.0.0.1:${port}`;
@@ -79,10 +69,9 @@ async function settleAt(page, progress, distance) {
 async function captureFrame(
   filename,
   {
-    close = false,
     progress = 0,
     reducedMotion = "no-preference",
-    setup,
+    reverseFrom,
     viewport = { height: 1000, width: 1440 },
   } = {},
 ) {
@@ -96,115 +85,78 @@ async function captureFrame(
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   const distance = await thresholdDistance(page);
 
-  if (setup) {
-    await setup(page);
+  if (reverseFrom !== undefined) {
+    await settleAt(page, reverseFrom, distance);
   }
-
   await settleAt(page, progress, distance);
-
-  if (close) {
-    await page.getByTestId("laptop-hero").screenshot({
-      path: path.join(outputDirectory, filename),
-    });
-  } else {
-    await page.screenshot({ path: path.join(outputDirectory, filename) });
-  }
-
+  await page.screenshot({ path: path.join(outputDirectory, filename) });
   await context.close();
 }
 
-const desktopFrames = [
-  ["01-arrival-initial.png", { progress: 0 }],
-  ["02-laptop-close.png", { close: true, progress: 0 }],
-  ["03-early-approach.png", { progress: 0.25 }],
-  ["04-threshold-crossing.png", { progress: 0.72 }],
-  ["05-workspace-reveal.png", { progress: 1 }],
+const requestedFrames = [
+  ["02-closed-state.png", { progress: 0 }],
+  ["03-opening-midpoint.png", { progress: 0.09 }],
+  ["04-fully-open-state.png", { progress: 0.2 }],
+  ["05-screen-activation.png", { progress: 0.32 }],
+  ["06-approach.png", { progress: 0.48 }],
+  ["07-threshold-crossing.png", { progress: 0.72 }],
+  ["08-reverse-closing.png", { progress: 0.08, reverseFrom: 0.72 }],
+  [
+    "09-compact-desktop.png",
+    { progress: 0.32, viewport: { height: 800, width: 1280 } },
+  ],
+  [
+    "10-tablet.png",
+    { progress: 0.32, viewport: { height: 1024, width: 768 } },
+  ],
+  ["11-mobile.png", { viewport: { height: 844, width: 390 } }],
+  ["12-reduced-motion.png", { reducedMotion: "reduce" }],
 ];
 
-for (const [filename, options] of desktopFrames) {
+for (const [filename, options] of requestedFrames) {
   await captureFrame(filename, options);
 }
 
-await captureFrame("06-compact-desktop.png", {
+const videoContext = await browser.newContext({
+  colorScheme: "dark",
+  recordVideo: {
+    dir: outputDirectory,
+    size: { height: 800, width: 1280 },
+  },
   viewport: { height: 800, width: 1280 },
 });
-await captureFrame("07-tablet.png", {
-  viewport: { height: 1024, width: 768 },
-});
-await captureFrame("08-mobile.png", {
-  viewport: { height: 844, width: 390 },
-});
-await captureFrame("09-reduced-motion.png", {
-  reducedMotion: "reduce",
-});
+const videoPage = await videoContext.newPage();
+observeConsole(videoPage);
+await videoPage.goto(baseUrl, { waitUntil: "networkidle" });
+const videoDistance = await thresholdDistance(videoPage);
 
-if (phase === "after") {
-  const minimalCandidate = async (page) => {
-    await page.addStyleTag({
-      content: `
-        [data-machine-detail="keyboard"],
-        [data-machine-detail="trackpad"],
-        [data-machine-detail="deck-accent"] {
-          display: none !important;
-        }
-      `,
-    });
-  };
-
-  await captureFrame("10-candidate-minimal-precision.png", {
-    setup: minimalCandidate,
-  });
-  await captureFrame("11-candidate-refined-workstation.png");
-
-  const context = await browser.newContext({
-    colorScheme: "dark",
-    recordVideo: {
-      dir: outputDirectory,
-      size: { height: 800, width: 1280 },
-    },
-    viewport: { height: 800, width: 1280 },
-  });
-  const page = await context.newPage();
-  observeConsole(page);
-  await page.goto(baseUrl, { waitUntil: "networkidle" });
-  const distance = await thresholdDistance(page);
-
-  for (let step = 0; step <= 40; step += 1) {
-    await page.evaluate(
-      ({ pinDistance, progress }) => {
-        window.scrollTo({
-          behavior: "auto",
-          top: Math.round(pinDistance * progress),
-        });
-      },
-      { pinDistance: distance, progress: step / 40 },
-    );
-    await page.waitForTimeout(45);
-  }
-  await page.waitForTimeout(350);
-  for (let step = 40; step >= 0; step -= 1) {
-    await page.evaluate(
-      ({ pinDistance, progress }) => {
-        window.scrollTo({
-          behavior: "auto",
-          top: Math.round(pinDistance * progress),
-        });
-      },
-      { pinDistance: distance, progress: step / 40 },
-    );
-    await page.waitForTimeout(45);
-  }
-  await page.waitForTimeout(350);
-
-  const video = page.video();
-  await context.close();
-  const temporaryVideo = await video.path();
-  await copyFile(
-    temporaryVideo,
-    path.join(outputDirectory, "12-forward-reverse.webm"),
+for (let step = 0; step <= 48; step += 1) {
+  await videoPage.evaluate(
+    ({ distance, progress }) =>
+      window.scrollTo({ top: distance * progress, behavior: "auto" }),
+    { distance: videoDistance, progress: step / 48 },
   );
-  await unlink(temporaryVideo);
+  await videoPage.waitForTimeout(45);
 }
+await videoPage.waitForTimeout(300);
+for (let step = 48; step >= 0; step -= 1) {
+  await videoPage.evaluate(
+    ({ distance, progress }) =>
+      window.scrollTo({ top: distance * progress, behavior: "auto" }),
+    { distance: videoDistance, progress: step / 48 },
+  );
+  await videoPage.waitForTimeout(45);
+}
+await videoPage.waitForTimeout(300);
+
+const video = videoPage.video();
+await videoContext.close();
+const temporaryVideo = await video.path();
+await copyFile(
+  temporaryVideo,
+  path.join(outputDirectory, "13-forward-reverse.webm"),
+);
+await unlink(temporaryVideo);
 
 const metricsContext = await browser.newContext({
   viewport: { height: 1000, width: 1440 },
@@ -212,33 +164,86 @@ const metricsContext = await browser.newContext({
 const metricsPage = await metricsContext.newPage();
 observeConsole(metricsPage);
 await metricsPage.goto(baseUrl, { waitUntil: "networkidle" });
-const metrics = await metricsPage.evaluate(() => ({
-  decorativeFocusableCount: document.querySelectorAll(
-    '[data-machine-detail] a, [data-machine-detail] button, [data-machine-detail] input, [data-machine-detail] [tabindex]:not([tabindex="-1"])',
-  ).length,
-  h1Count: document.querySelectorAll("h1").length,
-  horizontalOverflow:
-    document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  journeyMotionOwners: document.querySelectorAll(
-    '[data-motion-root="helix-experience"]',
-  ).length,
-  screenIdentityPresent:
-    document.querySelector('[data-motion="screen-identity"] h1')?.textContent ===
-    "Jonathan Jansson",
-  threeProductionAssets: performance
-    .getEntriesByType("resource")
-    .map((entry) => entry.name)
-    .filter((name) => name.toLowerCase().includes("three")),
-}));
+const metricsDistance = await thresholdDistance(metricsPage);
+const closedTransform = await metricsPage
+  .locator('[data-motion="laptop-lid"]')
+  .evaluate((element) => getComputedStyle(element).transform);
+await settleAt(metricsPage, 0.32, metricsDistance);
+const openTransform = await metricsPage
+  .locator('[data-motion="laptop-lid"]')
+  .evaluate((element) => getComputedStyle(element).transform);
+await settleAt(metricsPage, 0, metricsDistance);
+const restoredTransform = await metricsPage
+  .locator('[data-motion="laptop-lid"]')
+  .evaluate((element) => getComputedStyle(element).transform);
+const metrics = await metricsPage.evaluate(() => {
+  const machineScene = document.querySelector('[data-motion="machine-scene"]');
+  const lid = document.querySelector('[data-motion="laptop-lid"]');
+  const base = document.querySelector('[data-motion="laptop-base"]');
+  const screen = document.querySelector('[data-motion="laptop-screen"]');
+
+  return {
+    baseAndLidShareScene:
+      machineScene?.contains(lid) === true &&
+      machineScene?.contains(base) === true,
+    decorativeFocusableCount: document.querySelectorAll(
+      '[data-machine-detail] a, [data-machine-detail] button, [data-machine-detail] input, [data-machine-detail] [tabindex]:not([tabindex="-1"])',
+    ).length,
+    desktopPinCount: document.querySelectorAll(".pin-spacer").length,
+    h1Count: document.querySelectorAll("h1").length,
+    horizontalOverflow:
+      document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    journeyMotionOwners: document.querySelectorAll(
+      '[data-motion-root="helix-experience"]',
+    ).length,
+    screenIdentityPresent:
+      document.querySelector('[data-motion="screen-identity"] h1')?.textContent ===
+      "Jonathan Jansson",
+    screenIdentityTransform: getComputedStyle(
+      document.querySelector('[data-motion="screen-identity"]'),
+    ).transform,
+    screenOutsideMechanicalScene: machineScene?.contains(screen) === false,
+    threeProductionAssets: performance
+      .getEntriesByType("resource")
+      .map((entry) => entry.name)
+      .filter((name) => name.toLowerCase().includes("three")),
+  };
+});
 await metricsContext.close();
 
+async function staticModeMetrics(viewport, reducedMotion) {
+  const context = await browser.newContext({ viewport, reducedMotion });
+  const page = await context.newPage();
+  observeConsole(page);
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  const result = await page.evaluate(() => ({
+    h1Visible:
+      Number.parseFloat(
+        getComputedStyle(
+          document.querySelector('[data-motion="screen-identity"]'),
+        ).opacity,
+      ) > 0.99,
+    horizontalOverflow:
+      document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    pinCount: document.querySelectorAll(".pin-spacer").length,
+  }));
+  await context.close();
+  return result;
+}
+
+const mobile = await staticModeMetrics({ height: 844, width: 390 }, "no-preference");
+const reduced = await staticModeMetrics({ height: 1000, width: 1440 }, "reduce");
+
 await writeFile(
-  path.join(outputDirectory, "13-metrics.json"),
+  path.join(outputDirectory, "14-metrics.json"),
   `${JSON.stringify(
     {
       ...metrics,
+      closedStateRestored: closedTransform === restoredTransform,
       consoleWarningsOrErrors: [...new Set(consoleMessages)],
-      phase,
+      lidOpened: closedTransform !== openTransform,
+      mobile,
+      reduced,
     },
     null,
     2,

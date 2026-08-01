@@ -16,7 +16,7 @@
     "evidence:organic-branches": "node scripts/capture-organic-branches-evidence.mjs",
     "evidence:depth-atmosphere": "node scripts/capture-depth-atmosphere-evidence.mjs",
     "evidence:story-before-scroll": "node scripts/capture-story-before-scroll-evidence.mjs",
-    "evidence:machine": "node scripts/capture-machine-evidence.mjs --phase=after",
+    "evidence:machine": "node scripts/capture-machine-evidence.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "assets:generate": "node scripts/generate-release-assets.mjs",

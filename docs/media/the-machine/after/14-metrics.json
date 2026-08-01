@@ -1,0 +1,25 @@
+{
+  "baseAndLidShareScene": true,
+  "decorativeFocusableCount": 0,
+  "desktopPinCount": 1,
+  "h1Count": 1,
+  "horizontalOverflow": 0,
+  "journeyMotionOwners": 1,
+  "screenIdentityPresent": true,
+  "screenIdentityTransform": "none",
+  "screenOutsideMechanicalScene": true,
+  "threeProductionAssets": [],
+  "closedStateRestored": true,
+  "consoleWarningsOrErrors": [],
+  "lidOpened": true,
+  "mobile": {
+    "h1Visible": true,
+    "horizontalOverflow": 0,
+    "pinCount": 0
+  },
+  "reduced": {
+    "h1Visible": true,
+    "horizontalOverflow": 0,
+    "pinCount": 0
+  }
+}

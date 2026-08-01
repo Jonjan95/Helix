@@ -255,12 +255,13 @@ Responsive design preserves hierarchy and composition rather than proportionally
 - It must remain understandable as static semantic HTML.
 - The laptop must remain recognisable and contained across viewports. Do not sacrifice content readability to preserve identical proportions.
 
-The implemented workstation uses restrained physical layers—display shell,
-hinge, deck, front edge, and contact shadow—to make the portal believable.
-Semantic screen identity remains flat HTML outside the decorative depth
-wrapper. Fine keyboard and trackpad cues may appear on desktop, but must
-simplify before they compete with the screen or narrow the mobile composition.
-The rationale and evidence are recorded in [The Machine](the-machine.md).
+The implemented Opening Machine uses one shared mechanical scene: its base,
+hinge, and two-sided lid explain the physical portal before the screen powers
+on. Semantic screen identity remains flat HTML outside the rotating 3D subtree.
+Desktop and tablet may use the controlled opening sequence; mobile and reduced
+motion preserve a stable open composition. Fine keyboard and trackpad cues must
+remain subordinate to the display. The rationale and evidence are recorded in
+[The Machine](the-machine.md).
 
 ### Project cards
 

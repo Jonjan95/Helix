@@ -1,224 +1,202 @@
 # The Machine
 
-## Design question
+The laptop is the first physical object in Helix and the threshold into the
+portfolio. It must explain that relationship through form and behaviour, not
+through decorative hardware detail. This record documents the second design
+decision in draft PR #27: **The Opening Machine**.
 
-Can the laptop become a convincing physical workstation without competing
-with its screen, imitating a real product, or changing the accepted Threshold
-choreography?
+## Human review decision
 
-This review answers with a restrained CSS construction. The workstation is
-not intended to be photorealistic. Its job is to establish a believable
-object at Arrival, carry Jonathan's semantic identity toward the visitor, and
-then recede cleanly when the screen becomes the workspace.
+The earlier **Refined workstation** direction was rejected.
 
-## Baseline limitations
+Its display, hinge rail, perspective deck, and front edge were composed as
+separate visual layers. Although each layer added laptop-like detail, their
+geometry did not share a convincing mechanical relationship. The screen read
+as a framed rectangle above a stack of floating lower surfaces, and the hinge
+did not explain how those surfaces belonged together.
 
-The merged PR #26 baseline communicated “laptop” immediately, but the object
-read primarily as a framed display above a thin horizontal strip. The screen
-was already strong; the physical construction around it was not.
+The problem was structural rather than cosmetic. More shading or hardware
+detail would have made the illustration busier without making the machine
+more believable.
 
-The baseline review identified five limitations:
+The rejected direction is retained in
+[`media/the-machine/rejected`](media/the-machine/rejected) for comparison.
 
-- the lower silhouette did not describe a keyboard deck or working surface;
-- the hinge relationship was implied only by proximity;
-- shell, screen, and base had similar material weight and little edge depth;
-- the contact shadow floated below the display rather than grounding a whole
-  machine;
-- the close view exposed the object as a small set of flat CSS rectangles.
+## Selected concept: The Opening Machine
 
-The screen proportions, identity hierarchy, Threshold depth separation, and
-flat semantic text strategy were already effective and did not require a new
-concept.
+Arrival now begins with a nearly closed, unpowered laptop. The visitor's first
+scroll input opens the lid around its rear axis, activates the screen, reveals
+Jonathan's identity, and then begins the already accepted camera approach.
 
-Baseline evidence is stored in
-[`docs/media/the-machine/before`](media/the-machine/before).
+Opening is part of the story:
 
-## Candidates considered
+`closed object → working machine → personal identity → digital threshold`
 
-### Candidate 1 — Minimal precision
+It is not an idle flourish or a separate animation. Forward scroll constructs
+the portal; reverse scroll closes it again.
 
-This direction establishes the revised lid, hinge rail, shallow deck plane,
-front edge, and contact shadow but removes the keyboard suggestion, trackpad,
-hinge caps, and small deck indicator.
+## Mechanical model
 
-It has the calmest silhouette and is clearly more physical than the baseline.
-At the full Arrival scale, however, the uninterrupted deck surface can still
-read as a geometric platform rather than a workstation. Its restraint removes
-some of the evidence that explains the new plane.
+The physical machine is one CSS 3D scene with a shared coordinate system.
 
-### Candidate 2 — Refined workstation
+- The base is one grounded assembly containing the deck, rear edge, restrained
+  keyboard field, trackpad, and connected front edge.
+- The lid has separate front and rear surfaces.
+- The lid's transform origin is the lower rear edge, aligned with the base's
+  rear edge.
+- Two restrained hinge barrels sit on that shared axis and remain part of the
+  same scene.
+- The lid rotates with `rotateX`; the base does not counter-animate or float.
+- A single contact shadow changes scale and opacity as the machine opens.
+- The scene's perspective is owned by the laptop root, while
+  `transform-style: preserve-3d` is limited to the mechanical subtree.
 
-This direction uses the same silhouette and adds four low-contrast cues: a
-finite key field, trackpad outline, paired hinge caps, and a two-pixel cyan
-deck indicator. None carries content or interaction. The details are visible
-in the close view and quiet at the normal Arrival distance.
+This model explains the object with one relationship instead of layering a
+screen illustration over an unrelated base.
 
-The candidate feels more constructed without becoming busy. It avoids brand
-signatures, individual key legends, ports, logos, speaker grilles, glossy
-reflection, coloured glow, and decorative hardware detail.
+## Opening sequence
 
-The candidate comparison is stored as
-[`10-candidate-minimal-precision.png`](media/the-machine/after/10-candidate-minimal-precision.png)
-and
-[`11-candidate-refined-workstation.png`](media/the-machine/after/11-candidate-refined-workstation.png).
-The comparison is generated only by the repository evidence script; there is
-no public candidate switch or runtime mode.
+### 1. Closed machine
 
-## Chosen direction
+Desktop begins at a restrained 78-degree lid rotation. Tablet begins at 68
+degrees so the shallower scene remains legible. The display is unpowered,
+Jonathan's screen identity is not visually present, and the scroll cue remains
+available. The closed silhouette and hinge establish the physical object.
 
-**Refined workstation** is selected.
+### 2. Mechanical opening
 
-Its additional detail has a clear job: it makes the lower plane readable as a
-working surface. The screen remains the dominant rectangle, Jonathan's name
-remains the dominant content, and the physical cues disappear together through
-the existing handoff. At mobile sizes the details are removed, so the choice
-does not force desktop complexity into a narrow composition.
+The lid rotates to the accepted open position with `power2.inOut`. The base
+stays grounded while the complete scene settles into its open composition.
+The contact shadow broadens without bounce, elasticity, or spring motion.
 
-## Geometry and material changes
+### 3. Screen activation
 
-### Display assembly
+The flat screen portal begins activating only after the lid is substantially
+open. Glass and grid light appear first; Jonathan's identity follows. The
+brief ordering makes the text feel powered by the machine rather than pasted
+onto a moving surface.
 
-- The maximum workstation width moves from `48rem` to `49rem`, retaining the
-  existing contained hero scale.
-- The screen changes from `16 / 9.65` to `16 / 9.8`, producing a slightly
-  calmer display proportion without imitating a named product.
-- Bezel padding now distinguishes the lower edge from the top and sides.
-- A neutral lid gradient, inset edge, and quieter shell shadow describe
-  material thickness without gloss.
-- The camera remains a single restrained point and receives only a fine
-  neutral edge.
+### 4. Approach
 
-### Hinge and base
+Once open, the accepted camera calculation approaches the display. Camera
+start changes from timeline position `0.12` to `0.28`, and camera duration
+changes from `0.76` to `0.60`, reserving the first part of the existing pin for
+the opening without changing the camera destination. Arrival copy recession
+moves from `0.22` to `0.30` so the initial scene remains calm.
 
-- A central hinge rail connects the display to the deck. Its caps are visible
-  only when the composition can support them.
-- The former thin base becomes a shallow perspective deck with a separate
-  front edge.
-- A low-contrast repeated grid suggests keys without rendering key labels or
-  dozens of DOM elements.
-- A simple trackpad outline defines the hand-rest area.
-- The contact shadow belongs to the front edge, grounding the complete object
-  rather than making the display appear to float.
+### 5. Crossing
 
-The construction uses normal HTML elements and CSS. No SVG was necessary:
-the relevant forms are planes, edges, and repeated key spacing, all of which
-remain clearer and cheaper in CSS.
+The accepted Threshold handoff still begins at `0.60`. Its identity departure,
+grid handoff, glass depth, shell/base departure, screen coverage, and workspace
+continuity values are unchanged. The desktop pin-distance profile is also
+unchanged: 1,150px at 1440 × 1000.
+
+## Text-rendering strategy
+
+Jonathan's identity remains semantic HTML and the page retains one `h1`.
+
+The semantic screen portal is a flat sibling of the mechanical 3D scene. It is
+not a child of the rotating lid, does not use `preserve-3d`, and receives no
+independent scale, `translateZ`, blur, filter, or texture. It is visually
+hidden while the lid moves through unreadable angles, then aligned with the
+open decorative display before its opacity increases.
+
+This separation allows the decorative lid to carry physical motion while the
+readable identity stays crisp. The existing root-level camera approach still
+moves the complete composition, and the identity exits before the final
+high-scale Threshold phase. Reverse travel restores the same flat text and
+then removes it before the lid closes.
+
+The semantic content exists in the server-rendered document at every stage;
+animation changes only its visual presentation.
 
 ## Responsive simplification
 
 ### Desktop
 
-Desktop receives the complete refined-workstation treatment. Detail remains
-low contrast and subordinate to the screen at 1440 × 1000 and 1280 × 800.
+Desktop receives the complete five-stage opening sequence, full 3D lid range,
+screen activation, camera approach, and accepted pinned Threshold.
 
-### Laptop and tablet landscape
+### Tablet
 
-At compact heights between 48rem and 64rem wide, the hero uses a `42rem`
-workstation stage and tighter vertical rhythm. This keeps the rebuilt base from
-unnecessarily displacing the semantic introduction at 1024 × 768. The camera
-profile, scroll distance, and Threshold timing do not change.
-
-### Tablet portrait
-
-At 768 × 1024 the full silhouette remains, but hinge caps and the deck accent
-are removed and the key field becomes quieter. The screen retains visual
-priority.
+Tablet keeps the same narrative but begins from a shallower 68-degree closed
+angle and uses the existing reduced camera depth. Fine keyboard detail is
+quieter. It retains one pin and the existing shorter tablet distance profile.
 
 ### Mobile
 
-At 390 × 844 and 360 × 800, keyboard, trackpad, hinge caps, and deck accent are
-removed. The simplified lid, hinge rail, deck plane, front edge, and contact
-shadow preserve one readable object. Mobile remains unpinned and uses normal
-document flow.
+Mobile uses a stable open silhouette in normal document flow. It does not run
+the mechanical opening or create a pin. Keyboard and trackpad detail are
+removed, while the semantic identity and existing short screen handoff remain
+available.
 
-No reviewed viewport gained horizontal overflow.
+### Reduced motion
 
-## Text-rendering strategy
+Reduced motion presents the stable open laptop, powered display, semantic
+identity, and complete journey immediately. It creates no pin and no lid
+animation. The same component and document order are used; there is no
+separate reduced-motion implementation.
 
-Jonathan's name, location, and status remain real semantic HTML inside
-`screenIdentity`. That wrapper remains a flat sibling of the decorative
-`screenDepth` wrapper. It receives no scale, `translateZ`,
-`transform-style: preserve-3d`, filter, blur, or forced layer promotion.
+## Motion ownership and performance
 
-The complete workstation still moves through the accepted camera transform,
-but the identity is not independently enlarged inside a 3D subtree. It stays
-crisp through the readable initial, early, and midpoint states, then the
-existing opacity-only departure removes it before the final high-scale phase.
-Reverse travel restores the same unscaled HTML.
+The opening is part of the existing `JourneyMotion` GSAP timeline. Configuration
+for the desktop and tablet opening is centralized in
+`journey-motion.config.ts`.
 
-The workstation details are descendants of `aria-hidden="true"` surfaces,
-contain no focusable element, and never replace the single logical `h1`.
-
-## Threshold impact
-
-The rebuilt geometry required no change to `JourneyMotion` or its centralized
-configuration.
-
-The following accepted values and relationships are preserved:
-
-- one `JourneyMotion` owner;
-- one desktop/tablet Arrival pin and no mobile pin;
-- 1,150 px desktop pin distance at 1440 × 1000;
-- existing camera scale calculation and maximums;
-- existing identity departure, Threshold arrival, shell fade, and base travel;
-- existing sequential screen-grid/workspace-grid handoff;
-- native forward and reverse scrolling;
-- complete static reduced-motion flow.
-
-The screen bounds still drive the camera destination. The larger base remains
-inside the same laptop root and uses the existing `laptop-base` target, so it
-recedes with the accepted handoff instead of creating a second transition.
+The change adds no local `ScrollTrigger`, second motion owner, frame loop,
+client state, dependency, image, canvas, WebGL, Three.js, or React Three Fiber.
+The route remains statically generated. The recording script drives native
+scroll only for evidence capture; it is not production code.
 
 ## Evidence
 
-Matched screenshots are stored in:
+Evidence is stored in [`media/the-machine`](media/the-machine):
 
-- [before](media/the-machine/before);
-- [after](media/the-machine/after).
+- [`rejected`](media/the-machine/rejected) contains the human-rejected refined
+  workstation;
+- [`after`](media/the-machine/after) contains the Opening Machine sequence,
+  responsive states, reduced-motion state, metrics, and forward/reverse
+  recording.
 
-Both sets contain:
+The revised set includes:
 
-1. initial Arrival;
-2. laptop close view;
-3. early approach;
-4. Threshold crossing;
-5. workspace reveal;
-6. compact desktop;
-7. tablet;
-8. mobile;
-9. reduced motion.
-
-The chosen forward-and-reverse recording is
-[`12-forward-reverse.webm`](media/the-machine/after/12-forward-reverse.webm).
-The metrics files record one `h1`, one motion owner, semantic identity
-presence, zero focusable workstation details, zero desktop horizontal
-overflow, no console warning/error, and no Three.js production resource.
+1. rejected workstation;
+2. closed state;
+3. opening midpoint;
+4. fully open state;
+5. screen activation;
+6. approach;
+7. Threshold crossing;
+8. reverse closing;
+9. compact desktop;
+10. tablet;
+11. mobile;
+12. reduced motion.
 
 ## Known limitations
 
-- CSS perspective suggests a workstation; it does not model mechanically
-  correct hinge or deck geometry.
-- The key field is an intentionally abstract material cue and has no individual
-  keys or legends.
-- CSS line rendering can vary slightly with browser scaling and device-pixel
-  density.
-- Automated reflow and reduced-motion checks do not replace hands-on physical
-  device, browser zoom, or assistive-technology review.
-- The workstation does not address PR #26 content decisions, direct chapter
-  access, project evidence, or later-chapter density.
-
-These limits are preferable to imported models, image assets, large effects,
-or a more complex rendering system.
+- CSS perspective describes a coherent hinge relationship but is not a
+  mechanical simulation.
+- The keyboard remains an abstract surface cue rather than individually
+  modelled keys.
+- Lid edge thickness is deliberately understated and may vary slightly with
+  browser antialiasing and device-pixel density.
+- The flat semantic screen portal aligns with the decorative display only
+  after the lid is substantially open; it is intentionally invisible before
+  that point.
+- Automated reflow, keyboard, and reduced-motion checks do not replace
+  hands-on assistive-technology and physical-device review.
+- PR #26 content decisions, direct chapter access, project evidence, and later
+  chapter density remain outside this revision.
 
 ## Recommendation
 
-**Keep.** The refined workstation is clearly more physical than the baseline,
-its silhouette explains the object at a glance, and its details remain quieter
-than the screen. The semantic identity stays crisp during its readable phase,
-the accepted Threshold remains continuous forward and backward, and responsive
-simplification prevents the desktop treatment from becoming mobile noise.
+**Keep.** The new concept resolves the structural rejection: base, hinge, and
+lid now share one scene and one physical axis, while screen activation explains
+why the portfolio identity appears. It adds narrative meaning without adding a
+second motion system, disturbing the accepted Threshold, or forcing complex 3D
+behaviour onto mobile and reduced-motion visitors.
 
-Revisit only if human review finds the deck detail visually dominant at the
-normal Arrival distance. In that case, revise toward the documented Minimal
-precision candidate without reverting the improved lid, hinge, and base
-silhouette.
+Revise further only if human review finds the closed angle too shallow or too
+opaque at a specific approved viewport. Such a revision should tune the
+centralized opening profile, not reopen the mechanical architecture.
