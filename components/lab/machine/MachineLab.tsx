@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import {
-  type CSSProperties,
   useCallback,
   useEffect,
   useRef,
@@ -13,9 +12,7 @@ import { MachineFallback } from "@/components/lab/machine/MachineFallback";
 import type { MachineModelMetrics } from "@/components/lab/machine/MachineCanvas";
 import {
   getMachineStage,
-  machineSequence,
   reducedMachineProgress,
-  stageProgress,
   type MachinePlaybackDirection,
 } from "@/lib/machine-lab/sequence";
 import styles from "@/styles/lab/MachineLab.module.css";
@@ -51,16 +48,7 @@ export function MachineLab() {
   const reduced = systemReduced || simulateReduced;
   const fallback = runtimeState === "fallback";
   const effectiveProgress = reduced ? reducedMachineProgress : progress;
-  const identityProgress = stageProgress(
-    effectiveProgress,
-    machineSequence.identity,
-  );
-  const approachProgress = stageProgress(
-    effectiveProgress,
-    machineSequence.camera,
-  );
   const stage = reduced ? "Reduced-motion preview" : getMachineStage(progress);
-  const settledApproach = approachProgress ** 4;
 
   const stopPlayback = useCallback(() => {
     if (animationRef.current !== null) {
@@ -135,13 +123,6 @@ export function MachineLab() {
     setProgress(0);
   }
 
-  const overlayStyle = {
-    "--identity-opacity": identityProgress,
-    "--identity-scale": 1 + approachProgress * 0.12,
-    "--identity-x": `${58 - settledApproach * 8}%`,
-    "--identity-y": `${47 + settledApproach * 3}%`,
-  } as CSSProperties;
-
   return (
     <div
       className={styles.lab}
@@ -199,19 +180,6 @@ export function MachineLab() {
                 progress={effectiveProgress}
               />
             </MachineErrorBoundary>
-          )}
-
-          {!fallback && (
-            <div
-              className={styles.identity}
-              data-machine-identity=""
-              data-identity-visible={identityProgress > 0.05}
-              style={overlayStyle}
-            >
-              <span>MALMÖ, SWEDEN / PORTFOLIO</span>
-              <h2>Jonathan Jansson</h2>
-              <p>Software development / testing / quality</p>
-            </div>
           )}
 
           <div className={styles.stageReadout} aria-live="off">

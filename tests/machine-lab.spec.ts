@@ -41,9 +41,31 @@ async function setProgress(page: Page, value: number) {
 }
 
 test("keeps the Machine Lab isolated from production discovery and requests", async ({
+  context,
   page,
   request,
 }) => {
+  const labPage = await context.newPage();
+  const rendererChunks = new Set<string>();
+  const rendererChecks: Promise<void>[] = [];
+  labPage.on("response", (response) => {
+    const url = response.url();
+    if (!url.includes("/_next/static/") || !url.endsWith(".js")) return;
+    rendererChecks.push(
+      response
+        .text()
+        .then((body) => {
+          if (body.includes("WebGLRenderer")) rendererChunks.add(url);
+        })
+        .catch(() => undefined),
+    );
+  });
+  await labPage.goto("/lab/machine", { waitUntil: "networkidle" });
+  await waitForModel(labPage);
+  await Promise.all(rendererChecks);
+  expect(rendererChunks.size).toBeGreaterThan(0);
+  await labPage.close();
+
   const productionRequests: string[] = [];
   page.on("request", (resource) => productionRequests.push(resource.url()));
 
@@ -54,6 +76,7 @@ test("keeps the Machine Lab isolated from production discovery and requests", as
   expect(
     productionRequests.some((url) => url.includes("helix-machine.glb")),
   ).toBe(false);
+  expect(productionRequests.some((url) => rendererChunks.has(url))).toBe(false);
 
   const sitemap = await request.get("/sitemap.xml");
   expect(await sitemap.text()).not.toContain("/lab/machine");
@@ -92,6 +115,11 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
     page.getByRole("heading", { level: 2, name: "Jonathan Jansson" }),
   ).toBeAttached();
   expect(await identity.evaluate((element) => element.closest("canvas"))).toBeNull();
+  expect(
+    await identity.evaluate((element) =>
+      Boolean(element.closest("[data-machine-html-layer]")),
+    ),
+  ).toBe(true);
 
   for (const state of ["0.00", "0.35", "0.52", "0.64", "0.88"]) {
     await setProgress(page, Number(state));
@@ -101,6 +129,13 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
     );
   }
   await expect(identity).toHaveAttribute("data-identity-visible", "true");
+
+  await setProgress(page, 0.8);
+  await expect(page.getByText("Camera reframe", { exact: true })).toBeVisible();
+  await setProgress(page, 0.9);
+  await expect(page.getByText("Camera dolly", { exact: true })).toBeVisible();
+  await setProgress(page, 1);
+  await expect(identity).toHaveAttribute("data-identity-visible", "false");
 
   await setProgress(page, 0.32);
   await expect(identity).toHaveAttribute("data-identity-visible", "false");
