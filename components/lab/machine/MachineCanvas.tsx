@@ -122,6 +122,31 @@ function createModelRuntime(source: Group): ModelRuntime {
   };
 }
 
+function disposeImportedScene(scene: Object3D) {
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+    materials.forEach((material) => {
+      Object.values(material).forEach((value) => {
+        if (
+          value &&
+          typeof value === "object" &&
+          "isTexture" in value &&
+          value.isTexture &&
+          "dispose" in value &&
+          typeof value.dispose === "function"
+        ) {
+          value.dispose();
+        }
+      });
+      material.dispose();
+    });
+  });
+}
+
 function MachineScene({ onReady, progress }: MachineSceneProps) {
   const gltf = useGLTF(machineModelPath);
   const runtime = useMemo(
@@ -176,8 +201,10 @@ function MachineScene({ onReady, progress }: MachineSceneProps) {
   useEffect(
     () => () => {
       runtime.graphiteMaterials.forEach((material) => material.dispose());
+      disposeImportedScene(gltf.scene);
+      useGLTF.clear(machineModelPath);
     },
-    [runtime],
+    [gltf.scene, runtime],
   );
 
   return (

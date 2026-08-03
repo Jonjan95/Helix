@@ -2,11 +2,11 @@ import { expect, test, type Page } from "@playwright/test";
 
 const viewports = [
   { height: 1000, width: 1440 },
+  { height: 800, width: 1280 },
   { height: 768, width: 1024 },
   { height: 1024, width: 768 },
   { height: 844, width: 390 },
   { height: 800, width: 360 },
-  { height: 844, width: 844 },
 ] as const;
 
 async function expectNoHorizontalOverflow(page: Page) {

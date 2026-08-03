@@ -1,9 +1,9 @@
 {
   "emittedJavascriptBytes": {
-    "labOnly": 971157,
-    "labRouteTotal": 1485683,
+    "labOnly": 971481,
+    "labRouteTotal": 1486007,
     "productionRouteTotal": 652728,
-    "threeContainingLabChunks": 959812
+    "threeContainingLabChunks": 960136
   },
   "lab": {
     "canvasRatio": {
@@ -14,11 +14,11 @@
     "javascript": {
       "http://localhost:3201/_next/static/chunks/10qmq145gw9g7.js": 22091,
       "http://localhost:3201/_next/static/chunks/turbopack-1tgqj7ql4zsuf.js": 10547,
-      "http://localhost:3201/_next/static/chunks/3kt1cod3utakw.js": 11345,
+      "http://localhost:3201/_next/static/chunks/16i74s8y4vz8w.js": 11345,
       "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
       "http://localhost:3201/_next/static/chunks/2wr6r8sz3s2yd.js": 196441,
       "http://localhost:3201/_next/static/chunks/25o46h8mdjlrg.js": 227538,
-      "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js": 238240,
+      "http://localhost:3201/_next/static/chunks/2vz7zzjl_66w5.js": 238564,
       "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
     },
     "modelObjects": 9,
@@ -28,8 +28,8 @@
     "modelTriangles": 8322,
     "threeChunks": [
       {
-        "bytes": 238240,
-        "url": "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js"
+        "bytes": 238564,
+        "url": "http://localhost:3201/_next/static/chunks/2vz7zzjl_66w5.js"
       },
       {
         "bytes": 721572,
@@ -38,8 +38,8 @@
     ]
   },
   "labOnlyJavascript": {
-    "http://localhost:3201/_next/static/chunks/3kt1cod3utakw.js": 11345,
-    "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js": 238240,
+    "http://localhost:3201/_next/static/chunks/16i74s8y4vz8w.js": 11345,
+    "http://localhost:3201/_next/static/chunks/2vz7zzjl_66w5.js": 238564,
     "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
   },
   "modelBytes": 404020,

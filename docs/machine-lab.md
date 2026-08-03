@@ -31,6 +31,7 @@ Scene
 - `Screen` is the complete upright lid/display assembly. Its world bounds are approximately `30.4 × 20.103 × 1.005` units.
 - The imported model contains 8,322 triangles: 8,164 in the frame and 158 in the screen.
 - The model separates base and lid cleanly, but does not provide an articulated hinge node.
+- `Screen_ComputerScreen_0` is the mesh for the complete lid assembly; the asset does not expose the illuminated display area as a separate mesh. Machine Lab therefore adds a fitted runtime plane as the controllable screen surface.
 - The `Screen` node origin is close to the rear lower edge, but its geometry begins approximately `0.195` local units below that origin.
 
 The model is therefore usable without editing the GLB. Machine Lab inserts one runtime `RuntimeHingePivot`, offset by the measured `0.195` units, reparents `Screen` beneath it, and preserves the original transform. The reported structural runtime count is nine objects: the eight imported objects plus this wrapper. Lighting, the screen activation plane, and the studio shadow are lab presentation objects and are not counted as model structure.
@@ -48,6 +49,14 @@ The range input is the source of truth for a normalized `0–1` sequence. Playba
 | `0.70–1.00` | Camera approach | Move the camera toward the powered display while preserving the laptop form for most of the approach. |
 
 Stage interpolation uses controlled smoothstep easing. There is no bounce, spring, scroll interception, continuous render loop, or second motion owner. The R3F canvas uses `frameloop="demand"`; a frame is invalidated only when progress changes. Forward and reverse playback use the same sequence and duration, so reversing restores the closed state coherently.
+
+## Camera, material, and lighting strategy
+
+The perspective camera begins at `[4.6, 2.8, 6.4]`, looking across the full machine from a restrained three-quarter angle. From progress `0.70`, it interpolates toward `[0, 0.82, 1.08]` and shifts its look target from the machine body toward the screen. The final state stops at the display; it does not attempt the production Threshold or workspace handoff.
+
+The imported texture materials are replaced at runtime with two quiet graphite `MeshStandardMaterial` treatments: a slightly darker lid and a grounded base. The fitted display plane moves from near-black to dark cyan and uses low emissive intensity. The scene uses one warm key light, one low-intensity cyan rim light, ambient fill, and a subtle plane contact shadow. There is no HDRI, bloom, fog, reflection environment, or post-processing.
+
+Runtime-created graphite materials are explicitly disposed on unmount. The imported geometries, original material and texture resources, and loader cache are also released when the lab leaves the document; media-query listeners and playback frames are cancelled by the HTML controller.
 
 ## Semantic text strategy
 
@@ -87,9 +96,9 @@ Measurements are stored in [`docs/media/machine-lab/metrics.json`](media/machine
 - Structural runtime: nine objects including the hinge wrapper.
 - DPR: capped at `1.5`; a device-scale-factor `2` review measured approximately `1.5` in both axes.
 - Production `/` emitted JavaScript: 652,728 bytes.
-- Machine Lab emitted JavaScript: 1,485,683 bytes.
-- Lab-only emitted JavaScript: 971,157 bytes.
-- Lab-only chunks containing the Three.js renderer: 959,812 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F support; it is not a symbol-level Three.js measurement.
+- Machine Lab emitted JavaScript: 1,486,007 bytes.
+- Lab-only emitted JavaScript: 971,481 bytes.
+- Lab-only chunks containing the Three.js renderer: 960,136 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F support; it is not a symbol-level Three.js measurement.
 - Production `/` requested no GLB, no canvas, and none of the renderer-containing lab chunks.
 - Both measured routes produced zero browser console warnings and zero browser console errors.
 
