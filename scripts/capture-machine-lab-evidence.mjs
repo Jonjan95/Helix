@@ -5,10 +5,12 @@ import next from "next";
 import { chromium } from "@playwright/test";
 
 const outputDirectory = path.join(process.cwd(), "docs", "media", "machine-lab");
+const revisionDirectory = path.join(outputDirectory, "revision-after");
 const port = 3201;
 const baseUrl = `http://localhost:${port}`;
 
 await mkdir(outputDirectory, { recursive: true });
+await mkdir(revisionDirectory, { recursive: true });
 
 const app = next({ dev: false, dir: process.cwd() });
 await app.prepare();
@@ -66,10 +68,10 @@ async function capture(
   await page.waitForTimeout(180);
 
   if (fullPage) {
-    await page.screenshot({ path: path.join(outputDirectory, filename), fullPage: true });
+    await page.screenshot({ path: path.join(revisionDirectory, filename), fullPage: true });
   } else {
     await page.locator("[data-machine-stage]").screenshot({
-      path: path.join(outputDirectory, filename),
+      path: path.join(revisionDirectory, filename),
     });
   }
   await context.close();
@@ -79,7 +81,7 @@ async function record() {
   const context = await browser.newContext({
     colorScheme: "dark",
     recordVideo: {
-      dir: outputDirectory,
+      dir: revisionDirectory,
       size: { height: 720, width: 1280 },
     },
     viewport: { height: 720, width: 1280 },
@@ -97,7 +99,7 @@ async function record() {
   const temporaryVideo = await video.path();
   await copyFile(
     temporaryVideo,
-    path.join(outputDirectory, "13-forward-reverse.webm"),
+    path.join(revisionDirectory, "11-forward-reverse.webm"),
   );
   await unlink(temporaryVideo);
 }
@@ -162,31 +164,35 @@ async function measureRoute(route) {
 }
 
 try {
-  await capture("01-closed.png");
-  await capture("02-opening-midpoint.png", { progress: 0.35 });
-  await capture("03-fully-open.png", { progress: 0.5 });
-  await capture("04-screen-activation.png", { progress: 0.56 });
-  await capture("05-identity-visible.png", { progress: 0.67 });
-  await capture("06-camera-approach.png", { progress: 0.88 });
-  await capture("07-reverse-midpoint.png", { progress: 0.36 });
-  await capture("08-reset.png", { progress: 0 });
-  await capture("09-tablet.png", {
+  await capture("01-identity-visible.png", { progress: 0.67 });
+  await capture("02-camera-reframe.png", { progress: 0.8 });
+  await capture("03-camera-dolly-midpoint.png", { progress: 0.92 });
+  await capture("04-final-approach.png", { progress: 1 });
+  await capture("05-reverse-approach.png", {
+    progress: 1,
+    setup: async (page) => {
+      await page.getByRole("button", { name: "Play reverse" }).click();
+      await page.waitForTimeout(700);
+    },
+  });
+  await capture("06-screen-plane-close-up.png", { progress: 0.96 });
+  await capture("07-compact-desktop.png", {
+    progress: 0.85,
+    viewport: { height: 800, width: 1280 },
+  });
+  await capture("08-tablet.png", {
     fullPage: true,
-    progress: 0.67,
+    progress: 0.85,
     viewport: { height: 1024, width: 768 },
   });
-  await capture("10-mobile.png", {
+  await capture("09-mobile.png", {
     fullPage: true,
-    progress: 0.67,
+    progress: 0.85,
     viewport: { height: 844, width: 390 },
   });
-  await capture("11-reduced-motion.png", {
+  await capture("10-reduced-motion.png", {
     fullPage: true,
     reducedMotion: "reduce",
-  });
-  await capture("12-webgl-fallback.png", {
-    fullPage: true,
-    search: "?webgl=off",
   });
   await record();
 
