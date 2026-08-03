@@ -1,0 +1,63 @@
+{
+  "emittedJavascriptBytes": {
+    "labOnly": 971157,
+    "labRouteTotal": 1485683,
+    "productionRouteTotal": 652728,
+    "threeContainingLabChunks": 959812
+  },
+  "lab": {
+    "canvasRatio": {
+      "horizontal": 1.499047619047619,
+      "vertical": 1.5
+    },
+    "consoleProblems": [],
+    "javascript": {
+      "http://localhost:3201/_next/static/chunks/10qmq145gw9g7.js": 22091,
+      "http://localhost:3201/_next/static/chunks/turbopack-1tgqj7ql4zsuf.js": 10547,
+      "http://localhost:3201/_next/static/chunks/3kt1cod3utakw.js": 11345,
+      "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
+      "http://localhost:3201/_next/static/chunks/2wr6r8sz3s2yd.js": 196441,
+      "http://localhost:3201/_next/static/chunks/25o46h8mdjlrg.js": 227538,
+      "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js": 238240,
+      "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
+    },
+    "modelObjects": 9,
+    "modelRequests": [
+      "http://localhost:3201/models/helix-machine.glb"
+    ],
+    "modelTriangles": 8322,
+    "threeChunks": [
+      {
+        "bytes": 238240,
+        "url": "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js"
+      },
+      {
+        "bytes": 721572,
+        "url": "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js"
+      }
+    ]
+  },
+  "labOnlyJavascript": {
+    "http://localhost:3201/_next/static/chunks/3kt1cod3utakw.js": 11345,
+    "http://localhost:3201/_next/static/chunks/04_0m1ofvg2tw.js": 238240,
+    "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
+  },
+  "modelBytes": 404020,
+  "production": {
+    "canvasRatio": null,
+    "consoleProblems": [],
+    "javascript": {
+      "http://localhost:3201/_next/static/chunks/10qmq145gw9g7.js": 22091,
+      "http://localhost:3201/_next/static/chunks/turbopack-1tgqj7ql4zsuf.js": 10547,
+      "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
+      "http://localhost:3201/_next/static/chunks/0k5nlyruom12i.js": 68038,
+      "http://localhost:3201/_next/static/chunks/3tte7lhlvfih6.js": 70164,
+      "http://localhost:3201/_next/static/chunks/2wr6r8sz3s2yd.js": 196441,
+      "http://localhost:3201/_next/static/chunks/25o46h8mdjlrg.js": 227538
+    },
+    "modelObjects": null,
+    "modelRequests": [],
+    "modelTriangles": null,
+    "threeChunks": []
+  }
+}
