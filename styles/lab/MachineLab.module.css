@@ -138,36 +138,53 @@
   pointer-events: none;
 }
 
-.screenIdentity {
-  width: 22rem;
-  padding: 1.25rem;
-  color: var(--color-text);
+.screenIdentityFrame {
+  display: grid;
+  width: 25rem;
+  height: 15.625rem;
+  overflow: hidden;
+  color: rgba(244, 240, 232, 0.84);
   pointer-events: none;
-  transform: scale(2);
-  transform-origin: center;
+  place-items: center;
+  contain: layout paint;
+}
+
+.screenIdentity {
+  width: 100%;
+  padding: 2.4rem 3.25rem;
 }
 
 .screenIdentity span,
 .screenIdentity p {
-  color: var(--color-muted);
+  color: rgba(192, 205, 207, 0.68);
   font-family: var(--font-mono);
-  font-size: clamp(0.48rem, 0.72vw, 0.66rem);
+  font-size: 0.62rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
 .screenIdentity h2 {
   max-width: 8ch;
-  margin: clamp(0.8rem, 1.4vw, 1.25rem) 0;
-  font-size: clamp(1.6rem, 3.4vw, 3.35rem);
-  font-weight: 520;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  margin: 1rem 0;
+  font-size: 2.85rem;
+  font-weight: 480;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
 }
 
 .screenIdentity p {
   margin: 0;
   line-height: 1.5;
+}
+
+.semanticOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .stageReadout {

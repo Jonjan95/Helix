@@ -110,6 +110,10 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
   );
   await waitForModel(page);
 
+  await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
+    "data-machine-identity-candidate",
+    "semantic",
+  );
   const identity = page.locator("[data-machine-identity]");
   await expect(
     page.getByRole("heading", { level: 2, name: "Jonathan Jansson" }),
@@ -120,6 +124,7 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
       Boolean(element.closest("[data-machine-html-layer]")),
     ),
   ).toBe(true);
+  await expect(identity).toHaveAttribute("data-identity-candidate", "semantic");
 
   for (const state of ["0.00", "0.35", "0.52", "0.64", "0.88"]) {
     await setProgress(page, Number(state));
@@ -145,6 +150,26 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
     "0.000",
   );
   expect(consoleProblems).toEqual([]);
+});
+
+test("keeps a texture fallback internal while preserving equivalent semantic identity", async ({
+  page,
+}) => {
+  await page.goto("/lab/machine?identity=texture");
+  await waitForModel(page);
+
+  const root = page.locator("[data-machine-lab]");
+  const identity = page.locator("[data-machine-identity]");
+  await expect(root).toHaveAttribute(
+    "data-machine-identity-candidate",
+    "texture",
+  );
+  await expect(identity).toHaveAttribute("data-identity-candidate", "texture");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Jonathan Jansson" }),
+  ).toBeAttached();
+  await expect(page.locator("[data-machine-identity]")).toHaveCount(1);
+  expect(await identity.evaluate((element) => element.closest("canvas"))).toBeNull();
 });
 
 test("supports native transport, keyboard control, loading, and fallback states", async ({

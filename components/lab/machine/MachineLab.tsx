@@ -13,6 +13,7 @@ import type { MachineModelMetrics } from "@/components/lab/machine/MachineCanvas
 import {
   getMachineStage,
   reducedMachineProgress,
+  type MachineIdentityCandidate,
   type MachinePlaybackDirection,
 } from "@/lib/machine-lab/sequence";
 import styles from "@/styles/lab/MachineLab.module.css";
@@ -44,6 +45,8 @@ export function MachineLab() {
   const [metrics, setMetrics] = useState<MachineModelMetrics | null>(null);
   const [simulateReduced, setSimulateReduced] = useState(false);
   const [systemReduced, setSystemReduced] = useState(false);
+  const [identityCandidate, setIdentityCandidate] =
+    useState<MachineIdentityCandidate>("semantic");
   const animationRef = useRef<number | null>(null);
   const reduced = systemReduced || simulateReduced;
   const fallback = runtimeState === "fallback";
@@ -64,6 +67,12 @@ export function MachineLab() {
     updateReduced();
     const forceFallback =
       new URLSearchParams(window.location.search).get("webgl") === "off";
+    const requestedIdentity = new URLSearchParams(window.location.search).get(
+      "identity",
+    );
+    if (requestedIdentity === "texture") {
+      window.requestAnimationFrame(() => setIdentityCandidate("texture"));
+    }
     if (forceFallback || !supportsWebgl()) {
       window.requestAnimationFrame(() => setRuntimeState("fallback"));
     }
@@ -129,6 +138,7 @@ export function MachineLab() {
       data-machine-lab=""
       data-machine-progress={effectiveProgress.toFixed(3)}
       data-machine-reduced={reduced}
+      data-machine-identity-candidate={identityCandidate}
       data-model-objects={metrics?.objectCount ?? ""}
       data-model-state={runtimeState}
       data-model-triangles={metrics?.triangleCount ?? ""}
@@ -176,6 +186,7 @@ export function MachineLab() {
               onError={() => setRuntimeState("fallback")}
             >
               <MachineCanvas
+                identityCandidate={identityCandidate}
                 onReady={handleReady}
                 progress={effectiveProgress}
               />

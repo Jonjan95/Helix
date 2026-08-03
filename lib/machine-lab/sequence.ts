@@ -11,6 +11,7 @@ export const machineSequence = {
 
 export const reducedMachineProgress = 0.68;
 
+export type MachineIdentityCandidate = "semantic" | "texture";
 export type MachinePlaybackDirection = "forward" | "reverse";
 
 export function clampProgress(value: number) {
