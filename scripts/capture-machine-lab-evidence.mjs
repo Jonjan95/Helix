@@ -6,11 +6,13 @@ import { chromium } from "@playwright/test";
 
 const outputDirectory = path.join(process.cwd(), "docs", "media", "machine-lab");
 const revisionDirectory = path.join(outputDirectory, "revision-after");
+const identityDirectory = path.join(outputDirectory, "identity-revision");
 const port = 3201;
 const baseUrl = `http://localhost:${port}`;
 
 await mkdir(outputDirectory, { recursive: true });
 await mkdir(revisionDirectory, { recursive: true });
+await mkdir(identityDirectory, { recursive: true });
 
 const app = next({ dev: false, dir: process.cwd() });
 await app.prepare();
@@ -44,6 +46,7 @@ async function capture(
   filename,
   {
     fullPage = false,
+    output = revisionDirectory,
     progress = 0,
     reducedMotion = "no-preference",
     search = "",
@@ -68,10 +71,10 @@ async function capture(
   await page.waitForTimeout(180);
 
   if (fullPage) {
-    await page.screenshot({ path: path.join(revisionDirectory, filename), fullPage: true });
+    await page.screenshot({ path: path.join(output, filename), fullPage: true });
   } else {
     await page.locator("[data-machine-stage]").screenshot({
-      path: path.join(revisionDirectory, filename),
+      path: path.join(output, filename),
     });
   }
   await context.close();
@@ -195,6 +198,45 @@ try {
     reducedMotion: "reduce",
   });
   await record();
+
+  await capture("01-open-laptop-identity.png", {
+    output: identityDirectory,
+    progress: 0.68,
+  });
+  await capture("02-angled-identity.png", {
+    output: identityDirectory,
+    progress: 0.74,
+  });
+  await capture("03-camera-reframe.png", {
+    output: identityDirectory,
+    progress: 0.8,
+  });
+  await capture("04-dolly-midpoint.png", {
+    output: identityDirectory,
+    progress: 0.92,
+  });
+  await capture("05-close-screen-view.png", {
+    output: identityDirectory,
+    progress: 0.96,
+  });
+  await capture("06-reverse.png", {
+    output: identityDirectory,
+    progress: 1,
+    setup: async (page) => {
+      await page.getByRole("button", { name: "Play reverse" }).click();
+      await page.waitForTimeout(700);
+    },
+  });
+  await capture("07-reduced-motion.png", {
+    fullPage: true,
+    output: identityDirectory,
+    reducedMotion: "reduce",
+  });
+  await capture("08-texture-fallback.png", {
+    output: identityDirectory,
+    progress: 0.68,
+    search: "?identity=texture",
+  });
 
   const [production, lab] = await Promise.all([
     measureRoute("/"),

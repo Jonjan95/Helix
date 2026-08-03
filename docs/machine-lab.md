@@ -92,9 +92,19 @@ Runtime-created graphite materials are explicitly disposed on unmount. The impor
 
 ## Semantic text strategy
 
-The name, location, and professional direction remain normal semantic HTML, never a WebGL texture, SVG, canvas, or 3D text. A Drei `Html` transform is attached to an `Object3D` anchor at `[-0.012, 0.098, -0.0065]` in the fitted screen plane's local coordinate system. The HTML portal is placed outside the canvas's `aria-hidden` subtree, while the anchor inherits the lid opening and screen perspective.
+Human review found that the first anchored version still read as a layer floating in front of the display. Its 22rem content box had no display-ratio clipping boundary, its anchor sat independently of the exact screen center, and a `scale(0.5)` scene transform combined with a CSS `scale(2)` counter-scale. That full-strength compensation preserved size but weakened the perceived relationship between text, glass, and bezel. Warm-white contrast also remained closer to page typography than powered-screen typography.
 
-The transformed wrapper uses a small scene scale with an inverse CSS scale on its inner content. This preserves the scene relationship without relying on a heavily magnified browser texture. The identity appears only after the screen faces the viewer, exits over progress `0.90–0.97` before the closest camera state, and restores cleanly in reverse. Browser inspection confirms the heading remains exposed outside any `aria-hidden` canvas ancestor.
+### Candidate 1: screen-near semantic HTML (preferred)
+
+The default candidate keeps the name, location, and professional direction as normal HTML, never a WebGL texture, SVG, canvas, or 3D text. A Drei `Html` transform is centered at `[0, 0.098, -0.0067]`, only `0.0005` local units in front of the runtime display plane. Its `0.282` distance factor maps a `400 × 250` CSS clipping frame to the display's measured `0.282 × 0.176` opening. The nearly identical `1.60:1` aspect ratios let the identity inherit the screen perspective while the clipping frame prevents any content from crossing the bezel.
+
+The earlier counter-scale pair has been removed. Typography now uses restrained screen-relative sizes, reduced warm-white opacity, quieter metadata, no background panel, no border, and no glow. The screen itself remains the brightest field. The external HTML portal remains outside the canvas's `aria-hidden` subtree, while the scene anchor inherits lid opening, camera reframe, and dolly. Identity still appears after screen activation, exits over progress `0.90–0.97`, and restores cleanly in reverse.
+
+### Candidate 2: visual texture fallback (internal)
+
+`/lab/machine?identity=texture` selects an internal comparison candidate. It draws equivalent identity lettering into a high-resolution canvas texture fitted exactly to a front-facing overlay on the runtime screen plane. The visual texture is decorative: the same heading and supporting copy remain once in semantic DOM outside WebGL using a standard visually-hidden treatment. This candidate is useful if transformed HTML proves inconsistent in a production browser target, but it is not preferred because visual and semantic representations can drift and the texture cannot match native text rendering at every distance.
+
+The query is not linked from production or the lab interface. It is a deterministic review hook, not a visitor-facing mode.
 
 ## Controls and states
 
@@ -128,26 +138,29 @@ Measurements are stored in [`docs/media/machine-lab/metrics.json`](media/machine
 - Structural runtime: nine objects including the hinge wrapper.
 - DPR: capped at `1.5`; a device-scale-factor `2` review measured approximately `1.5` in both axes.
 - Production `/` emitted JavaScript: 652,875 bytes.
-- Machine Lab emitted JavaScript: 1,494,768 bytes.
-- Lab-only emitted JavaScript: 980,095 bytes.
-- Lab-only chunks containing the Three.js renderer: 969,098 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F and Drei support; it is not a symbol-level Three.js measurement.
+- Machine Lab emitted JavaScript: 1,496,359 bytes.
+- Lab-only emitted JavaScript: 981,686 bytes.
+- Lab-only chunks containing the Three.js renderer: 970,349 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F and Drei support; it is not a symbol-level Three.js measurement.
 - Production `/` requested no GLB, no canvas, and none of the renderer-containing lab chunks.
 - Both measured routes produced zero browser console warnings and zero browser console errors.
 
 React Three Fiber `9.7.0` and Drei `10.7.7` are loaded only by the dynamic Machine Lab canvas. Three.js is pinned to compatible release `0.182.0`: Three r183 introduced a `Clock` deprecation warning while the current stable R3F store still constructs that API. Pinning the last compatible release keeps diagnostics honest without suppressing console output.
 
-The approximately 980 KB lab-only JavaScript cost is acceptable for a direct-access experiment but is too large to accept automatically on the production homepage. Any production proposal must establish a deliberate loading boundary and compare this cost against the existing CSS implementation.
+The approximately 982 KB lab-only JavaScript cost is acceptable for a direct-access experiment but is too large to accept automatically on the production homepage. Any production proposal must establish a deliberate loading boundary and compare this cost against the existing CSS implementation.
 
 ## Model source and license
 
-The GLB was supplied for this experiment. Its binary metadata identifies the Blender glTF exporter, and its internal names include `Sketchfab_model`, but it contains no verifiable author, source URL, copyright notice, or license. Repository history available to this PR does not establish those facts.
+The supplied asset is [“Laptop”](https://sketchfab.com/3d-models/laptop-7d870e900889481395b4a575b9fa8c3e) by [Aullwen](https://sketchfab.com/Aullwen) on Sketchfab. It is licensed under the [Creative Commons Attribution 4.0 International license (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
-Therefore:
+Helix modifies the model for this experiment. The imported GLB geometry is retained, while the runtime presentation:
 
-- no author, marketplace, or license claim is made;
-- the asset must not be treated as cleared for public production use;
-- source provenance and redistribution rights must be verified before production integration or deployment;
-- replacing materials at runtime does not change the underlying asset-license requirement.
+- scales and repositions the model for the lab composition;
+- inserts a measured hinge wrapper and animates the independent screen node;
+- replaces the original materials with restrained graphite treatments;
+- adds a fitted powered-display plane and Helix identity treatment;
+- supplies new lighting, contact treatment, camera staging, and accessibility markup.
+
+Attribution is retained here with the exact title, creator, source, license version, and modification notice required for the adapted use. The creator does not endorse Helix.
 
 ## Evidence
 
@@ -179,17 +192,28 @@ The original prototype did not contain distinct reframe and dolly states, so its
 
 The revised [forward-and-reverse recording](media/machine-lab/revision-after/11-forward-reverse.webm) demonstrates that camera staging, identity departure, screen fit, and lid state all restore through the same deterministic progress source.
 
+### Screen-identity revision
+
+1. [Open laptop with identity](media/machine-lab/identity-revision/01-open-laptop-identity.png)
+2. [Angled identity view](media/machine-lab/identity-revision/02-angled-identity.png)
+3. [Camera reframe](media/machine-lab/identity-revision/03-camera-reframe.png)
+4. [Dolly midpoint](media/machine-lab/identity-revision/04-dolly-midpoint.png)
+5. [Close screen view](media/machine-lab/identity-revision/05-close-screen-view.png)
+6. [Reverse](media/machine-lab/identity-revision/06-reverse.png)
+7. [Reduced motion](media/machine-lab/identity-revision/07-reduced-motion.png)
+8. [Internal texture fallback](media/machine-lab/identity-revision/08-texture-fallback.png)
+
 ## Known limitations
 
-- Asset provenance and redistribution rights are unresolved.
-- Drei's transformed HTML remains a CSS 3D composition and needs cross-browser visual acceptance in the final Arrival layout before production use.
+- The default semantic candidate remains a CSS 3D composition and needs final acceptance in the real Arrival layout and all production browser targets.
+- The texture fallback deliberately duplicates only the visual lettering, so copy changes would need an explicit synchronization check if that candidate were ever selected.
 - The lab does not test production scroll pacing, Threshold crossing, or handoff into the workspace.
 - Materials and the layered contact footprint are intentionally restrained lab treatments rather than a physically calibrated product-rendering study.
-- The emitted Three/R3F cost needs a stricter production loading plan before integration.
+- The approximately 982 KB emitted Three/R3F lab-only cost needs a stricter production loading plan before integration.
 - No Firefox run is claimed by this Chromium-only Playwright configuration.
 
 ## Recommendation
 
-**Revise further before production integration.**
+**Proceed with the screen-near semantic candidate inside Machine Lab; do not integrate it into production yet.**
 
-The revision resolves the requested prototype concerns: the approach now reads as reframe then dolly, the semantic identity follows a true scene anchor while remaining accessible HTML, the runtime plane has a measured bezel fit, and the machine has clearer restrained material separation. It still does not justify replacing the production CSS machine. Asset licensing must be verified, transformed HTML must be accepted across production browser targets, and the lab-only bundle cost needs an explicit production budget. Until those conditions are satisfied, keep Machine Lab isolated and keep the production route unchanged.
+The screen-near candidate corrects the lab's remaining compositional blocker without abandoning semantic HTML: the identity now shares the display bounds, perspective, opening, and camera motion rather than reading as a separate card. The documented texture candidate remains a fallback, not the chosen direction. Model attribution and modification notice are now complete. Production integration, production scroll pacing, transformed-HTML browser acceptance, and the lab-only bundle budget remain separate future decisions; keep Machine Lab isolated and keep the production route unchanged for this PR.
