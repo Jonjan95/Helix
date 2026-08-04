@@ -69,7 +69,12 @@ const screenPlane = {
   rotation: [0, 0, 0] as const,
   width: 0.282,
 };
-const screenAnchorPosition = [0, 0.098, -0.0067] as const;
+const screenAnchorY = 0.098;
+const screenAnchorZ = -0.0067;
+
+function getScreenAnchorX(canvasWidth: number) {
+  return Math.min(0.019, Math.max(-0.024, (canvasWidth - 961) * 0.000297));
+}
 
 function createModelRuntime(source: Group): ModelRuntime {
   const root = source.clone(true);
@@ -184,6 +189,7 @@ function MachineScene({
   const identityIn = stageProgress(progress, sequence.identity);
   const identityOut = stageProgress(progress, sequence.identityExit);
   const identityVisibility = identityIn * (1 - identityOut);
+  const screenAnchorX = getScreenAnchorX(size.width);
 
   useEffect(() => {
     onReady({
@@ -261,7 +267,10 @@ function MachineScene({
                 side={BackSide}
               />
             </mesh>
-            <group position={screenAnchorPosition} rotation={screenPlane.rotation}>
+            <group
+              position={[screenAnchorX, screenAnchorY, screenAnchorZ]}
+              rotation={screenPlane.rotation}
+            >
               <Html
                 center
                 distanceFactor={0.282}
@@ -277,11 +286,6 @@ function MachineScene({
                   data-identity-visible={identityVisibility > 0.05}
                   data-machine-identity=""
                 >
-                  <div
-                    aria-hidden="true"
-                    className={styles.screenInterface}
-                    style={{ opacity: screenDetails * 0.42 }}
-                  />
                   <div
                     className={styles.screenIdentity}
                     style={{ opacity: identityVisibility }}

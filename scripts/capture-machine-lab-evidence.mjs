@@ -7,12 +7,17 @@ import { chromium } from "@playwright/test";
 const outputDirectory = path.join(process.cwd(), "docs", "media", "machine-lab");
 const revisionDirectory = path.join(outputDirectory, "revision-after");
 const identityDirectory = path.join(outputDirectory, "identity-revision");
+const arrivalDirectory = path.join(outputDirectory, "arrival-direction");
+const cinematicDirectory = path.join(arrivalDirectory, "candidate-a");
+const editorialDirectory = path.join(arrivalDirectory, "candidate-b");
 const port = 3201;
 const baseUrl = `http://localhost:${port}`;
 
 await mkdir(outputDirectory, { recursive: true });
 await mkdir(revisionDirectory, { recursive: true });
 await mkdir(identityDirectory, { recursive: true });
+await mkdir(cinematicDirectory, { recursive: true });
+await mkdir(editorialDirectory, { recursive: true });
 
 const app = next({ dev: false, dir: process.cwd() });
 await app.prepare();
@@ -80,29 +85,29 @@ async function capture(
   await context.close();
 }
 
-async function record() {
+async function record({ directory, duration, search = "" }) {
   const context = await browser.newContext({
     colorScheme: "dark",
     recordVideo: {
-      dir: revisionDirectory,
+      dir: directory,
       size: { height: 720, width: 1280 },
     },
     viewport: { height: 720, width: 1280 },
   });
   const page = await context.newPage();
-  await page.goto(`${baseUrl}/lab/machine`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/lab/machine${search}`, { waitUntil: "networkidle" });
   await page.locator('[data-model-state="ready"]').waitFor({ timeout: 15_000 });
   await page.locator("[data-machine-stage]").scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "Play forward" }).click();
-  await page.waitForTimeout(4400);
+  await page.waitForTimeout(duration + 250);
   await page.getByRole("button", { name: "Play reverse" }).click();
-  await page.waitForTimeout(4400);
+  await page.waitForTimeout(duration + 250);
   const video = page.video();
   await context.close();
   const temporaryVideo = await video.path();
   await copyFile(
     temporaryVideo,
-    path.join(revisionDirectory, "11-forward-reverse.webm"),
+    path.join(directory, "15-forward-reverse.webm"),
   );
   await unlink(temporaryVideo);
 }
@@ -167,76 +172,135 @@ async function measureRoute(route) {
 }
 
 try {
-  await capture("01-identity-visible.png", { progress: 0.67 });
-  await capture("02-camera-reframe.png", { progress: 0.8 });
-  await capture("03-camera-dolly-midpoint.png", { progress: 0.92 });
-  await capture("04-final-approach.png", { progress: 1 });
-  await capture("05-reverse-approach.png", {
-    progress: 1,
-    setup: async (page) => {
-      await page.getByRole("button", { name: "Play reverse" }).click();
-      await page.waitForTimeout(700);
+  const candidates = [
+    {
+      directory: cinematicDirectory,
+      duration: 7200,
+      progress: {
+        established: 0.16,
+        identity: 0.76,
+        hold: 0.84,
+        lidOpen: 0.5,
+        opening: 0.34,
+        reframe: 0.9,
+        screen: 0.6,
+        screenSettled: 0.69,
+        dolly: 0.98,
+      },
+      reverseWait: 2600,
+      search: "",
     },
-  });
-  await capture("06-screen-plane-close-up.png", { progress: 0.96 });
-  await capture("07-compact-desktop.png", {
-    progress: 0.85,
-    viewport: { height: 800, width: 1280 },
-  });
-  await capture("08-tablet.png", {
-    fullPage: true,
-    progress: 0.85,
-    viewport: { height: 1024, width: 768 },
-  });
-  await capture("09-mobile.png", {
-    fullPage: true,
-    progress: 0.85,
-    viewport: { height: 844, width: 390 },
-  });
-  await capture("10-reduced-motion.png", {
-    fullPage: true,
-    reducedMotion: "reduce",
-  });
-  await record();
+    {
+      directory: editorialDirectory,
+      duration: 5000,
+      progress: {
+        established: 0.11,
+        identity: 0.65,
+        hold: 0.72,
+        lidOpen: 0.42,
+        opening: 0.27,
+        reframe: 0.81,
+        screen: 0.51,
+        screenSettled: 0.59,
+        dolly: 0.94,
+      },
+      reverseWait: 1800,
+      search: "?sequence=editorial",
+    },
+  ];
 
-  await capture("01-open-laptop-identity.png", {
-    output: identityDirectory,
-    progress: 0.68,
-  });
-  await capture("02-angled-identity.png", {
-    output: identityDirectory,
-    progress: 0.74,
-  });
-  await capture("03-camera-reframe.png", {
-    output: identityDirectory,
-    progress: 0.8,
-  });
-  await capture("04-dolly-midpoint.png", {
-    output: identityDirectory,
-    progress: 0.92,
-  });
-  await capture("05-close-screen-view.png", {
-    output: identityDirectory,
-    progress: 0.96,
-  });
-  await capture("06-reverse.png", {
-    output: identityDirectory,
-    progress: 1,
-    setup: async (page) => {
-      await page.getByRole("button", { name: "Play reverse" }).click();
-      await page.waitForTimeout(700);
-    },
-  });
-  await capture("07-reduced-motion.png", {
-    fullPage: true,
-    output: identityDirectory,
-    reducedMotion: "reduce",
-  });
-  await capture("08-texture-fallback.png", {
-    output: identityDirectory,
-    progress: 0.68,
-    search: "?identity=texture",
-  });
+  for (const candidate of candidates) {
+    const shared = { output: candidate.directory, search: candidate.search };
+    await capture("01-darkness-initial-reveal.png", {
+      ...shared,
+      progress: 0.04,
+    });
+    await capture("02-machine-established.png", {
+      ...shared,
+      progress: candidate.progress.established,
+    });
+    await capture("03-lid-opening.png", {
+      ...shared,
+      progress: candidate.progress.opening,
+    });
+    await capture("04-fully-open.png", {
+      ...shared,
+      progress: candidate.progress.lidOpen,
+    });
+    await capture("05-screen-activation.png", {
+      ...shared,
+      progress: candidate.progress.screen,
+    });
+    await capture("06-screen-settled.png", {
+      ...shared,
+      progress: candidate.progress.screenSettled,
+    });
+    await capture("07-identity-visible.png", {
+      ...shared,
+      progress: candidate.progress.identity,
+    });
+    await capture("08-identity-hold.png", {
+      ...shared,
+      progress: candidate.progress.hold,
+    });
+    await capture("09-camera-reframe.png", {
+      ...shared,
+      progress: candidate.progress.reframe,
+    });
+    await capture("10-camera-dolly.png", {
+      ...shared,
+      progress: candidate.progress.dolly,
+    });
+    await capture("11-reverse-midpoint.png", {
+      ...shared,
+      progress: 1,
+      setup: async (page) => {
+        await page.getByRole("button", { name: "Play reverse" }).click();
+        await page.waitForTimeout(candidate.reverseWait);
+      },
+    });
+    await capture("12-reset.png", { ...shared, progress: 0 });
+    await capture("13-mobile.png", {
+      ...shared,
+      fullPage: true,
+      progress: candidate.progress.hold,
+      viewport: { height: 844, width: 390 },
+    });
+    await capture("14-reduced-motion.png", {
+      ...shared,
+      fullPage: true,
+      reducedMotion: "reduce",
+    });
+    await capture("16-compact-desktop.png", {
+      ...shared,
+      fullPage: true,
+      progress: candidate.progress.hold,
+      viewport: { height: 800, width: 1280 },
+    });
+    await capture("17-laptop.png", {
+      ...shared,
+      fullPage: true,
+      progress: candidate.progress.hold,
+      viewport: { height: 768, width: 1024 },
+    });
+    await capture("18-tablet.png", {
+      ...shared,
+      fullPage: true,
+      progress: candidate.progress.hold,
+      viewport: { height: 1024, width: 768 },
+    });
+    await capture("19-narrow-mobile.png", {
+      ...shared,
+      fullPage: true,
+      progress: candidate.progress.hold,
+      viewport: { height: 800, width: 360 },
+    });
+    await record({
+      directory: candidate.directory,
+      duration: candidate.duration,
+      search: candidate.search,
+    });
+  }
 
   const [production, lab] = await Promise.all([
     measureRoute("/"),

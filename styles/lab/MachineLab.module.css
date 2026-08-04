@@ -151,16 +151,6 @@
   contain: layout paint;
 }
 
-.screenInterface {
-  position: absolute;
-  inset: 1.1rem;
-  border: 1px solid rgba(105, 211, 231, 0.12);
-  background-image:
-    linear-gradient(rgba(105, 211, 231, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(105, 211, 231, 0.045) 1px, transparent 1px);
-  background-size: 2rem 2rem;
-}
-
 .screenIdentity {
   position: relative;
   z-index: 1;

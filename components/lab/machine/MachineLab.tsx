@@ -46,6 +46,7 @@ export function MachineLab() {
   const [metrics, setMetrics] = useState<MachineModelMetrics | null>(null);
   const [simulateReduced, setSimulateReduced] = useState(false);
   const [systemReduced, setSystemReduced] = useState(false);
+  const [compactViewport, setCompactViewport] = useState(false);
   const [sequenceCandidate, setSequenceCandidate] =
     useState<MachineSequenceCandidate>("cinematic");
   const animationRef = useRef<number | null>(null);
@@ -67,9 +68,12 @@ export function MachineLab() {
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactMedia = window.matchMedia("(max-width: 47.999rem)");
     const updateReduced = () => setSystemReduced(media.matches);
+    const updateCompact = () => setCompactViewport(compactMedia.matches);
 
     updateReduced();
+    updateCompact();
     const forceFallback =
       new URLSearchParams(window.location.search).get("webgl") === "off";
     const requestedSequence = new URLSearchParams(window.location.search).get(
@@ -82,9 +86,11 @@ export function MachineLab() {
       window.requestAnimationFrame(() => setRuntimeState("fallback"));
     }
     media.addEventListener("change", updateReduced);
+    compactMedia.addEventListener("change", updateCompact);
 
     return () => {
       media.removeEventListener("change", updateReduced);
+      compactMedia.removeEventListener("change", updateCompact);
       stopPlayback();
     };
   }, [stopPlayback]);
@@ -114,7 +120,12 @@ export function MachineLab() {
       return;
     }
 
-    const duration = 4200 * distance;
+    const fullDuration = compactViewport
+      ? 4200
+      : sequenceCandidate === "cinematic"
+        ? 7200
+        : 5000;
+    const duration = fullDuration * distance;
     const startedAt = performance.now();
 
     const tick = (now: number) => {
@@ -144,6 +155,7 @@ export function MachineLab() {
       data-machine-progress={effectiveProgress.toFixed(3)}
       data-machine-reduced={reduced}
       data-machine-sequence-candidate={sequenceCandidate}
+      data-machine-stage-state={stage}
       data-model-objects={metrics?.objectCount ?? ""}
       data-model-state={runtimeState}
       data-model-triangles={metrics?.triangleCount ?? ""}

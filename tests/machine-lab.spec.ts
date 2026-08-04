@@ -85,7 +85,7 @@ test("keeps the Machine Lab isolated from production discovery and requests", as
   expect(await robots.text()).toMatch(/Disallow: \/(?:lab\/)?/);
 });
 
-test("exposes a semantic, reversible five-stage machine sequence", async ({
+test("exposes a semantic, reversible staged arrival sequence", async ({
   page,
 }) => {
   const consoleProblems: string[] = [];
@@ -104,6 +104,7 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
 
   await page.goto("/lab/machine");
   await expect(page).toHaveTitle("Machine Lab | Helix");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
     /noindex/,
@@ -111,8 +112,8 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
   await waitForModel(page);
 
   await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
-    "data-machine-identity-candidate",
-    "semantic",
+    "data-machine-sequence-candidate",
+    "cinematic",
   );
   const identity = page.locator("[data-machine-identity]");
   await expect(
@@ -124,9 +125,8 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
       Boolean(element.closest("[data-machine-html-layer]")),
     ),
   ).toBe(true);
-  await expect(identity).toHaveAttribute("data-identity-candidate", "semantic");
 
-  for (const state of ["0.00", "0.35", "0.52", "0.64", "0.88"]) {
+  for (const state of ["0.00", "0.28", "0.6", "0.76", "0.9"]) {
     await setProgress(page, Number(state));
     await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
       "data-machine-progress",
@@ -135,14 +135,33 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
   }
   await expect(identity).toHaveAttribute("data-identity-visible", "true");
 
-  await setProgress(page, 0.8);
-  await expect(page.getByText("Camera reframe", { exact: true })).toBeVisible();
   await setProgress(page, 0.9);
+  await expect(page.getByText("Camera reframe", { exact: true })).toBeVisible();
+  await setProgress(page, 0.98);
   await expect(page.getByText("Camera dolly", { exact: true })).toBeVisible();
   await setProgress(page, 1);
   await expect(identity).toHaveAttribute("data-identity-visible", "false");
 
-  await setProgress(page, 0.32);
+  const reverseStages = [
+    [0.95, "Identity departure"],
+    [0.9, "Camera reframe"],
+    [0.84, "Identity hold"],
+    [0.76, "Identity reveal"],
+    [0.69, "Screen settled"],
+    [0.6, "Screen activation"],
+    [0.5, "Lid settled"],
+    [0.32, "Lid opening"],
+    [0.16, "Machine settled"],
+    [0.05, "Machine reveal"],
+  ] as const;
+
+  for (const [progress, expectedStage] of reverseStages) {
+    await setProgress(page, progress);
+    await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
+      "data-machine-stage-state",
+      expectedStage,
+    );
+  }
   await expect(identity).toHaveAttribute("data-identity-visible", "false");
   await setProgress(page, 0);
   await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
@@ -152,24 +171,65 @@ test("exposes a semantic, reversible five-stage machine sequence", async ({
   expect(consoleProblems).toEqual([]);
 });
 
-test("keeps a texture fallback internal while preserving equivalent semantic identity", async ({
+test("compares two deterministic timing candidates with the same stage order", async ({
   page,
 }) => {
-  await page.goto("/lab/machine?identity=texture");
+  await page.goto("/lab/machine");
   await waitForModel(page);
 
   const root = page.locator("[data-machine-lab]");
   const identity = page.locator("[data-machine-identity]");
+  const cinematic = page.getByRole("radio", { name: /Candidate A/i });
+  const editorial = page.getByRole("radio", { name: /Candidate B/i });
+
+  await expect(cinematic).toBeChecked();
+  await cinematic.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(editorial).toBeChecked();
+  await cinematic.check();
+  await setProgress(page, 0.6);
+  await expect(root).toHaveAttribute("data-machine-stage-state", "Screen activation");
+  await expect(identity).toHaveAttribute("data-screen-active", "true");
+  await expect(identity).toHaveAttribute("data-identity-visible", "false");
+  await setProgress(page, 0.75);
+  await expect(root).toHaveAttribute("data-machine-stage-state", "Identity reveal");
+  await expect(identity).toHaveAttribute("data-screen-settled", "true");
+  await expect(identity).toHaveAttribute("data-identity-visible", "true");
+  await setProgress(page, 0.84);
+  await expect(root).toHaveAttribute("data-machine-stage-state", "Identity hold");
+  await setProgress(page, 0.9);
+  await expect(root).toHaveAttribute("data-machine-stage-state", "Camera reframe");
+
+  await editorial.check();
   await expect(root).toHaveAttribute(
-    "data-machine-identity-candidate",
-    "texture",
+    "data-machine-sequence-candidate",
+    "editorial",
   );
-  await expect(identity).toHaveAttribute("data-identity-candidate", "texture");
-  await expect(
-    page.getByRole("heading", { level: 2, name: "Jonathan Jansson" }),
-  ).toBeAttached();
-  await expect(page.locator("[data-machine-identity]")).toHaveCount(1);
-  expect(await identity.evaluate((element) => element.closest("canvas"))).toBeNull();
+  const editorialStages = [
+    [0.05, "Machine reveal"],
+    [0.11, "Machine settled"],
+    [0.25, "Lid opening"],
+    [0.42, "Lid settled"],
+    [0.5, "Screen activation"],
+    [0.59, "Screen settled"],
+    [0.65, "Identity reveal"],
+    [0.72, "Identity hold"],
+    [0.8, "Camera reframe"],
+    [0.875, "Identity departure"],
+    [0.94, "Camera dolly"],
+  ] as const;
+
+  for (const [progress, expectedStage] of editorialStages) {
+    await setProgress(page, progress);
+    await expect(root).toHaveAttribute("data-machine-stage-state", expectedStage);
+  }
+
+  await page.goto("/lab/machine?sequence=editorial");
+  await waitForModel(page);
+  await expect(page.locator("[data-machine-lab]")).toHaveAttribute(
+    "data-machine-sequence-candidate",
+    "editorial",
+  );
 });
 
 test("supports native transport, keyboard control, loading, and fallback states", async ({
@@ -216,13 +276,20 @@ test("turns the sequence into a complete static scene for reduced motion", async
 
   const root = page.locator("[data-machine-lab]");
   await expect(root).toHaveAttribute("data-machine-reduced", "true");
-  await expect(root).toHaveAttribute("data-machine-progress", "0.680");
+  await expect(root).toHaveAttribute("data-machine-progress", "0.840");
   await expect(page.locator("[data-machine-identity]")).toHaveAttribute(
     "data-identity-visible",
     "true",
   );
   await expect(page.getByRole("button", { name: "Play forward" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Play reverse" })).toBeDisabled();
+
+  await page.getByRole("radio", { name: /Candidate B/i }).check();
+  await expect(root).toHaveAttribute("data-machine-progress", "0.730");
+  await expect(page.locator("[data-machine-identity]")).toHaveAttribute(
+    "data-identity-visible",
+    "true",
+  );
 });
 
 test("preserves responsive flow and avoids horizontal overflow", async ({ page }) => {
