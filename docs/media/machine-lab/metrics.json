@@ -1,9 +1,9 @@
 {
   "emittedJavascriptBytes": {
-    "labOnly": 981686,
-    "labRouteTotal": 1496359,
+    "labOnly": 982323,
+    "labRouteTotal": 1496996,
     "productionRouteTotal": 652875,
-    "threeContainingLabChunks": 970349
+    "threeContainingLabChunks": 969330
   },
   "lab": {
     "canvasRatio": {
@@ -15,11 +15,11 @@
       "http://localhost:3201/_next/static/chunks/3u0527crgji5y.js": 22091,
       "http://localhost:3201/_next/static/chunks/0ro772wcmsc4w.js": 24268,
       "http://localhost:3201/_next/static/chunks/turbopack-2dfdt8-pxe9p2.js": 10580,
+      "http://localhost:3201/_next/static/chunks/3ukdo7dzcb9-p.js": 12993,
       "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
-      "http://localhost:3201/_next/static/chunks/1rc1w9xs25h5s.js": 11337,
       "http://localhost:3201/_next/static/chunks/2wr6r8sz3s2yd.js": 196441,
       "http://localhost:3201/_next/static/chunks/3jh1u-s3k0bkk.js": 203384,
-      "http://localhost:3201/_next/static/chunks/2---i-rjxh38l.js": 248777,
+      "http://localhost:3201/_next/static/chunks/16zi-gk_u5l-c.js": 247758,
       "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
     },
     "modelObjects": 9,
@@ -29,8 +29,8 @@
     "modelTriangles": 8322,
     "threeChunks": [
       {
-        "bytes": 248777,
-        "url": "http://localhost:3201/_next/static/chunks/2---i-rjxh38l.js"
+        "bytes": 247758,
+        "url": "http://localhost:3201/_next/static/chunks/16zi-gk_u5l-c.js"
       },
       {
         "bytes": 721572,
@@ -39,8 +39,8 @@
     ]
   },
   "labOnlyJavascript": {
-    "http://localhost:3201/_next/static/chunks/1rc1w9xs25h5s.js": 11337,
-    "http://localhost:3201/_next/static/chunks/2---i-rjxh38l.js": 248777,
+    "http://localhost:3201/_next/static/chunks/3ukdo7dzcb9-p.js": 12993,
+    "http://localhost:3201/_next/static/chunks/16zi-gk_u5l-c.js": 247758,
     "http://localhost:3201/_next/static/chunks/06wckqp41tt7g.js": 721572
   },
   "modelBytes": 404020,
@@ -49,12 +49,12 @@
     "consoleProblems": [],
     "javascript": {
       "http://localhost:3201/_next/static/chunks/3u0527crgji5y.js": 22091,
-      "http://localhost:3201/_next/static/chunks/0ro772wcmsc4w.js": 24268,
       "http://localhost:3201/_next/static/chunks/turbopack-2dfdt8-pxe9p2.js": 10580,
-      "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
+      "http://localhost:3201/_next/static/chunks/0ro772wcmsc4w.js": 24268,
       "http://localhost:3201/_next/static/chunks/2wr6r8sz3s2yd.js": 196441,
-      "http://localhost:3201/_next/static/chunks/3jh1u-s3k0bkk.js": 203384,
+      "http://localhost:3201/_next/static/chunks/158myu8e_yme3.js": 57909,
       "http://localhost:3201/_next/static/chunks/0k5nlyruom12i.js": 68038,
+      "http://localhost:3201/_next/static/chunks/3jh1u-s3k0bkk.js": 203384,
       "http://localhost:3201/_next/static/chunks/3tte7lhlvfih6.js": 70164
     },
     "modelObjects": null,

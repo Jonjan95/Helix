@@ -2,9 +2,9 @@
 
 ## Status and boundary
 
-Machine Lab is an isolated technical experiment for PR #28. It is available only by direct navigation to `/lab/machine`, is marked `noindex, nofollow`, remains excluded from the sitemap, and sits beneath the existing `/lab/` robots exclusion. The production homepage does not link to it and was not changed for this experiment.
+Machine Lab is an isolated technical and experience-direction experiment, continued in PR #29 after the model work in PR #28. It is available only by direct navigation to `/lab/machine`, is marked `noindex, nofollow`, remains excluded from the sitemap, and sits beneath the existing `/lab/` robots exclusion. The production homepage does not link to it and was not changed for this experiment.
 
-The lab answers one narrow question: can a supplied GLB support Helix's closed-machine, opening, screen-activation, semantic-identity, and camera-approach sequence without compromising the production journey?
+The lab now answers a second narrow question: can those proven mechanics form a calm Arrival sequence in which the visitor understands one dominant event before the next begins?
 
 ## Model inspection
 
@@ -36,34 +36,74 @@ Scene
 
 The model is therefore usable without editing the GLB. Machine Lab inserts one runtime `RuntimeHingePivot`, offset by the measured `0.195` units, reparents `Screen` beneath it, and preserves the original transform. The reported structural runtime count is nine objects: the eight imported objects plus this wrapper. Lighting, the screen activation plane, and the studio shadow are lab presentation objects and are not counted as model structure.
 
-## Mechanical sequence
+## Arrival direction
 
-The range input is the source of truth for a normalized `0–1` sequence. Playback is a convenience layer over the same progress value and does not depend on scroll.
+The range input remains the source of truth for normalized `0–1` progress. Both candidates use the same stage names and mechanical implementation; only their stage ranges and playback duration differ. Stage interpolation uses controlled smoothstep easing. There is no bounce, spring, scroll interception, continuous render loop, or second motion owner. The R3F canvas keeps `frameloop="demand"`, and reverse playback traverses the same states in the opposite order.
 
-| Progress | Stage | Purpose |
-| --- | --- | --- |
-| `0.00–0.20` | Closed | Establish one quiet, grounded machine silhouette. |
-| `0.20–0.50` | Opening | Rotate the lid around the measured rear hinge while the base remains fixed. |
-| `0.45–0.65` | Screen activation | Bring a restrained cyan-black screen surface online after the display faces the viewer. |
-| `0.58–0.76` | Identity | Reveal Jonathan's semantic identity over the display without placing text in WebGL. |
-| `0.70–0.84` | Camera reframe | Remove the initial lateral offset first, align with the display, and retain the readable machine silhouette. |
-| `0.84–1.00` | Camera dolly | Travel primarily toward the display along its forward view direction while holding a stable screen center. |
-| `0.90–0.97` | Identity departure | Remove the semantic identity before the closest camera state, while keeping reverse playback deterministic. |
+### Candidate A — Quiet cinematic
 
-Stage interpolation uses controlled smoothstep easing. There is no bounce, spring, scroll interception, continuous render loop, or second motion owner. The R3F canvas uses `frameloop="demand"`; a frame is invalidated only when progress changes. Forward and reverse playback use the same sequence and duration, so reversing restores the closed state coherently.
+Candidate A is the chosen direction. Its 7.2-second lab playback gives the machine, powered display, and identity distinct reading intervals before the camera begins.
 
-## Human review and revision scope
+| Progress | Dominant event |
+| --- | --- |
+| `0.00–0.12` | Machine emerges through light. |
+| `0.12–0.20` | Established-machine hold. |
+| `0.20–0.46` | Lid opens around the existing hinge. |
+| `0.46–0.54` | Open-lid hold. |
+| `0.54–0.66` | Screen luminance rises. |
+| `0.66–0.72` | Screen interface resolves. |
+| `0.72–0.80` | Semantic identity appears. |
+| `0.80–0.87` | Identity holds without camera motion. |
+| `0.87–0.94` | Camera reframes toward the display centre. |
+| `0.94–0.96` | Identity departs. |
+| `0.96–1.00` | Camera dollies to the threshold boundary. |
+
+### Candidate B — Compact editorial
+
+Candidate B preserves the same ownership order in a 5-second playback, but compresses the holds. It is retained as a developer review comparison through the visible lab selector and `?sequence=editorial` query.
+
+| Progress | Dominant event |
+| --- | --- |
+| `0.00–0.09` | Machine reveal. |
+| `0.09–0.13` | Established-machine hold. |
+| `0.13–0.40` | Lid opening. |
+| `0.40–0.45` | Open-lid hold. |
+| `0.45–0.57` | Screen activation. |
+| `0.57–0.61` | Screen settled. |
+| `0.61–0.69` | Identity reveal. |
+| `0.69–0.76` | Identity hold. |
+| `0.76–0.86` | Camera reframe. |
+| `0.86–0.89` | Identity departure. |
+| `0.89–1.00` | Camera dolly. |
+
+Candidate B is rejected as the recommended production direction because the screen and identity are understood, but their shorter holds make the reframe feel like the next task rather than the consequence of a completed identity moment. It remains useful when judging future production scroll distance.
+
+## PR #28 human review and revision scope
 
 Human review found the first prototype technically successful and visually promising, but not ready for production integration. The single camera interpolation read as a diagonal coordinate change rather than a deliberate approach. Its fixed CSS identity only approximated the display perspective, and the fitted screen surface had not been documented tightly enough to review its relationship to the bezel. The machine also needed modest material separation without becoming glossy or effect-heavy.
 
 This revision retains the isolated route, deterministic controls, supplied model, measured hinge, production loading boundary, and reversible sequence. It changes only the camera approach, identity anchoring, runtime screen fit, and restrained studio treatment.
 
+## PR #29 human review findings and decisions
+
+Human review accepted the model, hinge, lighting foundation, and staged camera principle, but found that the machine entered awkwardly, screen activation and identity competed, and camera travel began before the display composition had resolved. The root cause was timing ownership: overlapping progress ranges made several mechanically correct changes read as one busy event.
+
+PR #29 keeps the mechanics and changes the direction:
+
+- **Machine entrance:** the object is already grounded in the scene. Warm key, ambient fill, cyan rim, and contact treatment rise from near-darkness over the first stage; the machine does not translate or rotate into view.
+- **Lid timing:** the existing hinge and angle are unchanged. Opening begins only after the reveal hold and finishes before screen power begins.
+- **Screen activation:** near-black glass gains dark-cyan luminance and then holds as a stable powered surface. An optional DOM grid was tested and rejected because its transformed projection did not remain registered with the bezel at every canvas width. There is no flash, glitch, scanline treatment, or boot copy.
+- **Identity composition:** semantic HTML remains outside WebGL. The HTML plane uses the measured display proportions, a bounded screen-space X correction derived from canvas width, centred copy, reduced measure, screen-relative contrast, and bezel clipping. It does not appear until the screen-settled interval is complete.
+- **Camera timing:** the accepted reframe and normal-facing dolly positions are preserved. Reframe waits for a complete identity hold; identity then leaves in its own short interval before the dolly begins.
+
+This makes the event order legible in forward and reverse travel without adding effects or changing the production journey.
+
 ## Camera strategy
 
-The perspective camera still begins at `[4.6, 2.8, 6.4]`, looking across the full machine from a restrained three-quarter angle. The former `0.70–1.00` single interpolation has been split into two stages:
+The perspective camera still begins at `[4.6, 2.8, 6.4]`, looking across the full machine from a restrained three-quarter angle. Both candidates reuse the accepted two-part move after their identity hold:
 
-- **Reframe (`0.70–0.84`)** moves to `[0.75, 1.2, 6]`, reducing lateral displacement before closing distance. Its look target settles on the screen center at `[0, 0.6, -0.64]`, so the machine remains legible while the view becomes frontal.
-- **Dolly (`0.84–1.00`)** moves to `[0.04, 0.67, 4.15]` while keeping that screen-center target stable. The final camera position preserves the complete bezel and a small part of the base instead of clipping into the display.
+- **Reframe** moves to `[0.75, 1.2, 6]`, reducing lateral displacement before closing distance. Its look target settles on the screen center at `[0, 0.6, -0.64]`, so the machine remains legible while the view becomes frontal.
+- **Dolly** moves to `[0.04, 0.67, 4.15]` while keeping that screen-center target stable. The final camera position preserves the complete bezel and a small part of the base instead of clipping into the display.
 
 Compact layouts use farther endpoints (`[0.8, 1.3, 6.1]` for reframe and `[0.18, 0.82, 4.6]` for dolly). This keeps the same narrative order without forcing the desktop camera distance into smaller stages. The field of view remains constant; the approach comes from camera travel rather than a simulated zoom.
 
@@ -94,37 +134,34 @@ Runtime-created graphite materials are explicitly disposed on unmount. The impor
 
 Human review found that the first anchored version still read as a layer floating in front of the display. Its 22rem content box had no display-ratio clipping boundary, its anchor sat independently of the exact screen center, and a `scale(0.5)` scene transform combined with a CSS `scale(2)` counter-scale. That full-strength compensation preserved size but weakened the perceived relationship between text, glass, and bezel. Warm-white contrast also remained closer to page typography than powered-screen typography.
 
-### Candidate 1: screen-near semantic HTML (preferred)
+### Screen-near semantic HTML
 
-The default candidate keeps the name, location, and professional direction as normal HTML, never a WebGL texture, SVG, canvas, or 3D text. A Drei `Html` transform is centered at `[0, 0.098, -0.0067]`, only `0.0005` local units in front of the runtime display plane. Its `0.282` distance factor maps a `400 × 250` CSS clipping frame to the display's measured `0.282 × 0.176` opening. The nearly identical `1.60:1` aspect ratios let the identity inherit the screen perspective while the clipping frame prevents any content from crossing the bezel.
+The name, location, and professional direction remain normal HTML, never a WebGL texture, SVG, canvas, or 3D text. A Drei `Html` transform remains at local Y `0.098` and Z `-0.0067`, only `0.0005` local units in front of the runtime display plane. Its X value is a bounded linear correction from `-0.024` to `0.019` local units based on canvas width; this compensates for transformed-HTML projection across the lab's responsive stage widths without changing the screen plane or camera. Its `0.282` distance factor maps a `400 × 250` CSS clipping frame to the display's measured `0.282 × 0.176` opening. The nearly identical `1.60:1` aspect ratios let the identity inherit screen perspective while clipping prevents content from crossing the bezel.
 
-The earlier counter-scale pair has been removed. Typography now uses restrained screen-relative sizes, reduced warm-white opacity, quieter metadata, no background panel, no border, and no glow. The screen itself remains the brightest field. The external HTML portal remains outside the canvas's `aria-hidden` subtree, while the scene anchor inherits lid opening, camera reframe, and dolly. Identity still appears after screen activation, exits over progress `0.90–0.97`, and restores cleanly in reverse.
+The earlier counter-scale pair remains removed. Typography uses centred composition, reduced warm-white contrast, quieter metadata, no background panel, no border, and no glow. The screen itself remains the brightest field. The external HTML portal remains outside the canvas's `aria-hidden` subtree, while the scene anchor inherits lid opening, camera reframe, and dolly. Identity appears only after screen activation has settled, holds before camera movement, exits before the dolly, and restores cleanly in reverse.
 
-### Candidate 2: visual texture fallback (internal)
-
-`/lab/machine?identity=texture` selects an internal comparison candidate. It draws equivalent identity lettering into a high-resolution canvas texture fitted exactly to a front-facing overlay on the runtime screen plane. The visual texture is decorative: the same heading and supporting copy remain once in semantic DOM outside WebGL using a standard visually-hidden treatment. This candidate is useful if transformed HTML proves inconsistent in a production browser target, but it is not preferred because visual and semantic representations can drift and the texture cannot match native text rendering at every distance.
-
-The query is not linked from production or the lab interface. It is a deterministic review hook, not a visitor-facing mode.
+The previous internal canvas-texture comparison was removed for this direction. PR #29 has one visual and semantic source for identity content.
 
 ## Controls and states
 
 Machine Lab provides native controls:
 
 - a keyboard-operable range input for exact progress;
+- keyboard-operable Candidate A and Candidate B radio controls;
 - forward, reverse, and reset buttons;
 - a reduced-motion preview checkbox;
 - a visible stage and progress readout.
 
-System `prefers-reduced-motion: reduce` and the preview control both resolve immediately to an open, powered machine with visible semantic identity at progress `0.68`. Lid and camera playback are disabled in that state.
+System `prefers-reduced-motion: reduce` and the preview control both resolve immediately to an open, powered machine with visible semantic identity at the selected candidate's identity-hold state (`0.84` for Candidate A and `0.73` for Candidate B). Entrance, lid, and camera playback are disabled in that state.
 
 The route exposes a visible loading message while the GLB is pending. If WebGL is unavailable, the GLB fails, or the route is opened with the deterministic review query `?webgl=off`, the canvas is replaced by a semantic fallback containing Jonathan's identity, an explanation, and a production-portfolio link. The fallback does not depend on JavaScript interaction to reveal its essential content.
 
 ## Responsive behavior
 
-- Desktop receives the full studio composition and sequence.
+- Desktop receives the full studio composition and the selected candidate duration.
 - Laptop and square viewports retain the full sequence with a narrower control column.
 - Tablet moves controls below the stage and keeps the model in a contained landscape composition.
-- Mobile uses the same direct control model in normal document flow, with a shorter stage, stacked controls, a farther camera endpoint, and no pinning.
+- Mobile uses the same deterministic stage order in a compact 4.2-second playback, with a shorter stage, stacked controls, a farther camera endpoint, and no pinning.
 - Reduced motion is a stable open state at every viewport, not a slowed version of the animation.
 
 All required viewport checks preserve native scrolling and show no horizontal overflow.
@@ -138,9 +175,9 @@ Measurements are stored in [`docs/media/machine-lab/metrics.json`](media/machine
 - Structural runtime: nine objects including the hinge wrapper.
 - DPR: capped at `1.5`; a device-scale-factor `2` review measured approximately `1.5` in both axes.
 - Production `/` emitted JavaScript: 652,875 bytes.
-- Machine Lab emitted JavaScript: 1,496,359 bytes.
-- Lab-only emitted JavaScript: 981,686 bytes.
-- Lab-only chunks containing the Three.js renderer: 970,349 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F and Drei support; it is not a symbol-level Three.js measurement.
+- Machine Lab emitted JavaScript: 1,496,996 bytes.
+- Lab-only emitted JavaScript: 982,323 bytes.
+- Lab-only chunks containing the Three.js renderer: 969,330 bytes. This is a conservative chunk-level contribution and includes co-bundled R3F and Drei support; it is not a symbol-level Three.js measurement.
 - Production `/` requested no GLB, no canvas, and none of the renderer-containing lab chunks.
 - Both measured routes produced zero browser console warnings and zero browser console errors.
 
@@ -203,17 +240,46 @@ The revised [forward-and-reverse recording](media/machine-lab/revision-after/11-
 7. [Reduced motion](media/machine-lab/identity-revision/07-reduced-motion.png)
 8. [Internal texture fallback](media/machine-lab/identity-revision/08-texture-fallback.png)
 
+The texture frame above is retained as historical PR #28 evidence; the runtime texture candidate itself is no longer part of Machine Lab.
+
+### Arrival-direction comparison
+
+The candidate captures use matching semantic states rather than matching progress values because their timing ranges differ.
+
+| State | Candidate A — Quiet cinematic | Candidate B — Compact editorial |
+| --- | --- | --- |
+| Darkness / initial reveal | [A01](media/machine-lab/arrival-direction/candidate-a/01-darkness-initial-reveal.png) | [B01](media/machine-lab/arrival-direction/candidate-b/01-darkness-initial-reveal.png) |
+| Machine established | [A02](media/machine-lab/arrival-direction/candidate-a/02-machine-established.png) | [B02](media/machine-lab/arrival-direction/candidate-b/02-machine-established.png) |
+| Lid opening | [A03](media/machine-lab/arrival-direction/candidate-a/03-lid-opening.png) | [B03](media/machine-lab/arrival-direction/candidate-b/03-lid-opening.png) |
+| Fully open | [A04](media/machine-lab/arrival-direction/candidate-a/04-fully-open.png) | [B04](media/machine-lab/arrival-direction/candidate-b/04-fully-open.png) |
+| Screen activation | [A05](media/machine-lab/arrival-direction/candidate-a/05-screen-activation.png) | [B05](media/machine-lab/arrival-direction/candidate-b/05-screen-activation.png) |
+| Screen settled | [A06](media/machine-lab/arrival-direction/candidate-a/06-screen-settled.png) | [B06](media/machine-lab/arrival-direction/candidate-b/06-screen-settled.png) |
+| Identity visible | [A07](media/machine-lab/arrival-direction/candidate-a/07-identity-visible.png) | [B07](media/machine-lab/arrival-direction/candidate-b/07-identity-visible.png) |
+| Identity hold | [A08](media/machine-lab/arrival-direction/candidate-a/08-identity-hold.png) | [B08](media/machine-lab/arrival-direction/candidate-b/08-identity-hold.png) |
+| Camera reframe | [A09](media/machine-lab/arrival-direction/candidate-a/09-camera-reframe.png) | [B09](media/machine-lab/arrival-direction/candidate-b/09-camera-reframe.png) |
+| Camera dolly | [A10](media/machine-lab/arrival-direction/candidate-a/10-camera-dolly.png) | [B10](media/machine-lab/arrival-direction/candidate-b/10-camera-dolly.png) |
+| Reverse midpoint | [A11](media/machine-lab/arrival-direction/candidate-a/11-reverse-midpoint.png) | [B11](media/machine-lab/arrival-direction/candidate-b/11-reverse-midpoint.png) |
+| Reset | [A12](media/machine-lab/arrival-direction/candidate-a/12-reset.png) | [B12](media/machine-lab/arrival-direction/candidate-b/12-reset.png) |
+| Mobile | [A13](media/machine-lab/arrival-direction/candidate-a/13-mobile.png) | [B13](media/machine-lab/arrival-direction/candidate-b/13-mobile.png) |
+| Reduced motion | [A14](media/machine-lab/arrival-direction/candidate-a/14-reduced-motion.png) | [B14](media/machine-lab/arrival-direction/candidate-b/14-reduced-motion.png) |
+| Forward and reverse | [A15 recording](media/machine-lab/arrival-direction/candidate-a/15-forward-reverse.webm) | [B15 recording](media/machine-lab/arrival-direction/candidate-b/15-forward-reverse.webm) |
+| Compact desktop, 1280 × 800 | [A16](media/machine-lab/arrival-direction/candidate-a/16-compact-desktop.png) | [B16](media/machine-lab/arrival-direction/candidate-b/16-compact-desktop.png) |
+| Laptop, 1024 × 768 | [A17](media/machine-lab/arrival-direction/candidate-a/17-laptop.png) | [B17](media/machine-lab/arrival-direction/candidate-b/17-laptop.png) |
+| Tablet, 768 × 1024 | [A18](media/machine-lab/arrival-direction/candidate-a/18-tablet.png) | [B18](media/machine-lab/arrival-direction/candidate-b/18-tablet.png) |
+| Narrow mobile, 360 × 800 | [A19](media/machine-lab/arrival-direction/candidate-a/19-narrow-mobile.png) | [B19](media/machine-lab/arrival-direction/candidate-b/19-narrow-mobile.png) |
+
 ## Known limitations
 
 - The default semantic candidate remains a CSS 3D composition and needs final acceptance in the real Arrival layout and all production browser targets.
-- The texture fallback deliberately duplicates only the visual lettering, so copy changes would need an explicit synchronization check if that candidate were ever selected.
 - The lab does not test production scroll pacing, Threshold crossing, or handoff into the workspace.
+- Candidate durations describe button playback in the lab, not a committed production scroll distance.
+- Mobile retains the same stage order at a shorter duration; physical-device review may still justify a static open state during production integration.
 - Materials and the layered contact footprint are intentionally restrained lab treatments rather than a physically calibrated product-rendering study.
 - The approximately 982 KB emitted Three/R3F lab-only cost needs a stricter production loading plan before integration.
 - No Firefox run is claimed by this Chromium-only Playwright configuration.
 
 ## Recommendation
 
-**Proceed with the screen-near semantic candidate inside Machine Lab; do not integrate it into production yet.**
+**Proceed to a separate production-integration proposal using Candidate A as the direction.**
 
-The screen-near candidate corrects the lab's remaining compositional blocker without abandoning semantic HTML: the identity now shares the display bounds, perspective, opening, and camera motion rather than reading as a separate card. The documented texture candidate remains a fallback, not the chosen direction. Model attribution and modification notice are now complete. Production integration, production scroll pacing, transformed-HTML browser acceptance, and the lab-only bundle budget remain separate future decisions; keep Machine Lab isolated and keep the production route unchanged for this PR.
+Candidate A makes the machine, lid, screen, identity, reframe, and dolly readable as consecutive events while retaining the accepted model and mechanics. Candidate B proves the sequence can be compressed coherently, but it gives the powered display and identity less breathing room and is therefore rejected as the primary direction. Model attribution and modification notice remain unchanged. Production integration, scroll mapping, final browser acceptance in the real Arrival composition, and the lab-only bundle budget remain separate future decisions; Machine Lab stays isolated and the production route stays unchanged in PR #29.
