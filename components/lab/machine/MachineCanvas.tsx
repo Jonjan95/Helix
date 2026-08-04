@@ -6,11 +6,8 @@ import { useEffect, useMemo, useRef, type RefObject } from "react";
 import {
   ACESFilmicToneMapping,
   BackSide,
-  CanvasTexture,
   Color,
-  FrontSide,
   Group,
-  LinearFilter,
   Mesh,
   MeshStandardMaterial,
   Object3D,
@@ -19,9 +16,8 @@ import {
 } from "three";
 import {
   machineModelPath,
-  machineSequence,
   stageProgress,
-  type MachineIdentityCandidate,
+  type MachineSequenceDefinition,
 } from "@/lib/machine-lab/sequence";
 import styles from "@/styles/lab/MachineLab.module.css";
 
@@ -31,9 +27,9 @@ export type MachineModelMetrics = {
 };
 
 type MachineCanvasProps = {
-  identityCandidate: MachineIdentityCandidate;
   onReady: (metrics: MachineModelMetrics) => void;
   progress: number;
+  sequence: MachineSequenceDefinition;
 };
 
 type MachineSceneProps = MachineCanvasProps;
@@ -73,37 +69,11 @@ const screenPlane = {
   rotation: [0, 0, 0] as const,
   width: 0.282,
 };
-const screenAnchorPosition = [0, 0.098, -0.0067] as const;
+const screenAnchorY = 0.098;
+const screenAnchorZ = -0.0067;
 
-function createIdentityTexture() {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1024;
-  canvas.height = 640;
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    throw new Error("The identity fallback texture could not be created.");
-  }
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  context.textAlign = "left";
-  context.fillStyle = "rgba(244, 240, 232, 0.62)";
-  context.font = "500 24px monospace";
-  context.fillText("MALMÖ, SWEDEN / PORTFOLIO", 156, 192);
-  context.fillStyle = "rgba(244, 240, 232, 0.86)";
-  context.font = "500 82px sans-serif";
-  context.fillText("Jonathan", 150, 312);
-  context.fillText("Jansson", 150, 390);
-  context.fillStyle = "rgba(244, 240, 232, 0.58)";
-  context.font = "500 22px monospace";
-  context.fillText("SOFTWARE DEVELOPMENT / TESTING / QUALITY", 154, 472);
-
-  const texture = new CanvasTexture(canvas);
-  texture.colorSpace = SRGBColorSpace;
-  texture.magFilter = LinearFilter;
-  texture.minFilter = LinearFilter;
-  texture.needsUpdate = true;
-  return texture;
+function getScreenAnchorX(canvasWidth: number) {
+  return Math.min(0.019, Math.max(-0.024, (canvasWidth - 961) * 0.000297));
 }
 
 function createModelRuntime(source: Group): ModelRuntime {
@@ -201,9 +171,9 @@ function disposeImportedScene(scene: Object3D) {
 
 function MachineScene({
   htmlPortal,
-  identityCandidate,
   onReady,
   progress,
+  sequence,
 }: MachineSceneWithPortalProps) {
   const gltf = useGLTF(machineModelPath);
   const runtime = useMemo(
@@ -213,14 +183,13 @@ function MachineScene({
   const hingeRef = useRef(runtime.hinge);
   const screenMaterialRef = useRef<MeshStandardMaterial>(null);
   const { camera, invalidate, size } = useThree();
-  const identityIn = stageProgress(progress, machineSequence.identity);
-  const identityOut = stageProgress(progress, machineSequence.identityExit);
+  const reveal = stageProgress(progress, sequence.machineReveal);
+  const screenPower = stageProgress(progress, sequence.screen);
+  const screenDetails = stageProgress(progress, sequence.screenSettled);
+  const identityIn = stageProgress(progress, sequence.identity);
+  const identityOut = stageProgress(progress, sequence.identityExit);
   const identityVisibility = identityIn * (1 - identityOut);
-  const identityTexture = useMemo(
-    () =>
-      identityCandidate === "texture" ? createIdentityTexture() : null,
-    [identityCandidate],
-  );
+  const screenAnchorX = getScreenAnchorX(size.width);
 
   useEffect(() => {
     onReady({
@@ -230,10 +199,10 @@ function MachineScene({
   }, [onReady, runtime.objectCount, runtime.triangleCount]);
 
   useEffect(() => {
-    const opening = stageProgress(progress, machineSequence.opening);
-    const screenPower = stageProgress(progress, machineSequence.screen);
-    const reframe = stageProgress(progress, machineSequence.cameraReframe);
-    const dolly = stageProgress(progress, machineSequence.cameraDolly);
+    const opening = stageProgress(progress, sequence.opening);
+    const currentScreenPower = stageProgress(progress, sequence.screen);
+    const reframe = stageProgress(progress, sequence.cameraReframe);
+    const dolly = stageProgress(progress, sequence.cameraDolly);
     const screenMaterial = screenMaterialRef.current;
     const compact = size.width < 768;
     const reframeTarget = compact ? cameraMobileReframe : cameraReframe;
@@ -243,9 +212,9 @@ function MachineScene({
     hingeRef.current.updateMatrixWorld(true);
 
     if (screenMaterial) {
-      screenMaterial.color.copy(screenOff).lerp(screenOn, screenPower);
+      screenMaterial.color.copy(screenOff).lerp(screenOn, currentScreenPower);
       screenMaterial.emissive.copy(accent);
-      screenMaterial.emissiveIntensity = screenPower * 0.11;
+      screenMaterial.emissiveIntensity = currentScreenPower * 0.11;
     }
 
     camera.position.copy(cameraStart).lerp(reframeTarget, reframe);
@@ -255,23 +224,30 @@ function MachineScene({
     camera.lookAt(lookStart.clone().lerp(screenCenter, reframe));
     camera.updateProjectionMatrix();
     invalidate();
-  }, [camera, invalidate, progress, size.width]);
+  }, [camera, invalidate, progress, sequence, size.width]);
 
   useEffect(
     () => () => {
-      identityTexture?.dispose();
       runtime.graphiteMaterials.forEach((material) => material.dispose());
       disposeImportedScene(gltf.scene);
       useGLTF.clear(machineModelPath);
     },
-    [gltf.scene, identityTexture, runtime],
+    [gltf.scene, runtime],
   );
 
   return (
     <>
-      <ambientLight intensity={0.36} />
-      <directionalLight color="#f4f0e8" intensity={1.65} position={[4.5, 7, 5.5]} />
-      <directionalLight color="#69d3e7" intensity={0.38} position={[-4, 2.5, -3]} />
+      <ambientLight intensity={0.04 + reveal * 0.32} />
+      <directionalLight
+        color="#f4f0e8"
+        intensity={0.08 + reveal * 1.57}
+        position={[4.5, 7, 5.5]}
+      />
+      <directionalLight
+        color="#69d3e7"
+        intensity={reveal * 0.38}
+        position={[-4, 2.5, -3]}
+      />
 
       <group position={[0, -0.58, 0.62]} scale={machineScale}>
         <primitive object={runtime.root} dispose={null} />
@@ -291,21 +267,10 @@ function MachineScene({
                 side={BackSide}
               />
             </mesh>
-            <group position={screenAnchorPosition} rotation={screenPlane.rotation}>
-              {identityTexture ? (
-                <mesh position={[0, 0, -0.0002]} rotation={[0, Math.PI, 0]}>
-                  <planeGeometry args={[screenPlane.width, screenPlane.height]} />
-                  <meshBasicMaterial
-                    alphaMap={identityTexture}
-                    color="#f4f0e8"
-                    map={identityTexture}
-                    opacity={identityVisibility * 0.72}
-                    side={FrontSide}
-                    toneMapped={false}
-                    transparent
-                  />
-                </mesh>
-              ) : null}
+            <group
+              position={[screenAnchorX, screenAnchorY, screenAnchorZ]}
+              rotation={screenPlane.rotation}
+            >
               <Html
                 center
                 distanceFactor={0.282}
@@ -315,17 +280,16 @@ function MachineScene({
                 zIndexRange={[3, 3]}
               >
                 <div
-                  className={`${styles.screenIdentityFrame} ${
-                    identityCandidate === "texture"
-                      ? styles.semanticOnly
-                      : ""
-                  }`}
+                  className={styles.screenIdentityFrame}
+                  data-screen-active={screenPower > 0.05}
+                  data-screen-settled={screenDetails > 0.95}
                   data-identity-visible={identityVisibility > 0.05}
-                  data-identity-candidate={identityCandidate}
                   data-machine-identity=""
-                  style={{ opacity: identityVisibility }}
                 >
-                  <div className={styles.screenIdentity}>
+                  <div
+                    className={styles.screenIdentity}
+                    style={{ opacity: identityVisibility }}
+                  >
                     <span>MALMÖ, SWEDEN / PORTFOLIO</span>
                     <h2>Jonathan Jansson</h2>
                     <p>Software development / testing / quality</p>
@@ -341,15 +305,15 @@ function MachineScene({
       <group position={[0, -0.595, 0.28]} rotation={[-Math.PI / 2, 0, 0]}>
         <mesh scale={[1.78, 0.84, 1]}>
           <circleGeometry args={[1, 64]} />
-          <meshBasicMaterial color="#000000" depthWrite={false} opacity={0.08} transparent />
+          <meshBasicMaterial color="#000000" depthWrite={false} opacity={reveal * 0.08} transparent />
         </mesh>
         <mesh position={[0, 0, -0.002]} scale={[2.02, 1.02, 1]}>
           <circleGeometry args={[1, 64]} />
-          <meshBasicMaterial color="#000000" depthWrite={false} opacity={0.045} transparent />
+          <meshBasicMaterial color="#000000" depthWrite={false} opacity={reveal * 0.045} transparent />
         </mesh>
         <mesh position={[0, 0, -0.004]} scale={[2.28, 1.2, 1]}>
           <circleGeometry args={[1, 64]} />
-          <meshBasicMaterial color="#000000" depthWrite={false} opacity={0.025} transparent />
+          <meshBasicMaterial color="#000000" depthWrite={false} opacity={reveal * 0.025} transparent />
         </mesh>
       </group>
     </>
@@ -357,9 +321,9 @@ function MachineScene({
 }
 
 export function MachineCanvas({
-  identityCandidate,
   onReady,
   progress,
+  sequence,
 }: MachineCanvasProps) {
   const htmlPortal = useRef<HTMLDivElement>(null!);
 
@@ -387,9 +351,9 @@ export function MachineCanvas({
       >
         <MachineScene
           htmlPortal={htmlPortal}
-          identityCandidate={identityCandidate}
           onReady={onReady}
           progress={progress}
+          sequence={sequence}
         />
       </Canvas>
       <div

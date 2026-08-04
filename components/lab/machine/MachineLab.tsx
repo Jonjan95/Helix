@@ -12,9 +12,10 @@ import { MachineFallback } from "@/components/lab/machine/MachineFallback";
 import type { MachineModelMetrics } from "@/components/lab/machine/MachineCanvas";
 import {
   getMachineStage,
+  machineSequences,
   reducedMachineProgress,
-  type MachineIdentityCandidate,
   type MachinePlaybackDirection,
+  type MachineSequenceCandidate,
 } from "@/lib/machine-lab/sequence";
 import styles from "@/styles/lab/MachineLab.module.css";
 
@@ -45,13 +46,18 @@ export function MachineLab() {
   const [metrics, setMetrics] = useState<MachineModelMetrics | null>(null);
   const [simulateReduced, setSimulateReduced] = useState(false);
   const [systemReduced, setSystemReduced] = useState(false);
-  const [identityCandidate, setIdentityCandidate] =
-    useState<MachineIdentityCandidate>("semantic");
+  const [compactViewport, setCompactViewport] = useState(false);
+  const [sequenceCandidate, setSequenceCandidate] =
+    useState<MachineSequenceCandidate>("cinematic");
   const animationRef = useRef<number | null>(null);
   const reduced = systemReduced || simulateReduced;
   const fallback = runtimeState === "fallback";
-  const effectiveProgress = reduced ? reducedMachineProgress : progress;
-  const stage = reduced ? "Reduced-motion preview" : getMachineStage(progress);
+  const effectiveProgress = reduced
+    ? reducedMachineProgress[sequenceCandidate]
+    : progress;
+  const stage = reduced
+    ? "Reduced-motion preview"
+    : getMachineStage(progress, sequenceCandidate);
 
   const stopPlayback = useCallback(() => {
     if (animationRef.current !== null) {
@@ -62,24 +68,29 @@ export function MachineLab() {
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactMedia = window.matchMedia("(max-width: 47.999rem)");
     const updateReduced = () => setSystemReduced(media.matches);
+    const updateCompact = () => setCompactViewport(compactMedia.matches);
 
     updateReduced();
+    updateCompact();
     const forceFallback =
       new URLSearchParams(window.location.search).get("webgl") === "off";
-    const requestedIdentity = new URLSearchParams(window.location.search).get(
-      "identity",
+    const requestedSequence = new URLSearchParams(window.location.search).get(
+      "sequence",
     );
-    if (requestedIdentity === "texture") {
-      window.requestAnimationFrame(() => setIdentityCandidate("texture"));
+    if (requestedSequence === "editorial") {
+      window.requestAnimationFrame(() => setSequenceCandidate("editorial"));
     }
     if (forceFallback || !supportsWebgl()) {
       window.requestAnimationFrame(() => setRuntimeState("fallback"));
     }
     media.addEventListener("change", updateReduced);
+    compactMedia.addEventListener("change", updateCompact);
 
     return () => {
       media.removeEventListener("change", updateReduced);
+      compactMedia.removeEventListener("change", updateCompact);
       stopPlayback();
     };
   }, [stopPlayback]);
@@ -109,7 +120,12 @@ export function MachineLab() {
       return;
     }
 
-    const duration = 4200 * distance;
+    const fullDuration = compactViewport
+      ? 4200
+      : sequenceCandidate === "cinematic"
+        ? 7200
+        : 5000;
+    const duration = fullDuration * distance;
     const startedAt = performance.now();
 
     const tick = (now: number) => {
@@ -138,18 +154,19 @@ export function MachineLab() {
       data-machine-lab=""
       data-machine-progress={effectiveProgress.toFixed(3)}
       data-machine-reduced={reduced}
-      data-machine-identity-candidate={identityCandidate}
+      data-machine-sequence-candidate={sequenceCandidate}
+      data-machine-stage-state={stage}
       data-model-objects={metrics?.objectCount ?? ""}
       data-model-state={runtimeState}
       data-model-triangles={metrics?.triangleCount ?? ""}
     >
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>EXPERIMENT / PR 28</p>
+          <p className={styles.eyebrow}>EXPERIMENT / PR 29</p>
           <h1>The Helix Machine</h1>
           <p className={styles.introduction}>
-            A contained 3D study of one physical transition: closed machine,
-            powered identity, then a controlled approach toward the display.
+            Two restrained timing studies for one physical arrival: machine,
+            display, identity, then a controlled approach to the threshold.
           </p>
         </div>
         {/* The lab intentionally avoids production-route prefetching. */}
@@ -186,9 +203,9 @@ export function MachineLab() {
               onError={() => setRuntimeState("fallback")}
             >
               <MachineCanvas
-                identityCandidate={identityCandidate}
                 onReady={handleReady}
                 progress={effectiveProgress}
+                sequence={machineSequences[sequenceCandidate]}
               />
             </MachineErrorBoundary>
           )}
@@ -202,6 +219,38 @@ export function MachineLab() {
         </section>
 
         <form className={styles.controls} aria-label="Machine sequence controls">
+          <fieldset className={styles.candidateControl}>
+            <legend>Timing direction</legend>
+            <label>
+              <input
+                checked={sequenceCandidate === "cinematic"}
+                name="machine-sequence"
+                onChange={() => {
+                  stopPlayback();
+                  setSequenceCandidate("cinematic");
+                }}
+                type="radio"
+                value="cinematic"
+              />
+              <span>Candidate A</span>
+              <small>Quiet cinematic</small>
+            </label>
+            <label>
+              <input
+                checked={sequenceCandidate === "editorial"}
+                name="machine-sequence"
+                onChange={() => {
+                  stopPlayback();
+                  setSequenceCandidate("editorial");
+                }}
+                type="radio"
+                value="editorial"
+              />
+              <span>Candidate B</span>
+              <small>Compact editorial</small>
+            </label>
+          </fieldset>
+
           <label className={styles.progressControl} htmlFor="machine-progress">
             <span>Sequence progress</span>
             <input
