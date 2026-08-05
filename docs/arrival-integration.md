@@ -85,14 +85,14 @@ Four continuity risks were found:
 1. **Two progress clocks:** production published raw `ScrollTrigger` progress to the WebGL machine while GSAP's scrubbed timeline drove the CSS Threshold. A wheel step could move the machine immediately while the surrounding scene was still settling.
 2. **Late orientation correction:** the previous reframe control points preserved too much lateral and angular correction for the end of the reframe, making a continuous path appear like a switch at normal scroll speed.
 3. **Conditional camera ownership:** reframe and dolly were selected as separate paths at a boundary. Their positions met, but the implementation expressed an immediate controller handoff rather than shared ownership.
-4. **Runtime presentation activation:** the model-ready callback replaced the CSS machine with WebGL in one render, which could expose a load-dependent composition change.
+4. **Runtime presentation activation:** the model-ready callback fired before the first progress-correct WebGL frame was guaranteed to have been painted.
 
 The correction keeps the approved timing, scroll distance, lighting, model, HTML, and downstream journey intact:
 
 - the machine now consumes the scrubbed GSAP timeline progress used by the surrounding Threshold;
 - reframe control points spread alignment across the path, and the look target follows a continuous cubic path;
 - reframe and dolly share ownership through the opening 20% of the dolly range with a quintic blend;
-- the CSS and WebGL presentations overlap through a 260 ms model-readiness blend before the scroll-driven opacity values take sole control;
+- the WebGL scene applies the current normalized progress before its first render, remains visually hidden for two committed frames, and only then takes ownership from the loading fallback;
 - a normalized 4,000-sample audit verifies bounded changes in camera position, target, and view direction, including epsilon checks on every camera and sequence-stage boundary.
 
 Machine and lid rotation, screen power, semantic identity visibility, light intensity, and the screen-plane hierarchy already derive from continuous stage functions. No separate animation owner, local ScrollTrigger, machine rotation switch, or HTML-anchor reparenting was found. The Threshold crossfade remains part of the single `JourneyMotion` timeline and now shares its progress source with the machine.
@@ -106,7 +106,43 @@ Machine and lid rotation, screen power, semantic identity visibility, light inte
 - Concurrent layers must consume the same authoritative progress value.
 - A loading-state handoff must preserve the current composition rather than reveal a new one.
 
-No remaining in-sequence discontinuity was observed in normalized sampling, slow forward travel, reverse travel, or the pin-to-Threshold handoff. Responsive mode selection still occurs when the viewport category changes, and a failed WebGL load still resolves to the complete CSS fallback; neither is an ownership switch during ordinary scroll travel.
+The mathematical audit did not expose a camera-path discontinuity, but later human review still found a visible composition switch. That review was authoritative and led to the renderer-ownership audit below.
+
+## Renderer ownership audit
+
+The remaining side-to-front jump was a perceptual handoff between two different laptop representations, not a discontinuity inside the WebGL camera. During the original Machine-to-Threshold range, the page crossfaded the WebGL machine into the complete CSS laptop. At normalized progress `0.69`, both representations were approximately half visible even though their projected geometry did not match.
+
+At the 1440 × 1000 review viewport, the measured differences were:
+
+- CSS screen width: 1556.08 px; WebGL screen width: 556.17 px; difference: 999.91 px, or 76.2% of the 1312 px scene width;
+- CSS screen height: 938.50 px; WebGL screen height: 347.75 px; difference: 590.75 px, or 108.0% of the 547.19 px scene height;
+- screen center: 8.12 px horizontal and 105.26 px vertical difference;
+- outer machine silhouette: 451.37 px width and 238.84 px height difference;
+- base center: 321.42 px vertical difference;
+- CSS display perspective: flat, while the WebGL display retained the fitted 3D camera projection.
+
+Opacity interpolation could not make those compositions continuous. It only made both mismatched silhouettes visible together.
+
+The successful enhanced path now has one laptop owner:
+
+1. The complete CSS laptop remains available while WebGL loads and for explicit CSS mode, compact layouts, WebGL failure, and model failure.
+2. The WebGL scene initializes at the normalized progress already owned by `JourneyMotion`.
+3. It renders two stable hidden frames with the current lid, screen, identity, camera, and model state before its ready callback transfers ownership.
+4. If the visitor has already moved beyond the initial 4% of Arrival when loading finishes, the page retains CSS ownership for that visit rather than switching renderer mid-sequence.
+5. Once ready near the initial state, WebGL is the only visible laptop representation for the complete Machine range.
+6. During the existing Threshold range, only the neutral CSS workspace layer may appear over WebGL. The CSS shell, camera, base, screen identity, grid, glass, screen background, border, and frame remain visually suppressed.
+
+The semantic CSS identity remains in the document and accessible; only its visual opacity is suppressed after WebGL takes ownership. No production control, additional scroll owner, timing change, camera-path change, or downstream journey change was introduced.
+
+### Diagnostic review mode
+
+The internal query parameter `arrivalDiagnostic` isolates the three reviewed representations:
+
+- `?arrivalDiagnostic=css` shows the complete CSS composition;
+- `?arrivalDiagnostic=webgl` shows the WebGL composition at the same progress;
+- `?arrivalDiagnostic=combined` preserves the rejected legacy crossfade for comparison.
+
+`?arrivalDiagnostics=on` leaves the corrected production composition intact while recording the active owner, CSS and WebGL opacity, normalized and Machine progress, camera position and target, lid angle, and projected screen, machine, and base bounds. Diagnostics are disabled by default and add no production UI.
 
 Machine Lab supports a temporary `?cameraDebug=on` review mode. It uses a fixed observer view to draw the camera path, the current virtual camera position, and the active look target. The mode is disabled by default, has no production control, and does not alter production rendering.
 
@@ -134,6 +170,14 @@ The continuity revision evidence is stored in `docs/media/arrival-integration/ph
 - `04-forward.png` and `05-reverse.png` use the real deterministic controls;
 - `06-debug-ownership.png` shows the shared reframe-to-dolly ownership region;
 - `07-slow-forward-reverse.webm` records small native scroll increments through the production sequence in both directions.
+
+The renderer-ownership evidence is stored in `docs/media/arrival-integration/renderer-handoff/`:
+
+- `01-current-css-only.png`, `02-current-webgl-only.png`, and `03-current-combined.png` show the three representations at the same former-jump progress;
+- `04-revised-before.png`, `05-revised-transfer.png`, and `06-revised-after.png` show the corrected production composition at `p - 0.002`, `p`, and `p + 0.002`;
+- `frame-0.688.png` through `frame-0.692.png` preserve the complete one-frame audit range;
+- `07-slow-forward.webm` and `08-slow-reverse.webm` record the actual production page;
+- `09-frame-audit.json` records active ownership, opacity, progress, camera, target, lid angle, projected bounds, and the measured CSS/WebGL differences.
 
 ## Remaining polish
 
