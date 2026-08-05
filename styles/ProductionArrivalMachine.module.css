@@ -27,23 +27,46 @@
   pointer-events: none;
 }
 
-.root[data-arrival-runtime="loading"] .machine {
-  visibility: hidden;
-}
-
 .root[data-arrival-runtime="css"] .cssFallback,
-.root[data-arrival-runtime="loading"] .cssFallback,
-.root[data-arrival-runtime="activating"] .cssFallback {
+.root[data-arrival-runtime="loading"] .cssFallback {
   opacity: 1;
 }
 
-.root[data-arrival-runtime="activating"] .machine {
+.root[data-arrival-runtime="css"] .machine,
+.root[data-arrival-runtime="loading"] .machine {
   opacity: 0;
 }
 
-.root[data-arrival-runtime="blending"] .cssFallback,
-.root[data-arrival-runtime="blending"] .machine {
-  transition: opacity 260ms cubic-bezier(0.45, 0, 0.55, 1);
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="laptop-shell"]),
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="laptop-camera"]),
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="laptop-base"]),
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="screen-grid"]),
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="screen-glass"]) {
+  visibility: hidden !important;
+}
+
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="screen-identity"]) {
+  opacity: 0 !important;
+}
+
+.root[data-arrival-runtime="ready"][data-arrival-diagnostic="current"]
+  .cssFallback
+  :global([data-motion="laptop-screen"]) {
+  border-color: transparent !important;
+  background: transparent !important;
+  --screen-frame-opacity: 0 !important;
 }
 
 @media (max-width: 64rem) {

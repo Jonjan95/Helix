@@ -1,17 +1,20 @@
 "use client";
 
-import { createPortal, Canvas, useThree } from "@react-three/fiber";
+import { createPortal, Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, useGLTF } from "@react-three/drei";
-import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import {
   ACESFilmicToneMapping,
   BackSide,
+  Box3,
+  type Camera,
   Color,
   Group,
   Mesh,
   MeshStandardMaterial,
   Object3D,
   SRGBColorSpace,
+  Vector3,
 } from "three";
 import {
   cameraDebugPath,
@@ -33,6 +36,7 @@ export type MachineModelMetrics = {
 
 type MachineCanvasProps = {
   cameraDebug?: boolean;
+  diagnostics?: boolean;
   identitySemantic?: boolean;
   onReady: (metrics: MachineModelMetrics) => void;
   progress: number;
@@ -43,6 +47,18 @@ type MachineSceneProps = MachineCanvasProps;
 
 type MachineSceneWithPortalProps = MachineSceneProps & {
   htmlPortal: RefObject<HTMLElement>;
+  onDiagnostics?: (diagnostics: MachineFrameDiagnostics) => void;
+};
+
+type MachineFrameDiagnostics = {
+  baseBounds: string;
+  cameraPosition: string;
+  cameraTarget: string;
+  lidAngle: string;
+  machineBounds: string;
+  progress: string;
+  screenBounds: string;
+  screenCenter: string;
 };
 
 type ModelRuntime = {
@@ -71,6 +87,46 @@ const screenPlane = {
 };
 const screenAnchorY = 0.098;
 const screenAnchorZ = -0.0067;
+
+function formatVector(vector: Vector3) {
+  return [vector.x, vector.y, vector.z]
+    .map((value) => value.toFixed(4))
+    .join(",");
+}
+
+function projectBounds(
+  points: Vector3[],
+  camera: Camera,
+  width: number,
+  height: number,
+) {
+  const projected = points.map((point) => point.clone().project(camera));
+  const xs = projected.map((point) => ((point.x + 1) / 2) * width);
+  const ys = projected.map((point) => ((1 - point.y) / 2) * height);
+  const left = Math.min(...xs);
+  const right = Math.max(...xs);
+  const top = Math.min(...ys);
+  const bottom = Math.max(...ys);
+
+  return [left, top, right - left, bottom - top]
+    .map((value) => value.toFixed(2))
+    .join(",");
+}
+
+function getBoxCorners(box: Box3) {
+  const { max, min } = box;
+
+  return [
+    new Vector3(min.x, min.y, min.z),
+    new Vector3(min.x, min.y, max.z),
+    new Vector3(min.x, max.y, min.z),
+    new Vector3(min.x, max.y, max.z),
+    new Vector3(max.x, min.y, min.z),
+    new Vector3(max.x, min.y, max.z),
+    new Vector3(max.x, max.y, min.z),
+    new Vector3(max.x, max.y, max.z),
+  ];
+}
 
 function getScreenAnchorX(canvasWidth: number) {
   return Math.min(0.019, Math.max(-0.024, (canvasWidth - 961) * 0.000297));
@@ -171,9 +227,11 @@ function disposeImportedScene(scene: Object3D) {
 
 function MachineScene({
   cameraDebug = false,
+  diagnostics = false,
   htmlPortal,
   identitySemantic = true,
   onReady,
+  onDiagnostics,
   progress,
   sequence,
 }: MachineSceneWithPortalProps) {
@@ -186,6 +244,9 @@ function MachineScene({
   const cameraMarkerRef = useRef<Mesh>(null);
   const lookMarkerRef = useRef<Mesh>(null);
   const screenMaterialRef = useRef<MeshStandardMaterial>(null);
+  const readyFrameCountRef = useRef(0);
+  const readyNotificationRef = useRef<number | null>(null);
+  const lastDiagnosticProgressRef = useRef<number | null>(null);
   const { camera, invalidate, size } = useThree();
   const reveal = stageProgress(progress, sequence.machineReveal);
   const screenPower = stageProgress(progress, sequence.screen);
@@ -195,14 +256,7 @@ function MachineScene({
   const identityVisibility = identityIn * (1 - identityOut);
   const screenAnchorX = getScreenAnchorX(size.width);
 
-  useEffect(() => {
-    onReady({
-      objectCount: runtime.objectCount,
-      triangleCount: runtime.triangleCount,
-    });
-  }, [onReady, runtime.objectCount, runtime.triangleCount]);
-
-  useEffect(() => {
+  useFrame(() => {
     const opening = stageProgress(progress, sequence.opening);
     const currentScreenPower = stageProgress(progress, sequence.screen);
     const screenMaterial = screenMaterialRef.current;
@@ -229,11 +283,100 @@ function MachineScene({
       camera.lookAt(pose.target);
     }
     camera.updateProjectionMatrix();
+
+    if (
+      diagnostics &&
+      onDiagnostics &&
+      lastDiagnosticProgressRef.current !== progress
+    ) {
+      const halfWidth = screenPlane.width / 2;
+      const halfHeight = screenPlane.height / 2;
+      const screenPoints = [
+        new Vector3(
+          screenPlane.position[0] - halfWidth,
+          screenPlane.position[1] - halfHeight,
+          screenPlane.position[2],
+        ),
+        new Vector3(
+          screenPlane.position[0] - halfWidth,
+          screenPlane.position[1] + halfHeight,
+          screenPlane.position[2],
+        ),
+        new Vector3(
+          screenPlane.position[0] + halfWidth,
+          screenPlane.position[1] - halfHeight,
+          screenPlane.position[2],
+        ),
+        new Vector3(
+          screenPlane.position[0] + halfWidth,
+          screenPlane.position[1] + halfHeight,
+          screenPlane.position[2],
+        ),
+      ].map((point) => runtime.lid.localToWorld(point));
+      const machineBounds = new Box3().setFromObject(runtime.root);
+      const baseBounds = new Box3().setFromObject(runtime.base);
+      const screenBounds = projectBounds(
+        screenPoints,
+        camera,
+        size.width,
+        size.height,
+      );
+      const [screenLeft, screenTop, screenWidth, screenHeight] = screenBounds
+        .split(",")
+        .map(Number);
+
+      lastDiagnosticProgressRef.current = progress;
+      onDiagnostics({
+        baseBounds: projectBounds(
+          getBoxCorners(baseBounds),
+          camera,
+          size.width,
+          size.height,
+        ),
+        cameraPosition: formatVector(pose.position),
+        cameraTarget: formatVector(pose.target),
+        lidAngle: hingeRef.current.rotation.x.toFixed(4),
+        machineBounds: projectBounds(
+          getBoxCorners(machineBounds),
+          camera,
+          size.width,
+          size.height,
+        ),
+        progress: progress.toFixed(4),
+        screenBounds,
+        screenCenter: [
+          screenLeft + screenWidth / 2,
+          screenTop + screenHeight / 2,
+        ]
+          .map((value) => value.toFixed(2))
+          .join(","),
+      });
+    }
+
+    if (readyFrameCountRef.current < 2) {
+      readyFrameCountRef.current += 1;
+      invalidate();
+
+      if (readyFrameCountRef.current === 2) {
+        readyNotificationRef.current = window.requestAnimationFrame(() => {
+          onReady({
+            objectCount: runtime.objectCount,
+            triangleCount: runtime.triangleCount,
+          });
+        });
+      }
+    }
+  });
+
+  useEffect(() => {
     invalidate();
-  }, [camera, cameraDebug, invalidate, progress, sequence, size.width]);
+  }, [cameraDebug, diagnostics, invalidate, progress, sequence, size.width]);
 
   useEffect(
     () => () => {
+      if (readyNotificationRef.current !== null) {
+        window.cancelAnimationFrame(readyNotificationRef.current);
+      }
       runtime.graphiteMaterials.forEach((material) => material.dispose());
       disposeImportedScene(gltf.scene);
       useGLTF.clear(machineModelPath);
@@ -353,13 +496,16 @@ function MachineScene({
 
 export function MachineCanvas({
   cameraDebug = false,
+  diagnostics: diagnosticReview = false,
   identitySemantic = true,
   onReady,
   progress,
   sequence,
 }: MachineCanvasProps) {
   const htmlPortal = useRef<HTMLDivElement>(null!);
-  const diagnostics = getCameraPose(progress, sequence);
+  const cameraDiagnostics = getCameraPose(progress, sequence);
+  const [frameDiagnostics, setFrameDiagnostics] =
+    useState<MachineFrameDiagnostics | null>(null);
 
   return (
     <>
@@ -385,9 +531,11 @@ export function MachineCanvas({
       >
         <MachineScene
           cameraDebug={cameraDebug}
+          diagnostics={diagnosticReview}
           htmlPortal={htmlPortal}
           identitySemantic={identitySemantic}
           onReady={onReady}
+          onDiagnostics={diagnosticReview ? setFrameDiagnostics : undefined}
           progress={progress}
           sequence={sequence}
         />
@@ -396,10 +544,19 @@ export function MachineCanvas({
         ref={htmlPortal}
         className={styles.htmlPortal}
         data-camera-debug={cameraDebug}
-        data-camera-blend={diagnostics.blend.toFixed(3)}
+        data-camera-diagnostics={diagnosticReview}
+        data-camera-blend={cameraDiagnostics.blend.toFixed(3)}
         data-camera-interpolation="cubic-path / quintic-ease"
         data-camera-language="physical"
-        data-camera-owner={diagnostics.owner}
+        data-camera-owner={cameraDiagnostics.owner}
+        data-camera-position={frameDiagnostics?.cameraPosition}
+        data-camera-target={frameDiagnostics?.cameraTarget}
+        data-lid-angle={frameDiagnostics?.lidAngle}
+        data-machine-projected-bounds={frameDiagnostics?.machineBounds}
+        data-base-projected-bounds={frameDiagnostics?.baseBounds}
+        data-rendered-progress={frameDiagnostics?.progress}
+        data-screen-projected-bounds={frameDiagnostics?.screenBounds}
+        data-screen-projected-center={frameDiagnostics?.screenCenter}
         data-machine-html-layer=""
       />
     </>

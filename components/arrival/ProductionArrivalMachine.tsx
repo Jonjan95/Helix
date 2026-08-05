@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
   type ReactNode,
@@ -36,7 +37,13 @@ type ProductionArrivalMachineProps = {
   children: ReactNode;
 };
 
-type RuntimeState = "activating" | "blending" | "css" | "loading" | "ready";
+type ArrivalDiagnosticMode = "combined" | "css" | "current" | "webgl";
+type ArrivalMachineStyle = CSSProperties & {
+  "--fallback-opacity": number;
+  "--machine-opacity": number;
+};
+type RuntimeState = "css" | "loading" | "ready";
+const machineActivationDeadline = 0.04;
 
 function supportsWebgl() {
   try {
@@ -64,22 +71,19 @@ export function ProductionArrivalMachine({
   const [reduced, setReduced] = useState(false);
   const [runtimeState, setRuntimeState] = useState<RuntimeState>("css");
   const [shouldLoad, setShouldLoad] = useState(false);
+  const [diagnosticMode, setDiagnosticMode] =
+    useState<ArrivalDiagnosticMode>("current");
+  const [diagnosticsEnabled, setDiagnosticsEnabled] = useState(false);
+  const progressRef = useRef(0);
 
-  useEffect(() => subscribeToArrivalProgress(setProgress), []);
-
-  useEffect(() => {
-    if (runtimeState === "activating") {
-      const frame = window.requestAnimationFrame(() => {
-        setRuntimeState("blending");
-      });
-      return () => window.cancelAnimationFrame(frame);
-    }
-
-    if (runtimeState === "blending") {
-      const timer = window.setTimeout(() => setRuntimeState("ready"), 280);
-      return () => window.clearTimeout(timer);
-    }
-  }, [runtimeState]);
+  useEffect(
+    () =>
+      subscribeToArrivalProgress((nextProgress) => {
+        progressRef.current = nextProgress;
+        setProgress(nextProgress);
+      }),
+    [],
+  );
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -87,8 +91,24 @@ export function ProductionArrivalMachine({
     const params = new URLSearchParams(window.location.search);
     const forcedOff = params.get("webgl") === "off";
     const loadFailure = params.get("machine") === "error";
+    const requestedDiagnostic = params.get("arrivalDiagnostic");
+    const requestedDiagnostics = params.get("arrivalDiagnostics") === "on";
     const requestedMode = getRequestedMode();
     const updateReduced = () => setReduced(motion.matches);
+
+    const hasDiagnosticMode =
+      requestedDiagnostic === "combined" ||
+      requestedDiagnostic === "css" ||
+      requestedDiagnostic === "webgl";
+    const diagnosticFrame =
+      hasDiagnosticMode || requestedDiagnostics
+        ? window.requestAnimationFrame(() => {
+            if (hasDiagnosticMode) {
+              setDiagnosticMode(requestedDiagnostic);
+            }
+            setDiagnosticsEnabled(true);
+          })
+        : null;
 
     updateReduced();
 
@@ -100,7 +120,11 @@ export function ProductionArrivalMachine({
       !supportsWebgl()
     ) {
       window.requestAnimationFrame(() => setRuntimeState("css"));
-      return () => undefined;
+      return () => {
+        if (diagnosticFrame !== null) {
+          window.cancelAnimationFrame(diagnosticFrame);
+        }
+      };
     }
 
     window.requestAnimationFrame(() => setRuntimeState("loading"));
@@ -120,6 +144,9 @@ export function ProductionArrivalMachine({
     motion.addEventListener("change", updateReduced);
 
     return () => {
+      if (diagnosticFrame !== null) {
+        window.cancelAnimationFrame(diagnosticFrame);
+      }
       motion.removeEventListener("change", updateReduced);
       if (idleWindow.cancelIdleCallback) {
         idleWindow.cancelIdleCallback(handle);
@@ -130,35 +157,62 @@ export function ProductionArrivalMachine({
   }, []);
 
   const handleReady = useCallback(() => {
-    setRuntimeState("activating");
-  }, []);
+    setRuntimeState(
+      reduced || progressRef.current <= machineActivationDeadline
+        ? "ready"
+        : "css",
+    );
+  }, [reduced]);
   const machineProgress = reduced
     ? reducedMachineProgress.cinematic
     : clampProgress(progress / machineSequenceEnd);
   const handoff = clampProgress(
     (progress - machineSequenceEnd) / (machineHandoffEnd - machineSequenceEnd),
   );
-  const machineStyle = useMemo(
-    () =>
-      ({
-        "--fallback-opacity": reduced ? 0 : handoff,
-        "--machine-opacity": reduced ? 1 : 1 - handoff,
-      }) as CSSProperties,
-    [handoff, reduced],
-  );
+  const machineStyle = useMemo(() => {
+    let fallbackOpacity = reduced ? 0 : handoff;
+    let machineOpacity = reduced ? 1 : 1 - handoff;
+
+    if (runtimeState !== "ready") {
+      fallbackOpacity = 1;
+      machineOpacity = 0;
+    } else if (diagnosticMode === "css") {
+      fallbackOpacity = 1;
+      machineOpacity = 0;
+    } else if (diagnosticMode === "webgl") {
+      fallbackOpacity = 0;
+      machineOpacity = 1;
+    }
+
+    return {
+      "--fallback-opacity": fallbackOpacity,
+      "--machine-opacity": machineOpacity,
+    } as ArrivalMachineStyle;
+  }, [diagnosticMode, handoff, reduced, runtimeState]);
+
+  const activeOwner =
+    runtimeState !== "ready"
+      ? "css-loading"
+      : diagnosticMode !== "current"
+        ? diagnosticMode
+        : handoff <= 0
+          ? "webgl"
+          : handoff >= 1
+            ? "threshold"
+            : "webgl-threshold";
 
   return (
     <div
       className={styles.root}
-      data-arrival-mode={
-        runtimeState === "activating" ||
-        runtimeState === "blending" ||
-        runtimeState === "ready"
-          ? "machine"
-          : "css"
-      }
+      data-arrival-diagnostic={diagnosticMode}
+      data-arrival-diagnostics={diagnosticsEnabled}
+      data-arrival-mode={runtimeState === "ready" ? "machine" : "css"}
+      data-arrival-owner={activeOwner}
+      data-arrival-progress={progress.toFixed(4)}
       data-arrival-runtime={runtimeState}
+      data-css-opacity={machineStyle["--fallback-opacity"]}
       data-machine-progress={machineProgress.toFixed(3)}
+      data-webgl-opacity={machineStyle["--machine-opacity"]}
       style={machineStyle}
     >
       <div className={styles.cssFallback} data-arrival-css-fallback="">
@@ -171,6 +225,7 @@ export function ProductionArrivalMachine({
         >
           <MachineErrorBoundary onError={() => setRuntimeState("css")}>
             <MachineCanvas
+              diagnostics={diagnosticsEnabled}
               identitySemantic={false}
               onReady={handleReady}
               progress={machineProgress}
