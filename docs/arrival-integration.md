@@ -69,12 +69,44 @@ The first production integration moved the camera by interpolating directly from
 
 The camera now follows two connected cubic spatial paths without changing the Candidate A stage boundaries:
 
-1. **Reframe:** the camera makes a very small outward anticipation, performs most of its lateral and vertical correction while it remains distant, and settles almost square to the display.
+1. **Reframe:** the camera distributes its lateral and vertical correction across the complete path while it remains distant, then settles almost square to the display. This avoids preserving most of the orientation change for the last part of the stage.
 2. **Dolly:** the camera completes its remaining alignment early, then travels primarily along the display's forward axis toward a clear end frame.
 
 Both paths use a monotonic quintic ease. Acceleration and deceleration reach zero at each endpoint, avoiding a robotic start or stop without bounce, elastic movement, or overshoot. The existing hold between reframe and dolly remains intact.
 
-The look target has its own motivation. It acquires the screen slightly ahead of the camera position, then remains locked to the display through the dolly. The effect is that attention reaches the destination first and the camera follows, while the display stays stable during the final approach.
+The look target follows its own continuous cubic path. It acquires the screen slightly ahead of the camera position, then remains locked to the display through the dolly. The effect is that attention reaches the destination first and the camera follows, while the display stays stable during the final approach.
+
+## Continuity audit
+
+Human review found a visible side-to-front composition jump during a small scroll movement. The audit covered camera position and target, machine and lid transforms, the screen plane, semantic HTML anchor, opacity, light intensity, stage boundaries, the Threshold handoff, and runtime presentation ownership.
+
+Four continuity risks were found:
+
+1. **Two progress clocks:** production published raw `ScrollTrigger` progress to the WebGL machine while GSAP's scrubbed timeline drove the CSS Threshold. A wheel step could move the machine immediately while the surrounding scene was still settling.
+2. **Late orientation correction:** the previous reframe control points preserved too much lateral and angular correction for the end of the reframe, making a continuous path appear like a switch at normal scroll speed.
+3. **Conditional camera ownership:** reframe and dolly were selected as separate paths at a boundary. Their positions met, but the implementation expressed an immediate controller handoff rather than shared ownership.
+4. **Runtime presentation activation:** the model-ready callback replaced the CSS machine with WebGL in one render, which could expose a load-dependent composition change.
+
+The correction keeps the approved timing, scroll distance, lighting, model, HTML, and downstream journey intact:
+
+- the machine now consumes the scrubbed GSAP timeline progress used by the surrounding Threshold;
+- reframe control points spread alignment across the path, and the look target follows a continuous cubic path;
+- reframe and dolly share ownership through the opening 20% of the dolly range with a quintic blend;
+- the CSS and WebGL presentations overlap through a 260 ms model-readiness blend before the scroll-driven opacity values take sole control;
+- a normalized 4,000-sample audit verifies bounded changes in camera position, target, and view direction, including epsilon checks on every camera and sequence-stage boundary.
+
+Machine and lid rotation, screen power, semantic identity visibility, light intensity, and the screen-plane hierarchy already derive from continuous stage functions. No separate animation owner, local ScrollTrigger, machine rotation switch, or HTML-anchor reparenting was found. The Threshold crossfade remains part of the single `JourneyMotion` timeline and now shares its progress source with the machine.
+
+### Continuity Rules
+
+- Never switch visual ownership instantly.
+- Blend between animation systems.
+- Adjacent scroll positions should never produce different compositions.
+- Motion must remain physically continuous.
+- Concurrent layers must consume the same authoritative progress value.
+- A loading-state handoff must preserve the current composition rather than reveal a new one.
+
+No remaining in-sequence discontinuity was observed in normalized sampling, slow forward travel, reverse travel, or the pin-to-Threshold handoff. Responsive mode selection still occurs when the viewport category changes, and a failed WebGL load still resolves to the complete CSS fallback; neither is an ownership switch during ordinary scroll travel.
 
 Machine Lab supports a temporary `?cameraDebug=on` review mode. It uses a fixed observer view to draw the camera path, the current virtual camera position, and the active look target. The mode is disabled by default, has no production control, and does not alter production rendering.
 
@@ -94,6 +126,14 @@ The reproducible review set is stored in `docs/media/arrival-integration/physica
 - `08-forward-reverse.webm`.
 
 The stills use exact Machine Lab progress positions. The reverse still and recording use the real deterministic playback controls rather than synthesized transform values.
+
+The continuity revision evidence is stored in `docs/media/arrival-integration/physical-camera/continuity/`:
+
+- `01-before-discontinuity.png` and `02-discontinuity-frame.png` preserve the reviewed side-to-front comparison;
+- `03-after-fix.png` shows the revised composition at the former transition range;
+- `04-forward.png` and `05-reverse.png` use the real deterministic controls;
+- `06-debug-ownership.png` shows the shared reframe-to-dolly ownership region;
+- `07-slow-forward-reverse.webm` records small native scroll increments through the production sequence in both directions.
 
 ## Remaining polish
 
