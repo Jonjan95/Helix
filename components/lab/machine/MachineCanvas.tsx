@@ -1,11 +1,12 @@
 "use client";
 
 import { createPortal, Canvas, useThree } from "@react-three/fiber";
-import { Html, useGLTF } from "@react-three/drei";
+import { Html, Line, useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import {
   ACESFilmicToneMapping,
   BackSide,
+  CubicBezierCurve3,
   Color,
   Group,
   Mesh,
@@ -27,6 +28,7 @@ export type MachineModelMetrics = {
 };
 
 type MachineCanvasProps = {
+  cameraDebug?: boolean;
   identitySemantic?: boolean;
   onReady: (metrics: MachineModelMetrics) => void;
   progress: number;
@@ -53,12 +55,48 @@ const accent = new Color("#69d3e7");
 const screenOff = new Color("#0b1012");
 const screenOn = new Color("#123038");
 const cameraStart = new Vector3(4.6, 2.8, 6.4);
-const cameraReframe = new Vector3(0.75, 1.2, 6);
+const cameraReframe = new Vector3(0.28, 0.82, 6.05);
 const cameraDollyEnd = new Vector3(0.04, 0.67, 4.15);
-const cameraMobileReframe = new Vector3(0.8, 1.3, 6.1);
+const cameraMobileReframe = new Vector3(0.42, 0.96, 6.1);
 const cameraMobileEnd = new Vector3(0.18, 0.82, 4.6);
 const lookStart = new Vector3(0, 0.55, 0.3);
 const screenCenter = new Vector3(0, 0.6, -0.64);
+const cameraDebugPosition = new Vector3(7.4, 5.7, 9.2);
+const cameraDebugTarget = new Vector3(1.4, 1.2, 4.8);
+const cameraPath = {
+  desktop: {
+    dolly: new CubicBezierCurve3(
+      cameraReframe,
+      new Vector3(0.12, 0.72, 5.92),
+      new Vector3(0.06, 0.68, 4.58),
+      cameraDollyEnd,
+    ),
+    reframe: new CubicBezierCurve3(
+      cameraStart,
+      new Vector3(4.7, 2.82, 6.48),
+      new Vector3(1.58, 1.24, 6.18),
+      cameraReframe,
+    ),
+  },
+  mobile: {
+    dolly: new CubicBezierCurve3(
+      cameraMobileReframe,
+      new Vector3(0.31, 0.88, 5.95),
+      new Vector3(0.21, 0.83, 4.88),
+      cameraMobileEnd,
+    ),
+    reframe: new CubicBezierCurve3(
+      cameraStart,
+      new Vector3(4.68, 2.82, 6.47),
+      new Vector3(1.7, 1.38, 6.24),
+      cameraMobileReframe,
+    ),
+  },
+} as const;
+const cameraDebugPath = [
+  ...cameraPath.desktop.reframe.getPoints(32),
+  ...cameraPath.desktop.dolly.getPoints(24).slice(1),
+];
 const machineScale = 0.115;
 const closedLidAngle = Math.PI * 0.48;
 const hingeOffsetY = 0.195;
@@ -75,6 +113,17 @@ const screenAnchorZ = -0.0067;
 
 function getScreenAnchorX(canvasWidth: number) {
   return Math.min(0.019, Math.max(-0.024, (canvasWidth - 961) * 0.000297));
+}
+
+function getRawStageProgress(
+  value: number,
+  range: { readonly end: number; readonly start: number },
+) {
+  return Math.min(1, Math.max(0, (value - range.start) / (range.end - range.start)));
+}
+
+function physicalEase(value: number) {
+  return value * value * value * (value * (value * 6 - 15) + 10);
 }
 
 function createModelRuntime(source: Group): ModelRuntime {
@@ -171,6 +220,7 @@ function disposeImportedScene(scene: Object3D) {
 }
 
 function MachineScene({
+  cameraDebug = false,
   htmlPortal,
   identitySemantic = true,
   onReady,
@@ -183,6 +233,8 @@ function MachineScene({
     [gltf.scene],
   );
   const hingeRef = useRef(runtime.hinge);
+  const cameraMarkerRef = useRef<Mesh>(null);
+  const lookMarkerRef = useRef<Mesh>(null);
   const screenMaterialRef = useRef<MeshStandardMaterial>(null);
   const { camera, invalidate, size } = useThree();
   const reveal = stageProgress(progress, sequence.machineReveal);
@@ -203,12 +255,20 @@ function MachineScene({
   useEffect(() => {
     const opening = stageProgress(progress, sequence.opening);
     const currentScreenPower = stageProgress(progress, sequence.screen);
-    const reframe = stageProgress(progress, sequence.cameraReframe);
-    const dolly = stageProgress(progress, sequence.cameraDolly);
+    const reframeRaw = getRawStageProgress(progress, sequence.cameraReframe);
+    const reframe = physicalEase(reframeRaw);
+    const dolly = physicalEase(
+      getRawStageProgress(progress, sequence.cameraDolly),
+    );
     const screenMaterial = screenMaterialRef.current;
     const compact = size.width < 768;
-    const reframeTarget = compact ? cameraMobileReframe : cameraReframe;
-    const dollyTarget = compact ? cameraMobileEnd : cameraDollyEnd;
+    const activePath = compact ? cameraPath.mobile : cameraPath.desktop;
+    const physicalPosition =
+      dolly > 0
+        ? activePath.dolly.getPoint(dolly)
+        : activePath.reframe.getPoint(reframe);
+    const lookProgress = physicalEase(Math.min(1, reframeRaw * 1.18));
+    const lookTarget = lookStart.clone().lerp(screenCenter, lookProgress);
 
     hingeRef.current.rotation.x = closedLidAngle * (1 - opening);
     hingeRef.current.updateMatrixWorld(true);
@@ -219,14 +279,19 @@ function MachineScene({
       screenMaterial.emissiveIntensity = currentScreenPower * 0.11;
     }
 
-    camera.position.copy(cameraStart).lerp(reframeTarget, reframe);
-    if (dolly > 0) {
-      camera.position.copy(reframeTarget).lerp(dollyTarget, dolly);
+    cameraMarkerRef.current?.position.copy(physicalPosition);
+    lookMarkerRef.current?.position.copy(lookTarget);
+
+    if (cameraDebug) {
+      camera.position.copy(cameraDebugPosition);
+      camera.lookAt(cameraDebugTarget);
+    } else {
+      camera.position.copy(physicalPosition);
+      camera.lookAt(lookTarget);
     }
-    camera.lookAt(lookStart.clone().lerp(screenCenter, reframe));
     camera.updateProjectionMatrix();
     invalidate();
-  }, [camera, invalidate, progress, sequence, size.width]);
+  }, [camera, cameraDebug, invalidate, progress, sequence, size.width]);
 
   useEffect(
     () => () => {
@@ -245,6 +310,26 @@ function MachineScene({
         intensity={0.08 + reveal * 1.57}
         position={[4.5, 7, 5.5]}
       />
+
+      {cameraDebug ? (
+        <group>
+          <Line
+            color="#69d3e7"
+            dashed
+            dashScale={10}
+            lineWidth={1.2}
+            points={cameraDebugPath}
+          />
+          <mesh ref={cameraMarkerRef}>
+            <sphereGeometry args={[0.13, 16, 16]} />
+            <meshBasicMaterial color="#f4f0e8" />
+          </mesh>
+          <mesh ref={lookMarkerRef}>
+            <sphereGeometry args={[0.09, 16, 16]} />
+            <meshBasicMaterial color="#69d3e7" />
+          </mesh>
+        </group>
+      ) : null}
       <directionalLight
         color="#69d3e7"
         intensity={reveal * 0.38}
@@ -328,6 +413,7 @@ function MachineScene({
 }
 
 export function MachineCanvas({
+  cameraDebug = false,
   identitySemantic = true,
   onReady,
   progress,
@@ -358,6 +444,7 @@ export function MachineCanvas({
         shadows
       >
         <MachineScene
+          cameraDebug={cameraDebug}
           htmlPortal={htmlPortal}
           identitySemantic={identitySemantic}
           onReady={onReady}
@@ -368,6 +455,8 @@ export function MachineCanvas({
       <div
         ref={htmlPortal}
         className={styles.htmlPortal}
+        data-camera-debug={cameraDebug}
+        data-camera-language="physical"
         data-machine-html-layer=""
       />
     </>

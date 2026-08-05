@@ -173,6 +173,35 @@ test("exposes a semantic, reversible staged arrival sequence", async ({
   expect(consoleProblems).toEqual([]);
 });
 
+test("uses the physical camera path and keeps its debug view internal", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const productionCamera = page.locator(
+    "[data-production-machine] [data-machine-html-layer]",
+  );
+  await expect(productionCamera).toHaveAttribute(
+    "data-camera-language",
+    "physical",
+    { timeout: 15_000 },
+  );
+  await expect(productionCamera).toHaveAttribute("data-camera-debug", "false");
+
+  await page.goto("/lab/machine");
+  await waitForModel(page);
+  await expect(page.locator("[data-machine-html-layer]")).toHaveAttribute(
+    "data-camera-debug",
+    "false",
+  );
+
+  await page.goto("/lab/machine?cameraDebug=on");
+  await waitForModel(page);
+  await expect(page.locator("[data-machine-html-layer]")).toHaveAttribute(
+    "data-camera-debug",
+    "true",
+  );
+});
+
 test("compares two deterministic timing candidates with the same stage order", async ({
   page,
 }) => {

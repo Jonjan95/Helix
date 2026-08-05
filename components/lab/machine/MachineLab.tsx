@@ -47,6 +47,7 @@ export function MachineLab() {
   const [simulateReduced, setSimulateReduced] = useState(false);
   const [systemReduced, setSystemReduced] = useState(false);
   const [compactViewport, setCompactViewport] = useState(false);
+  const [cameraDebug, setCameraDebug] = useState(false);
   const [sequenceCandidate, setSequenceCandidate] =
     useState<MachineSequenceCandidate>("cinematic");
   const animationRef = useRef<number | null>(null);
@@ -79,6 +80,11 @@ export function MachineLab() {
     const requestedSequence = new URLSearchParams(window.location.search).get(
       "sequence",
     );
+    const requestedCameraDebug =
+      new URLSearchParams(window.location.search).get("cameraDebug") === "on";
+    if (requestedCameraDebug) {
+      window.requestAnimationFrame(() => setCameraDebug(true));
+    }
     if (requestedSequence === "editorial") {
       window.requestAnimationFrame(() => setSequenceCandidate("editorial"));
     }
@@ -203,6 +209,7 @@ export function MachineLab() {
               onError={() => setRuntimeState("fallback")}
             >
               <MachineCanvas
+                cameraDebug={cameraDebug}
                 onReady={handleReady}
                 progress={effectiveProgress}
                 sequence={machineSequences[sequenceCandidate]}
