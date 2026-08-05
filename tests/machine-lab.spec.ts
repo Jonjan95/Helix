@@ -40,7 +40,7 @@ async function setProgress(page: Page, value: number) {
   }, value);
 }
 
-test("keeps the Machine Lab isolated from production discovery and requests", async ({
+test("keeps the Machine Lab route isolated while production reuses its renderer", async ({
   context,
   page,
   request,
@@ -72,11 +72,13 @@ test("keeps the Machine Lab isolated from production discovery and requests", as
   await page.goto("/", { waitUntil: "networkidle" });
 
   await expect(page.locator("[data-machine-lab]")).toHaveCount(0);
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("[data-production-machine] canvas")).toHaveCount(1, {
+    timeout: 15_000,
+  });
   expect(
     productionRequests.some((url) => url.includes("helix-machine.glb")),
-  ).toBe(false);
-  expect(productionRequests.some((url) => rendererChunks.has(url))).toBe(false);
+  ).toBe(true);
+  expect(productionRequests.some((url) => rendererChunks.has(url))).toBe(true);
 
   const sitemap = await request.get("/sitemap.xml");
   expect(await sitemap.text()).not.toContain("/lab/machine");

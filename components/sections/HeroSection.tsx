@@ -1,4 +1,5 @@
 import { Laptop } from "@/components/Laptop";
+import { ProductionArrivalMachine } from "@/components/arrival/ProductionArrivalMachine";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { arrivalIdentity } from "@/data/early-journey";
 import styles from "@/styles/HeroSection.module.css";
@@ -20,7 +21,9 @@ export function HeroSection() {
       </div>
 
       <div className={styles.visual}>
-        <Laptop />
+        <ProductionArrivalMachine>
+          <Laptop />
+        </ProductionArrivalMachine>
       </div>
 
       <div

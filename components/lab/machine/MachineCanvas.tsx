@@ -27,6 +27,7 @@ export type MachineModelMetrics = {
 };
 
 type MachineCanvasProps = {
+  identitySemantic?: boolean;
   onReady: (metrics: MachineModelMetrics) => void;
   progress: number;
   sequence: MachineSequenceDefinition;
@@ -171,6 +172,7 @@ function disposeImportedScene(scene: Object3D) {
 
 function MachineScene({
   htmlPortal,
+  identitySemantic = true,
   onReady,
   progress,
   sequence,
@@ -280,6 +282,7 @@ function MachineScene({
                 zIndexRange={[3, 3]}
               >
                 <div
+                  aria-hidden={identitySemantic ? undefined : true}
                   className={styles.screenIdentityFrame}
                   data-screen-active={screenPower > 0.05}
                   data-screen-settled={screenDetails > 0.95}
@@ -291,7 +294,11 @@ function MachineScene({
                     style={{ opacity: identityVisibility }}
                   >
                     <span>MALMÖ, SWEDEN / PORTFOLIO</span>
-                    <h2>Jonathan Jansson</h2>
+                    {identitySemantic ? (
+                      <h2>Jonathan Jansson</h2>
+                    ) : (
+                      <div className={styles.identityName}>Jonathan Jansson</div>
+                    )}
                     <p>Software development / testing / quality</p>
                   </div>
                 </div>
@@ -321,6 +328,7 @@ function MachineScene({
 }
 
 export function MachineCanvas({
+  identitySemantic = true,
   onReady,
   progress,
   sequence,
@@ -351,6 +359,7 @@ export function MachineCanvas({
       >
         <MachineScene
           htmlPortal={htmlPortal}
+          identitySemantic={identitySemantic}
           onReady={onReady}
           progress={progress}
           sequence={sequence}
