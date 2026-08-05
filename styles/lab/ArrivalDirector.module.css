@@ -1,0 +1,33 @@
+.director {
+  min-height: 100svh;
+  padding: clamp(2rem, 5vw, 4.5rem) var(--page-gutter) 6rem;
+  background: #101315;
+  color: var(--color-text);
+}
+
+.header {
+  width: min(100%, 86rem);
+  margin-inline: auto;
+}
+
+.header > p:first-child {
+  margin: 0 0 0.75rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  font-weight: 470;
+  letter-spacing: -0.055em;
+  line-height: 0.96;
+}
+
+.header > p:last-child {
+  max-width: 46rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
