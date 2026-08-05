@@ -36,7 +36,7 @@ type ProductionArrivalMachineProps = {
   children: ReactNode;
 };
 
-type RuntimeState = "css" | "loading" | "ready";
+type RuntimeState = "activating" | "blending" | "css" | "loading" | "ready";
 
 function supportsWebgl() {
   try {
@@ -66,6 +66,20 @@ export function ProductionArrivalMachine({
   const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => subscribeToArrivalProgress(setProgress), []);
+
+  useEffect(() => {
+    if (runtimeState === "activating") {
+      const frame = window.requestAnimationFrame(() => {
+        setRuntimeState("blending");
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    if (runtimeState === "blending") {
+      const timer = window.setTimeout(() => setRuntimeState("ready"), 280);
+      return () => window.clearTimeout(timer);
+    }
+  }, [runtimeState]);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -116,7 +130,7 @@ export function ProductionArrivalMachine({
   }, []);
 
   const handleReady = useCallback(() => {
-    setRuntimeState("ready");
+    setRuntimeState("activating");
   }, []);
   const machineProgress = reduced
     ? reducedMachineProgress.cinematic
@@ -136,7 +150,13 @@ export function ProductionArrivalMachine({
   return (
     <div
       className={styles.root}
-      data-arrival-mode={runtimeState === "ready" ? "machine" : "css"}
+      data-arrival-mode={
+        runtimeState === "activating" ||
+        runtimeState === "blending" ||
+        runtimeState === "ready"
+          ? "machine"
+          : "css"
+      }
       data-arrival-runtime={runtimeState}
       data-machine-progress={machineProgress.toFixed(3)}
       style={machineStyle}

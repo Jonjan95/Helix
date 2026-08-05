@@ -30,6 +30,10 @@ test("loads the shared machine from the production Arrival", async ({ page }) =>
   await expect(productionMachine.locator("canvas")).toHaveCount(1, {
     timeout: 15_000,
   });
+  await expect(page.locator("[data-arrival-runtime='blending']")).toHaveCount(
+    1,
+    { timeout: 15_000 },
+  );
   await expect(page.locator("[data-arrival-runtime='ready']")).toHaveCount(1, {
     timeout: 15_000,
   });

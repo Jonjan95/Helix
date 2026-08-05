@@ -175,6 +175,7 @@ function createSpatialTimeline(
   const spatialTimeline = gsap
     .timeline({
       defaults: { overwrite: "auto" },
+      onUpdate: () => publishArrivalProgress(spatialTimeline.progress()),
       scrollTrigger: {
         anticipatePin: 1,
         end: () => {
@@ -190,7 +191,6 @@ function createSpatialTimeline(
         scrub: profile.scrub,
         start: "top top",
         trigger: targets.arrival,
-        onUpdate: (self) => publishArrivalProgress(self.progress),
       },
     })
     .to(
@@ -291,15 +291,15 @@ function createSpatialTimeline(
 function createMobileTimeline(targets: MotionTargets) {
   const { handoff, mobile } = journeyMotionConfig;
 
-  return gsap
+  const mobileTimeline = gsap
     .timeline({
+      onUpdate: () => publishArrivalProgress(mobileTimeline.progress()),
       scrollTrigger: {
         end: "bottom top",
         invalidateOnRefresh: true,
         scrub: mobile.scrub,
         start: "top top",
         trigger: targets.arrival,
-        onUpdate: (self) => publishArrivalProgress(self.progress),
       },
     })
     .to(
@@ -371,6 +371,8 @@ function createMobileTimeline(targets: MotionTargets) {
       },
       handoff.mobile.start,
     );
+
+  return mobileTimeline;
 }
 
 function applyJourneyState(
@@ -748,6 +750,7 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
     <div
       ref={scopeRef}
       className={styles.journey}
+      data-arrival-progress-source="scrubbed-timeline"
       data-motion-root="helix-experience"
       data-motion-state="idle"
     >

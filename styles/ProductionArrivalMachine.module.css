@@ -31,8 +31,19 @@
   visibility: hidden;
 }
 
-.root:not([data-arrival-runtime="ready"]) .cssFallback {
+.root[data-arrival-runtime="css"] .cssFallback,
+.root[data-arrival-runtime="loading"] .cssFallback,
+.root[data-arrival-runtime="activating"] .cssFallback {
   opacity: 1;
+}
+
+.root[data-arrival-runtime="activating"] .machine {
+  opacity: 0;
+}
+
+.root[data-arrival-runtime="blending"] .cssFallback,
+.root[data-arrival-runtime="blending"] .machine {
+  transition: opacity 260ms cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 @media (max-width: 64rem) {

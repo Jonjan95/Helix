@@ -6,15 +6,19 @@ import { useEffect, useMemo, useRef, type RefObject } from "react";
 import {
   ACESFilmicToneMapping,
   BackSide,
-  CubicBezierCurve3,
   Color,
   Group,
   Mesh,
   MeshStandardMaterial,
   Object3D,
   SRGBColorSpace,
-  Vector3,
 } from "three";
+import {
+  cameraDebugPath,
+  cameraDebugPosition,
+  cameraDebugTarget,
+  getCameraPose,
+} from "@/lib/machine-lab/camera-motion";
 import {
   machineModelPath,
   stageProgress,
@@ -54,49 +58,6 @@ type ModelRuntime = {
 const accent = new Color("#69d3e7");
 const screenOff = new Color("#0b1012");
 const screenOn = new Color("#123038");
-const cameraStart = new Vector3(4.6, 2.8, 6.4);
-const cameraReframe = new Vector3(0.28, 0.82, 6.05);
-const cameraDollyEnd = new Vector3(0.04, 0.67, 4.15);
-const cameraMobileReframe = new Vector3(0.42, 0.96, 6.1);
-const cameraMobileEnd = new Vector3(0.18, 0.82, 4.6);
-const lookStart = new Vector3(0, 0.55, 0.3);
-const screenCenter = new Vector3(0, 0.6, -0.64);
-const cameraDebugPosition = new Vector3(7.4, 5.7, 9.2);
-const cameraDebugTarget = new Vector3(1.4, 1.2, 4.8);
-const cameraPath = {
-  desktop: {
-    dolly: new CubicBezierCurve3(
-      cameraReframe,
-      new Vector3(0.12, 0.72, 5.92),
-      new Vector3(0.06, 0.68, 4.58),
-      cameraDollyEnd,
-    ),
-    reframe: new CubicBezierCurve3(
-      cameraStart,
-      new Vector3(4.7, 2.82, 6.48),
-      new Vector3(1.58, 1.24, 6.18),
-      cameraReframe,
-    ),
-  },
-  mobile: {
-    dolly: new CubicBezierCurve3(
-      cameraMobileReframe,
-      new Vector3(0.31, 0.88, 5.95),
-      new Vector3(0.21, 0.83, 4.88),
-      cameraMobileEnd,
-    ),
-    reframe: new CubicBezierCurve3(
-      cameraStart,
-      new Vector3(4.68, 2.82, 6.47),
-      new Vector3(1.7, 1.38, 6.24),
-      cameraMobileReframe,
-    ),
-  },
-} as const;
-const cameraDebugPath = [
-  ...cameraPath.desktop.reframe.getPoints(32),
-  ...cameraPath.desktop.dolly.getPoints(24).slice(1),
-];
 const machineScale = 0.115;
 const closedLidAngle = Math.PI * 0.48;
 const hingeOffsetY = 0.195;
@@ -113,17 +74,6 @@ const screenAnchorZ = -0.0067;
 
 function getScreenAnchorX(canvasWidth: number) {
   return Math.min(0.019, Math.max(-0.024, (canvasWidth - 961) * 0.000297));
-}
-
-function getRawStageProgress(
-  value: number,
-  range: { readonly end: number; readonly start: number },
-) {
-  return Math.min(1, Math.max(0, (value - range.start) / (range.end - range.start)));
-}
-
-function physicalEase(value: number) {
-  return value * value * value * (value * (value * 6 - 15) + 10);
 }
 
 function createModelRuntime(source: Group): ModelRuntime {
@@ -255,20 +205,9 @@ function MachineScene({
   useEffect(() => {
     const opening = stageProgress(progress, sequence.opening);
     const currentScreenPower = stageProgress(progress, sequence.screen);
-    const reframeRaw = getRawStageProgress(progress, sequence.cameraReframe);
-    const reframe = physicalEase(reframeRaw);
-    const dolly = physicalEase(
-      getRawStageProgress(progress, sequence.cameraDolly),
-    );
     const screenMaterial = screenMaterialRef.current;
     const compact = size.width < 768;
-    const activePath = compact ? cameraPath.mobile : cameraPath.desktop;
-    const physicalPosition =
-      dolly > 0
-        ? activePath.dolly.getPoint(dolly)
-        : activePath.reframe.getPoint(reframe);
-    const lookProgress = physicalEase(Math.min(1, reframeRaw * 1.18));
-    const lookTarget = lookStart.clone().lerp(screenCenter, lookProgress);
+    const pose = getCameraPose(progress, sequence, compact);
 
     hingeRef.current.rotation.x = closedLidAngle * (1 - opening);
     hingeRef.current.updateMatrixWorld(true);
@@ -279,15 +218,15 @@ function MachineScene({
       screenMaterial.emissiveIntensity = currentScreenPower * 0.11;
     }
 
-    cameraMarkerRef.current?.position.copy(physicalPosition);
-    lookMarkerRef.current?.position.copy(lookTarget);
+    cameraMarkerRef.current?.position.copy(pose.position);
+    lookMarkerRef.current?.position.copy(pose.target);
 
     if (cameraDebug) {
       camera.position.copy(cameraDebugPosition);
       camera.lookAt(cameraDebugTarget);
     } else {
-      camera.position.copy(physicalPosition);
-      camera.lookAt(lookTarget);
+      camera.position.copy(pose.position);
+      camera.lookAt(pose.target);
     }
     camera.updateProjectionMatrix();
     invalidate();
@@ -420,6 +359,7 @@ export function MachineCanvas({
   sequence,
 }: MachineCanvasProps) {
   const htmlPortal = useRef<HTMLDivElement>(null!);
+  const diagnostics = getCameraPose(progress, sequence);
 
   return (
     <>
@@ -456,7 +396,10 @@ export function MachineCanvas({
         ref={htmlPortal}
         className={styles.htmlPortal}
         data-camera-debug={cameraDebug}
+        data-camera-blend={diagnostics.blend.toFixed(3)}
+        data-camera-interpolation="cubic-path / quintic-ease"
         data-camera-language="physical"
+        data-camera-owner={diagnostics.owner}
         data-machine-html-layer=""
       />
     </>

@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
+import { auditCameraContinuity, getCameraPose } from "@/lib/machine-lab/camera-motion";
+import { machineSequences, stageProgress } from "@/lib/machine-lab/sequence";
 
 const viewports = [
   { height: 1000, width: 1440 },
@@ -186,6 +188,9 @@ test("uses the physical camera path and keeps its debug view internal", async ({
     { timeout: 15_000 },
   );
   await expect(productionCamera).toHaveAttribute("data-camera-debug", "false");
+  await expect(
+    page.locator("[data-motion-root='helix-experience']"),
+  ).toHaveAttribute("data-arrival-progress-source", "scrubbed-timeline");
 
   await page.goto("/lab/machine");
   await waitForModel(page);
@@ -200,6 +205,54 @@ test("uses the physical camera path and keeps its debug view internal", async ({
     "data-camera-debug",
     "true",
   );
+  await setProgress(page, 0.9);
+  await expect(page.locator("[data-machine-html-layer]")).toHaveAttribute(
+    "data-camera-owner",
+    "reframe",
+  );
+  await setProgress(page, 0.94);
+  await expect(page.locator("[data-machine-html-layer]")).toHaveAttribute(
+    "data-camera-owner",
+    "shared",
+  );
+  await setProgress(page, 0.98);
+  await expect(page.locator("[data-machine-html-layer]")).toHaveAttribute(
+    "data-camera-owner",
+    "dolly",
+  );
+});
+
+test("keeps camera position and view direction continuous at every sample", () => {
+  const sequence = machineSequences.cinematic;
+  const audit = auditCameraContinuity(sequence, 4000);
+
+  expect(audit.maxPositionDelta).toBeLessThan(0.04);
+  expect(audit.maxTargetDelta).toBeLessThan(0.012);
+  expect(audit.maxViewAngle).toBeLessThan(0.008);
+
+  for (const boundary of [
+    sequence.cameraReframe.start,
+    sequence.cameraReframe.end,
+    sequence.cameraDolly.start,
+    sequence.cameraDolly.end,
+  ]) {
+    const before = getCameraPose(boundary - 0.000001, sequence);
+    const after = getCameraPose(boundary + 0.000001, sequence);
+    const beforeDirection = before.target.clone().sub(before.position).normalize();
+    const afterDirection = after.target.clone().sub(after.position).normalize();
+
+    expect(before.position.distanceTo(after.position)).toBeLessThan(0.0001);
+    expect(before.target.distanceTo(after.target)).toBeLessThan(0.0001);
+    expect(beforeDirection.angleTo(afterDirection)).toBeLessThan(0.0001);
+  }
+
+  for (const range of Object.values(sequence)) {
+    for (const boundary of [range.start, range.end]) {
+      const before = stageProgress(boundary - 0.000001, range);
+      const after = stageProgress(boundary + 0.000001, range);
+      expect(Math.abs(after - before)).toBeLessThan(0.0001);
+    }
+  }
 });
 
 test("compares two deterministic timing candidates with the same stage order", async ({
