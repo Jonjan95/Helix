@@ -1,0 +1,583 @@
+.director {
+  min-height: 100svh;
+  padding: clamp(2rem, 4vw, 4rem) var(--page-gutter) 5rem;
+  overflow: clip;
+  background: #101315;
+  color: var(--color-text);
+}
+
+.header,
+.boundary,
+.workspace {
+  width: min(100%, 100rem);
+  margin-inline: auto;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+.eyebrow,
+.previewLabel {
+  margin: 0 0 0.75rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.8rem);
+  font-weight: 470;
+  letter-spacing: -0.055em;
+  line-height: 0.96;
+}
+
+.introduction {
+  max-width: 48rem;
+  margin: 1rem 0 0;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.backLink,
+.actions button,
+.editor > section > button,
+.renameRow button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.25rem;
+  background: #202428;
+  color: var(--color-text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.backLink {
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.backLink:hover,
+.actions button:hover,
+.editor > section > button:hover,
+.renameRow button:hover {
+  border-color: var(--color-accent);
+}
+
+.backLink:focus-visible,
+.director button:focus-visible,
+.director input:focus-visible,
+.director select:focus-visible,
+.director textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.boundary {
+  display: flex;
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-block: 1px solid var(--color-line);
+  gap: 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.boundary strong {
+  color: var(--color-text);
+  font-weight: 520;
+}
+
+.workspace {
+  display: grid;
+  margin-top: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 25rem);
+  border: 1px solid var(--color-line);
+  background: #141719;
+}
+
+.viewer {
+  position: sticky;
+  top: 0;
+  display: grid;
+  min-width: 0;
+  height: 100svh;
+  padding: 1rem;
+  border-right: 1px solid var(--color-line);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-self: start;
+}
+
+.viewerToolbar {
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.viewerToolbar label,
+.poseLibrary > label,
+.compareSelectors label,
+.importField,
+.renameRow > label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.viewerToolbar p {
+  margin: 0 0 0.7rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.director select,
+.director textarea,
+.renameRow input,
+.numberControl input[type="number"] {
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.2rem;
+  background: #191d20;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.viewportShell {
+  position: relative;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid rgba(244, 240, 232, 0.18);
+  background: #101315;
+}
+
+.preview,
+.comparison {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.preview {
+  isolation: isolate;
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.comparison .preview {
+  position: relative;
+  inset: auto;
+  min-width: 0;
+}
+
+.comparison .preview:first-child {
+  border-right: 1px solid var(--color-accent);
+}
+
+.previewLabel {
+  position: absolute;
+  z-index: 8;
+  top: 0.75rem;
+  left: 0.75rem;
+  margin: 0;
+  padding: 0.35rem 0.45rem;
+  background: rgba(16, 19, 21, 0.82);
+}
+
+.loading {
+  position: absolute;
+  z-index: 7;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  transform: translate(-50%, -50%);
+}
+
+.viewportGuides {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  pointer-events: none;
+}
+
+.thirdsGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, transparent 33.25%, rgba(105, 211, 231, 0.55) 33.3%, rgba(105, 211, 231, 0.55) 33.4%, transparent 33.45%, transparent 66.55%, rgba(105, 211, 231, 0.55) 66.6%, rgba(105, 211, 231, 0.55) 66.7%, transparent 66.75%),
+    linear-gradient(to bottom, transparent 33.25%, rgba(105, 211, 231, 0.55) 33.3%, rgba(105, 211, 231, 0.55) 33.4%, transparent 33.45%, transparent 66.55%, rgba(105, 211, 231, 0.55) 66.6%, rgba(105, 211, 231, 0.55) 66.7%, transparent 66.75%);
+}
+
+.viewportCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.viewportCenter::before,
+.viewportCenter::after {
+  position: absolute;
+  background: var(--color-accent);
+  content: "";
+}
+
+.projectedScreenBounds::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border: 2px solid rgba(105, 211, 231, 0.9);
+  content: "";
+  pointer-events: none;
+}
+
+.screenCenterGuide {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.screenCenterGuide::before,
+.screenCenterGuide::after {
+  position: absolute;
+  background: var(--color-accent);
+  content: "";
+}
+
+.screenCenterGuide::before {
+  top: 50%;
+  right: -0.35rem;
+  left: -0.35rem;
+  height: 1px;
+}
+
+.screenCenterGuide::after {
+  top: -0.35rem;
+  bottom: -0.35rem;
+  left: 50%;
+  width: 1px;
+}
+
+.safeTextRegionGuide {
+  position: absolute;
+  z-index: 3;
+  inset: 14% 12%;
+  border: 1px dashed rgba(244, 240, 232, 0.64);
+  pointer-events: none;
+}
+
+.viewportCenter::before {
+  top: 50%;
+  right: -0.5rem;
+  left: -0.5rem;
+  height: 1px;
+}
+
+.viewportCenter::after {
+  top: -0.5rem;
+  bottom: -0.5rem;
+  left: 50%;
+  width: 1px;
+}
+
+.editor {
+  min-width: 0;
+  background: #191c1f;
+}
+
+.editor > section,
+.controls {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.editor h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 520;
+}
+
+.poseLibrary {
+  display: grid;
+  gap: 1rem;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.actions .primaryAction {
+  grid-column: 1 / -1;
+  border-color: rgba(105, 211, 231, 0.65);
+}
+
+.renameRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+}
+
+.renameRow > label {
+  grid-column: 1 / -1;
+}
+
+.dangerAction {
+  justify-self: start;
+  color: #d6aaa3 !important;
+}
+
+.dangerAction:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.controls {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.controlGroup {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  gap: 0.65rem;
+}
+
+.controlGroup legend {
+  margin-bottom: 0.25rem;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 520;
+}
+
+.numberControl {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) minmax(5rem, 1fr) 4.6rem;
+  gap: 0.65rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  align-items: center;
+}
+
+.numberControl input[type="range"] {
+  width: 100%;
+  min-height: 2.75rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.numberControl input[type="number"] {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.35rem;
+}
+
+.utilitySection {
+  display: grid;
+  gap: 1rem;
+}
+
+.checkList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+}
+
+.checkList label {
+  display: grid;
+  min-height: 2.75rem;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.55rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  align-items: center;
+}
+
+.checkList input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-accent);
+}
+
+.compareSelectors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.importField textarea {
+  width: 100%;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+.status {
+  margin: 0;
+  padding: 1.25rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 75rem) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer {
+    position: relative;
+    height: min(76svh, 48rem);
+    border-right: 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .editor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .controls,
+  .status {
+    grid-column: 1 / -1;
+  }
+
+  .controlGroup {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .controlGroup legend {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .director {
+    padding-bottom: 3rem;
+  }
+
+  .header,
+  .editor,
+  .controlGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .backLink {
+    width: fit-content;
+  }
+
+  .boundary {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .workspace {
+    width: auto;
+    margin-inline: calc(var(--page-gutter) * -1);
+    border-inline: 0;
+  }
+
+  .viewer {
+    height: min(70svh, 35rem);
+    padding: 0.75rem;
+  }
+
+  .viewerToolbar {
+    align-items: start;
+  }
+
+  .viewerToolbar p {
+    max-width: 12rem;
+    text-align: right;
+  }
+
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison .preview:first-child {
+    border-right: 0;
+    border-bottom: 1px solid var(--color-accent);
+  }
+
+  .editor > section,
+  .controls,
+  .status {
+    grid-column: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .controlGroup legend {
+    grid-column: auto;
+  }
+
+  .numberControl {
+    grid-template-columns: minmax(7rem, 1fr) minmax(4rem, 0.8fr) 4.5rem;
+  }
+
+  .checkList,
+  .compareSelectors {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (forced-colors: active) {
+  .workspace,
+  .viewer,
+  .director button,
+  .director input,
+  .director select,
+  .director textarea {
+    border-color: CanvasText;
+  }
+}
