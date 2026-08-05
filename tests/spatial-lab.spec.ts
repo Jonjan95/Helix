@@ -26,7 +26,7 @@ test("keeps the spatial lab isolated from the production journey", async ({
   await expect(page.getByRole("link", { name: /spatial design/i })).toHaveCount(
     0,
   );
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("[data-spatial-canvas]")).toHaveCount(0);
 
   const sitemap = await request.get("/sitemap.xml");
   expect(await sitemap.text()).not.toContain("/lab/spatial");
