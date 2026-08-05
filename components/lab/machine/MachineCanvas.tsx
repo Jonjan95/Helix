@@ -11,6 +11,7 @@ import {
   Mesh,
   MeshStandardMaterial,
   Object3D,
+  PerspectiveCamera,
   SRGBColorSpace,
   Vector3,
 } from "three";
@@ -19,6 +20,7 @@ import {
   stageProgress,
   type MachineSequenceDefinition,
 } from "@/lib/machine-lab/sequence";
+import type { DirectorPose } from "@/lib/machine-lab/director";
 import styles from "@/styles/lab/MachineLab.module.css";
 
 export type MachineModelMetrics = {
@@ -33,7 +35,24 @@ type MachineCanvasProps = {
   sequence: MachineSequenceDefinition;
 };
 
-type MachineSceneProps = MachineCanvasProps;
+export type DirectorGuideState = {
+  cameraTarget: boolean;
+  projectedScreenBounds: boolean;
+  safeTextRegion: boolean;
+  screenCenter: boolean;
+};
+
+export type DirectorGuideClassNames = {
+  projectedScreenBounds: string;
+  safeTextRegion: string;
+  screenCenter: string;
+};
+
+type MachineSceneProps = MachineCanvasProps & {
+  directorGuideClassNames?: DirectorGuideClassNames;
+  directorGuides?: DirectorGuideState;
+  directorPose?: DirectorPose;
+};
 
 type MachineSceneWithPortalProps = MachineSceneProps & {
   htmlPortal: RefObject<HTMLElement>;
@@ -170,7 +189,10 @@ function disposeImportedScene(scene: Object3D) {
   });
 }
 
-function MachineScene({
+export function MachineScene({
+  directorGuideClassNames,
+  directorGuides,
+  directorPose,
   htmlPortal,
   identitySemantic = true,
   onReady,
@@ -185,13 +207,33 @@ function MachineScene({
   const hingeRef = useRef(runtime.hinge);
   const screenMaterialRef = useRef<MeshStandardMaterial>(null);
   const { camera, invalidate, size } = useThree();
-  const reveal = stageProgress(progress, sequence.machineReveal);
-  const screenPower = stageProgress(progress, sequence.screen);
-  const screenDetails = stageProgress(progress, sequence.screenSettled);
-  const identityIn = stageProgress(progress, sequence.identity);
-  const identityOut = stageProgress(progress, sequence.identityExit);
+  const reveal = directorPose
+    ? 1
+    : stageProgress(progress, sequence.machineReveal);
+  const screenPower = directorPose
+    ? directorPose.screenLuminance
+    : stageProgress(progress, sequence.screen);
+  const screenDetails = directorPose
+    ? directorPose.screenLuminance
+    : stageProgress(progress, sequence.screenSettled);
+  const identityIn = directorPose
+    ? directorPose.screenLuminance > 0.02
+      ? 1
+      : 0
+    : stageProgress(progress, sequence.identity);
+  const identityOut = directorPose
+    ? 0
+    : stageProgress(progress, sequence.identityExit);
   const identityVisibility = identityIn * (1 - identityOut);
   const screenAnchorX = getScreenAnchorX(size.width);
+  const scenePosition = directorPose
+    ? [
+        directorPose.machinePosition.x,
+        directorPose.machinePosition.y,
+        directorPose.machinePosition.z,
+      ] as const
+    : [0, -0.58, 0.62] as const;
+  const sceneScale = directorPose?.machineScale ?? machineScale;
 
   useEffect(() => {
     onReady({
@@ -201,6 +243,41 @@ function MachineScene({
   }, [onReady, runtime.objectCount, runtime.triangleCount]);
 
   useEffect(() => {
+    if (directorPose) {
+      const screenMaterial = screenMaterialRef.current;
+      hingeRef.current.rotation.x = directorPose.lidAngle;
+      hingeRef.current.updateMatrixWorld(true);
+
+      if (screenMaterial) {
+        screenMaterial.color
+          .copy(screenOff)
+          .lerp(screenOn, directorPose.screenLuminance);
+        screenMaterial.emissive.copy(accent);
+        screenMaterial.emissiveIntensity =
+          directorPose.screenLuminance * 0.11;
+      }
+
+      camera.position.set(
+        directorPose.cameraPosition.x,
+        directorPose.cameraPosition.y,
+        directorPose.cameraPosition.z,
+      );
+      if (camera instanceof PerspectiveCamera) {
+        const focalLength =
+          0.5 * camera.getFilmHeight() /
+          Math.tan((directorPose.fov * Math.PI) / 360);
+        camera.setFocalLength(focalLength);
+      }
+      camera.lookAt(
+        directorPose.cameraTarget.x,
+        directorPose.cameraTarget.y,
+        directorPose.cameraTarget.z,
+      );
+      camera.updateProjectionMatrix();
+      invalidate();
+      return;
+    }
+
     const opening = stageProgress(progress, sequence.opening);
     const currentScreenPower = stageProgress(progress, sequence.screen);
     const reframe = stageProgress(progress, sequence.cameraReframe);
@@ -226,7 +303,7 @@ function MachineScene({
     camera.lookAt(lookStart.clone().lerp(screenCenter, reframe));
     camera.updateProjectionMatrix();
     invalidate();
-  }, [camera, invalidate, progress, sequence, size.width]);
+  }, [camera, directorPose, invalidate, progress, sequence, size.width]);
 
   useEffect(
     () => () => {
@@ -251,7 +328,7 @@ function MachineScene({
         position={[-4, 2.5, -3]}
       />
 
-      <group position={[0, -0.58, 0.62]} scale={machineScale}>
+      <group position={scenePosition} scale={sceneScale}>
         <primitive object={runtime.root} dispose={null} />
         {createPortal(
           <>
@@ -283,15 +360,41 @@ function MachineScene({
               >
                 <div
                   aria-hidden={identitySemantic ? undefined : true}
-                  className={styles.screenIdentityFrame}
+                  className={`${styles.screenIdentityFrame} ${
+                    directorGuides?.projectedScreenBounds
+                      ? directorGuideClassNames?.projectedScreenBounds ?? ""
+                      : ""
+                  }`}
                   data-screen-active={screenPower > 0.05}
                   data-screen-settled={screenDetails > 0.95}
                   data-identity-visible={identityVisibility > 0.05}
                   data-machine-identity=""
+                  data-director-screen-guide={
+                    directorGuides?.projectedScreenBounds || undefined
+                  }
                 >
+                  {directorGuides?.screenCenter ? (
+                    <span
+                      aria-hidden="true"
+                      className={directorGuideClassNames?.screenCenter}
+                      data-director-guide="screen-center"
+                    />
+                  ) : null}
+                  {directorGuides?.safeTextRegion ? (
+                    <span
+                      aria-hidden="true"
+                      className={directorGuideClassNames?.safeTextRegion}
+                      data-director-guide="safe-text-region"
+                    />
+                  ) : null}
                   <div
                     className={styles.screenIdentity}
-                    style={{ opacity: identityVisibility }}
+                    style={{
+                      opacity: identityVisibility,
+                      transform: directorPose
+                        ? `translate(${directorPose.identityOffset.x}rem, ${directorPose.identityOffset.y}rem) scale(${directorPose.identityScale})`
+                        : undefined,
+                    }}
                   >
                     <span>MALMÖ, SWEDEN / PORTFOLIO</span>
                     {identitySemantic ? (
@@ -308,6 +411,19 @@ function MachineScene({
           runtime.lid,
         )}
       </group>
+
+      {directorPose && directorGuides?.cameraTarget ? (
+        <mesh
+          position={[
+            directorPose.cameraTarget.x,
+            directorPose.cameraTarget.y,
+            directorPose.cameraTarget.z,
+          ]}
+        >
+          <sphereGeometry args={[0.035, 16, 16]} />
+          <meshBasicMaterial color="#69d3e7" depthTest={false} />
+        </mesh>
+      ) : null}
 
       <group position={[0, -0.595, 0.28]} rotation={[-Math.PI / 2, 0, 0]}>
         <mesh scale={[1.78, 0.84, 1]}>
