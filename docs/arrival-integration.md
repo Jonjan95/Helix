@@ -63,6 +63,38 @@ For quick local comparison, `?arrival=css` and `?arrival=machine` override the b
 
 Desktop receives the complete Candidate A sequence. Compact laptop/tablet and mobile layouts retain the established CSS journey, normal document flow, and mobile no-pin rule. Reduced-motion desktop uses the static open machine. The order and meaning of the semantic content do not change between modes.
 
+## Physical camera language
+
+The first production integration moved the camera by interpolating directly from its opening coordinates to one reframe coordinate and then to one dolly coordinate. Although the stages were correctly separated, the shortest-path interpolation made the camera feel automated: lateral alignment, vertical alignment, and forward travel happened together, and the look target arrived at the display at the same rate as the camera body.
+
+The camera now follows two connected cubic spatial paths without changing the Candidate A stage boundaries:
+
+1. **Reframe:** the camera makes a very small outward anticipation, performs most of its lateral and vertical correction while it remains distant, and settles almost square to the display.
+2. **Dolly:** the camera completes its remaining alignment early, then travels primarily along the display's forward axis toward a clear end frame.
+
+Both paths use a monotonic quintic ease. Acceleration and deceleration reach zero at each endpoint, avoiding a robotic start or stop without bounce, elastic movement, or overshoot. The existing hold between reframe and dolly remains intact.
+
+The look target has its own motivation. It acquires the screen slightly ahead of the camera position, then remains locked to the display through the dolly. The effect is that attention reaches the destination first and the camera follows, while the display stays stable during the final approach.
+
+Machine Lab supports a temporary `?cameraDebug=on` review mode. It uses a fixed observer view to draw the camera path, the current virtual camera position, and the active look target. The mode is disabled by default, has no production control, and does not alter production rendering.
+
+Remaining camera review should focus on physical devices: perceived velocity at very high refresh rates, the final screen-edge framing across unusual aspect ratios, and whether the compact Machine Lab preview needs its own camera path. These observations should not change sequence timing or threshold composition without separate approval.
+
+### Camera evidence
+
+The reproducible review set is stored in `docs/media/arrival-integration/physical-camera/`:
+
+- `01-initial-framing.png`;
+- `02-reframe.png`;
+- `03-dolly-start.png`;
+- `04-dolly-midpoint.png`;
+- `05-dolly-end.png`;
+- `06-reverse.png`;
+- `07-debug-path.png`;
+- `08-forward-reverse.webm`.
+
+The stills use exact Machine Lab progress positions. The reverse still and recording use the real deterministic playback controls rather than synthesized transform values.
+
 ## Remaining polish
 
 - Review the exact canvas-to-threshold blend on a wider range of physical GPUs and display densities.
