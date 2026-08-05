@@ -1,0 +1,47 @@
+.root {
+  position: relative;
+  width: min(100%, 82rem);
+  height: clamp(20rem, 38vw, 35rem);
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+.cssFallback,
+.machine {
+  position: absolute;
+  inset: 0;
+}
+
+.cssFallback {
+  z-index: 1;
+  display: grid;
+  opacity: var(--fallback-opacity, 1);
+  place-items: center;
+}
+
+.machine {
+  z-index: 2;
+  overflow: hidden;
+  background: #101315;
+  opacity: var(--machine-opacity, 1);
+  pointer-events: none;
+}
+
+.root[data-arrival-runtime="loading"] .machine {
+  visibility: hidden;
+}
+
+.root:not([data-arrival-runtime="ready"]) .cssFallback {
+  opacity: 1;
+}
+
+@media (max-width: 64rem) {
+  .root {
+    width: min(100%, 46rem);
+    height: auto;
+  }
+
+  .cssFallback {
+    position: relative;
+  }
+}

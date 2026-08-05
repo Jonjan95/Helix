@@ -16,6 +16,7 @@ import {
   type HelixChapterId,
 } from "@/data/helix-chapters";
 import styles from "@/styles/JourneyMotion.module.css";
+import { publishArrivalProgress } from "@/lib/arrival/arrival-progress";
 
 type JourneyMotionProps = {
   children: ReactNode;
@@ -171,7 +172,7 @@ function createSpatialTimeline(
   const getTransform = () =>
     getCameraTransform(targets.laptop, targets.screen, profile);
 
-  return gsap
+  const spatialTimeline = gsap
     .timeline({
       defaults: { overwrite: "auto" },
       scrollTrigger: {
@@ -189,6 +190,7 @@ function createSpatialTimeline(
         scrub: profile.scrub,
         start: "top top",
         trigger: targets.arrival,
+        onUpdate: (self) => publishArrivalProgress(self.progress),
       },
     })
     .to(
@@ -282,6 +284,8 @@ function createSpatialTimeline(
       },
       handoff.start,
     );
+
+  return spatialTimeline;
 }
 
 function createMobileTimeline(targets: MotionTargets) {
@@ -295,6 +299,7 @@ function createMobileTimeline(targets: MotionTargets) {
         scrub: mobile.scrub,
         start: "top top",
         trigger: targets.arrival,
+        onUpdate: (self) => publishArrivalProgress(self.progress),
       },
     })
     .to(
@@ -681,6 +686,7 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
         }
 
         if (conditions.reduced) {
+          publishArrivalProgress(0);
           scope.dataset.motionState = "reduced";
           setStaticJourneyState(targets);
           clearMotionStyles(targets);
@@ -728,6 +734,7 @@ export function JourneyMotion({ children }: JourneyMotionProps) {
     }, scope);
 
     return () => {
+      publishArrivalProgress(0);
       delete scope.dataset.motionState;
       if (targets) {
         setStaticJourneyState(targets);

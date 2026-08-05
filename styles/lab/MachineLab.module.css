@@ -170,13 +170,18 @@
   text-transform: uppercase;
 }
 
-.screenIdentity h2 {
+.screenIdentity h2,
+.identityName {
   max-width: 9ch;
   margin: 0.8rem 0 0.9rem;
   font-size: 2.7rem;
   font-weight: 480;
   letter-spacing: -0.045em;
   line-height: 0.94;
+}
+
+.identityName {
+  font-family: var(--font-sans);
 }
 
 .screenIdentity p {
