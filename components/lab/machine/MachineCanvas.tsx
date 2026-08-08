@@ -217,9 +217,7 @@ export function MachineScene({
     ? directorPose.screenLuminance
     : stageProgress(progress, sequence.screenSettled);
   const identityIn = directorPose
-    ? directorPose.screenLuminance > 0.02
-      ? 1
-      : 0
+    ? directorPose.identityOpacity
     : stageProgress(progress, sequence.identity);
   const identityOut = directorPose
     ? 0

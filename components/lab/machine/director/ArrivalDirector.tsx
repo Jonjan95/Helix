@@ -20,7 +20,7 @@ import {
   directorStorageKey,
   directorViewportPresets,
   initialDirectorPoses,
-  isDirectorPose,
+  normalizeDirectorPose,
   parseDirectorPoseImport,
   serializeDirectorPoses,
   type DirectorPose,
@@ -221,12 +221,12 @@ export function ArrivalDirector() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as { poses?: unknown };
-        if (
-          Array.isArray(parsed.poses) &&
-          parsed.poses.length > 0 &&
-          parsed.poses.every(isDirectorPose)
-        ) {
-          const restored = parsed.poses.map(cloneDirectorPose);
+        if (Array.isArray(parsed.poses) && parsed.poses.length > 0) {
+          const normalized = parsed.poses.map(normalizeDirectorPose);
+          if (normalized.some((pose) => pose === null)) {
+            throw new Error("Stored pose data is invalid.");
+          }
+          const restored = normalized as DirectorPose[];
           window.requestAnimationFrame(() => {
             setPoses(restored);
             setSelectedId(restored[0].id);
@@ -472,6 +472,7 @@ export function ArrivalDirector() {
             <ControlGroup title="Semantic identity">
               {(["x", "y"] as const).map((axis) => <NumberControl key={axis} label={`Identity ${axis.toUpperCase()} offset`} {...directorControlRanges.identityOffset} value={workingPose.identityOffset[axis]} onChange={(value) => updateWorkingPose((pose) => ({ ...pose, identityOffset: { ...pose.identityOffset, [axis]: value } }))} />)}
               <NumberControl label="Identity scale" {...directorControlRanges.identityScale} value={workingPose.identityScale} onChange={(value) => updateWorkingPose((pose) => ({ ...pose, identityScale: value }))} />
+              <NumberControl label="Identity opacity" {...directorControlRanges.identityOpacity} value={workingPose.identityOpacity} onChange={(value) => updateWorkingPose((pose) => ({ ...pose, identityOpacity: value }))} />
             </ControlGroup>
           </form>
 
