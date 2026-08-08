@@ -59,6 +59,7 @@ The director exposes:
 - screen luminance from dark (`0`) to powered (`1`);
 - semantic identity X and Y offsets;
 - semantic identity scale;
+- semantic identity opacity from hidden (`0`) to fully visible (`1`);
 - the five approved viewport presets.
 
 The director never interpolates, optimizes, or changes these values on behalf
@@ -135,6 +136,13 @@ or out-of-range input is rejected rather than silently changed. Imported IDs
 that already exist receive a local import suffix so an existing pose is not
 overwritten.
 
+`identityOpacity` is included in current-pose and full-library exports. Poses
+saved or exported before this control existed remain valid: the Director reads
+a missing `identityOpacity` as `0` in memory. Loading that legacy pose does not
+rewrite localStorage or change any of its existing values; persistence occurs
+only after the reviewer explicitly saves, duplicates, renames, deletes, or
+imports a pose.
+
 To hand off an approved review:
 
 1. Confirm the six intended pose names and saved values.
@@ -149,7 +157,9 @@ animation configuration.
 
 ## Accessibility and reduced motion
 
-The identity remains semantic HTML rendered outside WebGL. Native form
+The identity uses the real production copy and remains semantic HTML rendered
+outside WebGL. Opacity, position, and scale affect only its Director
+composition; the production Arrival identity behavior is unchanged. Native form
 controls, labels, fieldsets, buttons, status feedback, focus styles, and
 document order make the authoring surface keyboard usable. Guides are
 decorative and hidden from assistive technology.

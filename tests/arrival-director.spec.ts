@@ -47,7 +47,11 @@ test("keeps the Arrival Director isolated and neutral", async ({ page, request }
     await expect(page.getByRole("spinbutton", { name: "Camera position X numeric value" })).toHaveValue("4.6");
     await expect(page.getByRole("spinbutton", { name: "Lid angle numeric value" })).toHaveValue("1.50796");
     await expect(page.getByRole("spinbutton", { name: "Screen luminance numeric value" })).toHaveValue("0");
+    await expect(page.getByRole("spinbutton", { name: "Identity opacity numeric value" })).toHaveValue("0");
   }
+
+  await expect(page.getByRole("heading", { level: 2, name: "Jonathan Jansson" })).toBeAttached();
+  await expect(page.getByText("Software development / testing / quality", { exact: true })).toBeAttached();
 
   await expect(page.locator("[data-director-guide]")).toHaveCount(0);
   await expect(page.locator('[data-director-screen-guide="true"]')).toHaveCount(0);
@@ -66,6 +70,7 @@ test("edits, persists, duplicates, renames, compares, exports, and imports poses
   await waitForDirector(page);
 
   const cameraX = page.getByRole("spinbutton", { name: "Camera position X numeric value" });
+  const identityOpacity = page.getByRole("spinbutton", { name: "Identity opacity numeric value" });
   await cameraX.fill("3.25");
   await expect(page.getByRole("status")).toHaveText("Unsaved changes.");
 
@@ -74,10 +79,35 @@ test("edits, persists, duplicates, renames, compares, exports, and imports poses
   await expect(cameraX).toHaveValue("4.6");
 
   await cameraX.fill("3.25");
+  await identityOpacity.fill("0.65");
   await page.getByRole("button", { name: "Save pose locally" }).click();
   await page.reload();
   await waitForDirector(page);
   await expect(cameraX).toHaveValue("3.25");
+  await expect(identityOpacity).toHaveValue("0.65");
+  await expect(page.locator("[data-machine-identity]")).toHaveAttribute("data-identity-visible", "true");
+
+  await page.evaluate(() => {
+    const key = "helix.arrival-director.poses.v1";
+    const stored = JSON.parse(window.localStorage.getItem(key) ?? "{}");
+    delete stored.poses[0].identityOpacity;
+    window.localStorage.setItem(key, JSON.stringify(stored));
+  });
+  await page.reload();
+  await waitForDirector(page);
+  await expect(cameraX).toHaveValue("3.25");
+  await expect(identityOpacity).toHaveValue("0");
+  expect(
+    await page.evaluate(() => {
+      const stored = JSON.parse(
+        window.localStorage.getItem("helix.arrival-director.poses.v1") ?? "{}",
+      );
+      return Object.hasOwn(stored.poses[0], "identityOpacity");
+    }),
+  ).toBe(false);
+
+  await identityOpacity.fill("0.65");
+  await page.getByRole("button", { name: "Save pose locally" }).click();
 
   await page.getByRole("button", { name: "Duplicate pose" }).click();
   await expect(page.getByRole("combobox", { name: "Active pose" }).locator("option")).toHaveCount(7);
@@ -89,7 +119,10 @@ test("edits, persists, duplicates, renames, compares, exports, and imports poses
   await page.getByRole("button", { name: "Copy current pose as JSON" }).click();
   await expect(page.getByRole("status")).toHaveText("Current pose copied as JSON.");
   const currentExport = await page.evaluate(() => navigator.clipboard.readText());
-  expect(JSON.parse(currentExport).name).toBe("review-alternate");
+  expect(JSON.parse(currentExport)).toMatchObject({
+    identityOpacity: 0.65,
+    name: "review-alternate",
+  });
 
   await page.getByRole("button", { name: "Copy all poses as JSON" }).click();
   const allExport = JSON.parse(await page.evaluate(() => navigator.clipboard.readText()));
@@ -109,10 +142,12 @@ test("edits, persists, duplicates, renames, compares, exports, and imports poses
     name: "imported-review",
     cameraPosition: { x: 1, y: 2, z: 5 },
   };
+  delete importedPose.identityOpacity;
   await page.getByRole("textbox", { name: "Pose JSON" }).fill(JSON.stringify(importedPose));
   await page.getByRole("button", { name: "Import pose JSON" }).click();
   await expect(page.getByRole("status")).toHaveText("1 pose imported locally.");
   await expect(page.getByRole("spinbutton", { name: "Camera position X numeric value" })).toHaveValue("1");
+  await expect(identityOpacity).toHaveValue("0");
 
   await page.getByRole("textbox", { name: "Pose JSON" }).fill('{"invalid":true}');
   await page.getByRole("button", { name: "Import pose JSON" }).click();
