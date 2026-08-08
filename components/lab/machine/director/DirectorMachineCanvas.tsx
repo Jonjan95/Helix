@@ -68,6 +68,7 @@ export function DirectorMachineCanvas({
           directorGuides={guides}
           directorPose={pose}
           htmlPortal={htmlPortal}
+          identitySemantic
           onReady={onReady}
           progress={0}
           sequence={machineSequences.cinematic}

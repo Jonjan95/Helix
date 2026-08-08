@@ -25,6 +25,7 @@ export type DirectorPose = {
     x: number;
     y: number;
   };
+  identityOpacity: number;
   identityScale: number;
   lidAngle: number;
   machinePosition: DirectorVector3;
@@ -43,6 +44,7 @@ export const directorControlRanges = {
   cameraTarget: { max: 5, min: -5, step: 0.01 },
   fov: { max: 75, min: 20, step: 1 },
   identityOffset: { max: 2, min: -2, step: 0.01 },
+  identityOpacity: { max: 1, min: 0, step: 0.01 },
   identityScale: { max: 2, min: 0.4, step: 0.01 },
   lidAngle: { max: 1.55, min: 0, step: 0.01 },
   machinePosition: { max: 5, min: -5, step: 0.01 },
@@ -64,6 +66,7 @@ const neutralPose = {
   cameraTarget: { x: 0, y: 0.55, z: 0.3 },
   fov: 38,
   identityOffset: { x: 0, y: 0 },
+  identityOpacity: 0,
   identityScale: 1,
   lidAngle: 1.50796,
   machinePosition: { x: 0, y: -0.58, z: 0.62 },
@@ -78,6 +81,7 @@ export const initialDirectorPoses: DirectorPose[] = initialSlotNames.map(
     fov: neutralPose.fov,
     id: `slot-${index + 1}`,
     identityOffset: { ...neutralPose.identityOffset },
+    identityOpacity: neutralPose.identityOpacity,
     identityScale: neutralPose.identityScale,
     lidAngle: neutralPose.lidAngle,
     machinePosition: { ...neutralPose.machinePosition },
@@ -124,11 +128,12 @@ function inRange(
   return value >= range.min && value <= range.max;
 }
 
-export function isDirectorPose(value: unknown): value is DirectorPose {
-  if (!value || typeof value !== "object") return false;
+export function normalizeDirectorPose(value: unknown): DirectorPose | null {
+  if (!value || typeof value !== "object") return null;
   const pose = value as Record<string, unknown>;
+  const identityOpacity = pose.identityOpacity ?? 0;
 
-  return (
+  const valid =
     typeof pose.id === "string" &&
     pose.id.trim().length > 0 &&
     typeof pose.name === "string" &&
@@ -156,9 +161,29 @@ export function isDirectorPose(value: unknown): value is DirectorPose {
     isVector2(pose.identityOffset) &&
     inRange(pose.identityOffset.x, directorControlRanges.identityOffset) &&
     inRange(pose.identityOffset.y, directorControlRanges.identityOffset) &&
+    isFiniteNumber(identityOpacity) &&
+    inRange(identityOpacity, directorControlRanges.identityOpacity) &&
     isFiniteNumber(pose.identityScale) &&
-    inRange(pose.identityScale, directorControlRanges.identityScale)
-  );
+    inRange(pose.identityScale, directorControlRanges.identityScale);
+
+  if (!valid) return null;
+
+  return {
+    cameraPosition: { ...(pose.cameraPosition as DirectorVector3) },
+    cameraTarget: { ...(pose.cameraTarget as DirectorVector3) },
+    fov: pose.fov as number,
+    id: pose.id as string,
+    identityOffset: {
+      ...(pose.identityOffset as { x: number; y: number }),
+    },
+    identityOpacity,
+    identityScale: pose.identityScale as number,
+    lidAngle: pose.lidAngle as number,
+    machinePosition: { ...(pose.machinePosition as DirectorVector3) },
+    machineScale: pose.machineScale as number,
+    name: pose.name as string,
+    screenLuminance: pose.screenLuminance as number,
+  };
 }
 
 export function parseDirectorPoseImport(value: string): DirectorPose[] {
@@ -172,11 +197,12 @@ export function parseDirectorPoseImport(value: string): DirectorPose[] {
   if (!Array.isArray(candidates) || candidates.length === 0) {
     throw new Error("The import must contain at least one pose.");
   }
-  if (!candidates.every(isDirectorPose)) {
+  const normalized = candidates.map(normalizeDirectorPose);
+  if (normalized.some((pose) => pose === null)) {
     throw new Error("The import contains an invalid or out-of-range pose.");
   }
 
-  return candidates.map(cloneDirectorPose);
+  return normalized as DirectorPose[];
 }
 
 export function serializeDirectorPoses(poses: DirectorPose[]) {
